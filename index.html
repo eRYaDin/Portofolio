@@ -8,48 +8,155 @@
 </head>
 <body>
 
-  <!-- HERO -->
-  <header class="hero">
+  <!-- NAVIGATION (DIKEMBANGKAN – DENGAN DROPDOWN PROJECTS) -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <h1 class="nav-title">Rafif Yasin</h1>
+      <ul class="nav-menu">
+        <li><a href="#home">Home</a></li>
+        <li class="dropdown">
+          <a href="#projects" class="dropbtn">Projects ▼</a>
+          <div class="dropdown-content">
+            <a href="#my-projects">My Projects</a>
+            <a href="#teaching-projects">My Teaching Projects</a>
+          </div>
+        </li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button id="theme-toggle" class="theme-btn">🌙 Dark Mode</button>
+    </div>
+  </nav>
+
+  <!-- HOME (HERO) -->
+  <section id="home" class="hero">
     <div class="hero-content">
 
       <!-- FOTO PROFIL (SATU-SATUNYA GAMBAR) -->
       <img
-        src="assets/images/profile/rafif-profile.png"
+        src="assets/images/profile/Profile.png"
         alt="Foto Rafif"
-        class="Profile-img"
+        class="profile-img"
       >
 
       <h1>Rafif Yasin Habibullah Wiryawan</h1>
       <p class="subtitle">
-        Physics Student · Programming Physics · Simulation Enthusiast
+        Physics Student · Programming Physics · Teaching Assistant
       </p>
-
-    </div>
-  </header>
-
-  <!-- PROJECTS -->
-  <section class="section">
-    <h2>Projects</h2>
-
-    <div class="projects-grid">
-
-      <div class="project-card">
-        <p>Simulasi Dinamika Energi 2D</p>
-        <span>(Coming soon)</span>
-      </div>
+      <p class="hero-desc">
+        Fokus pada simulasi fisika, visualisasi data, dan pengajaran berbasis komputasi.
+      </p>
 
     </div>
   </section>
 
-  <!-- ABOUT -->
-  <section class="section">
-    <h2>About Me</h2>
+  <!-- PROJECTS -->
+  <section id="projects" class="section">
+    <h2>Projects</h2>
 
+    <!-- MY PROJECTS -->
+    <div id="my-projects" class="sub-section">
+      <h3>My Projects</h3>
+      <div class="projects-grid">
+        <div class="project-card">
+          <p>Simulasi Dinamika Energi 2D</p>
+          <span>Simulasi interaksi energi dalam sistem 2D menggunakan Python.</span>
+          <small>Status: Ongoing</small>
+        </div>
+        <div class="project-card">
+          <p>Simulasi Tumbukan</p>
+          <span>Visualisasi tumbukan partikel dengan analisis momentum.</span>
+          <small>Status: Completed</small>
+        </div>
+        <div class="project-card">
+          <p>Proyek Komputasi Numerik</p>
+          <span>Pemodelan numerik untuk persamaan diferensial fisika.</span>
+          <small>Status: Completed</small>
+        </div>
+        <div class="project-card">
+          <p>Proyek Mandiri</p>
+          <span>Eksplorasi algoritma simulasi untuk fenomena gelombang.</span>
+          <small>Status: Ongoing</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY TEACHING PROJECTS -->
+    <div id="teaching-projects" class="sub-section">
+      <h3>My Teaching Projects</h3>
+      <div class="projects-grid">
+        <div class="project-card teaching-card">
+          <p>Simulasi Lemparan Proyektil (Praktikum)</p>
+          <span>Digunakan untuk membantu praktikan memahami hubungan sudut dan energi.</span>
+          <small>Status: Completed</small>
+        </div>
+        <div class="project-card teaching-card">
+          <p>Modul Visualisasi Data Fisika</p>
+          <span>Bimbingan mahasiswa dalam membuat grafik interaktif untuk analisis data.</span>
+          <small>Status: Ongoing</small>
+        </div>
+        <div class="project-card teaching-card">
+          <p>Pendekatan Mengajar Berbasis Komputasi</p>
+          <span>Fokus pada visualisasi dulu baru rumus, untuk pemahaman mendalam.</span>
+          <small>Status: Active</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section">
+    <h2>About Me</h2>
     <div class="about-card">
       <p>
-        Saya adalah mahasiswa S1 Fisika Universitas Padjadjaran dengan minat pada
-        pemrograman fisika, simulasi numerik, dan visualisasi fenomena fisis.
+        Saya adalah mahasiswa S1 Fisika Universitas Padjadjaran dengan minat pada pemrograman fisika, simulasi numerik, dan visualisasi data.
+        Selain mengembangkan proyek mandiri, saya juga aktif sebagai asisten laboratorium pemrograman fisika dan terlibat dalam proses pengajaran berbasis komputasi.
       </p>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="section">
+    <h2>Skills</h2>
+    <div class="skills-container">
+      <div class="skill-item">
+        <span class="skill-name">Pemrograman</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 80%;"></div>
+        </div>
+        <span class="skill-percent">80%</span>
+      </div>
+      <div class="skill-item">
+        <span class="skill-name">Editing Video</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 60%;"></div>
+        </div>
+        <span class="skill-percent">60%</span>
+      </div>
+      <div class="skill-item">
+        <span class="skill-name">Visual Graphic</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 90%;"></div>
+        </div>
+        <span class="skill-percent">90%</span>
+      </div>
+      <div class="skill-item">
+        <span class="skill-name">Menulis / Novel</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 90%;"></div>
+        </div>
+        <span class="skill-percent">90%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section">
+    <h2>Contact</h2>
+    <div class="contact-card">
+      <p><strong>Email:</strong> rafif.yasin@example.com</p>
+      <p><strong>GitHub:</strong> <a href="https://github.com/username" target="_blank">github.com/username</a></p>
     </div>
   </section>
 
