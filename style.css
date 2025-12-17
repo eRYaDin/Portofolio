@@ -5,19 +5,143 @@
   box-sizing: border-box;
 }
 
+/* CSS VARIABLES UNTUK DARK MODE & AKSEN */
+:root {
+  --bg-color: #f2f5ff;
+  --hero-bg: linear-gradient(135deg, #e0e7ff, #fdf2f8);
+  --card-bg: #ffffff;
+  --text-color: #222;
+  --border-color: #111;
+  --shadow-color: #111;
+  --subtitle-bg: #ffffff;
+  --footer-bg: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --transition: all 0.3s ease;
+  --accent-color: #007bff; /* WARNA AKSEN UTAMA */
+  --teaching-bg: #f8f9fa; /* BACKGROUND LEMBUT UNTUK TEACHING */
+}
+
+/* DARK MODE VARIABLES */
+[data-theme="dark"] {
+  --bg-color: #1a1a2e;
+  --hero-bg: linear-gradient(135deg, #16213e, #0f3460);
+  --card-bg: #0f3460;
+  --text-color: #e0e7ff;
+  --border-color: #e0e7ff;
+  --shadow-color: #e0e7ff;
+  --subtitle-bg: #16213e;
+  --footer-bg: #16213e;
+  --nav-bg: rgba(26, 26, 46, 0.9);
+  --accent-color: #a0c4ff; /* AKSEN DARK */
+  --teaching-bg: #1e2a3c; /* TEACHING BG DARK */
+}
+
 /* BODY */
 body {
   font-family: "Segoe UI", Arial, sans-serif;
-  background: #f2f5ff;
-  color: #222;
+  background: var(--bg-color);
+  color: var(--text-color);
   line-height: 1.6;
+  transition: var(--transition);
 }
 
-/* HERO */
+/* NAVIGATION */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--border-color);
+  z-index: 100;
+  transition: var(--transition);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.nav-menu {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-menu li {
+  position: relative;
+}
+
+.nav-menu a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.nav-menu a:hover {
+  color: var(--accent-color);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 4px 4px 0px var(--shadow-color);
+  min-width: 160px;
+  z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  color: var(--text-color);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  transition: var(--transition);
+}
+
+.dropdown-content a:hover {
+  background: var(--bg-color);
+}
+
+.theme-btn {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 3px 3px 0px var(--shadow-color);
+  transition: var(--transition);
+}
+
+.theme-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px var(--shadow-color);
+}
+
+/* HERO (HOME – DOMINAN) */
 .hero {
-  background: linear-gradient(135deg, #e0e7ff, #fdf2f8);
-  padding: 90px 20px;
+  background: var(--hero-bg);
+  padding: 140px 20px 100px; /* LEBIH BESAR UNTUK HIERARKI */
   text-align: center;
+  transition: var(--transition);
 }
 
 .hero-content {
@@ -26,92 +150,285 @@ body {
 }
 
 .profile-img {
-  width: 160px;
-  height: 160px;
+  width: 180px; /* LEBIH BESAR */
+  height: 180px;
   object-fit: cover;
   border-radius: 50%;
-  border: 5px solid #ffffff;
-  background: white;
-  box-shadow: 6px 6px 0px #111;
-  margin-bottom: 24px;
+  border: 5px solid var(--card-bg);
+  background: var(--card-bg);
+  box-shadow: 8px 8px 0px var(--shadow-color); /* SHADOW LEBIH BESAR */
+  margin-bottom: 30px; /* SPASI LEBIH */
+  transition: var(--transition);
 }
 
 .hero h1 {
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 10px;
+  font-size: 2.5rem; /* LEBIH BESAR */
+  font-weight: 900; /* LEBIH BOLD */
+  margin-bottom: 15px;
+  transition: var(--transition);
 }
 
 .subtitle {
-  font-size: 1rem;
-  color: #444;
-  background: #ffffff;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  background: var(--subtitle-bg);
   display: inline-block;
-  padding: 6px 14px;
+  padding: 8px 16px; /* PADDING LEBIH */
   border-radius: 999px;
-  box-shadow: 3px 3px 0px #111;
+  box-shadow: 4px 4px 0px var(--shadow-color); /* SHADOW LEBIH */
+  margin-bottom: 20px;
+  transition: var(--transition);
 }
 
-/* SECTION */
+.hero-desc {
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+/* SECTION (HIERARKI & SPASI) */
 .section {
   max-width: 1000px;
-  margin: 70px auto;
+  margin: 100px auto; /* MARGIN LEBIH BESAR UNTUK RITME */
   padding: 0 20px;
+  transition: var(--transition);
 }
 
 .section h2 {
-  font-size: 1.6rem;
-  margin-bottom: 24px;
+  font-size: 2rem; /* LEBIH BESAR */
+  margin-bottom: 40px; /* SPASI JUDUL-KONTEN LEBIH */
+  font-weight: 900; /* BOLD */
+  transition: var(--transition);
+}
+
+.sub-section h3 {
+  font-size: 1.5rem; /* LEBIH BESAR */
+  margin-bottom: 30px; /* SPASI LEBIH */
   font-weight: 800;
 }
 
-/* PROJECTS */
+/* FIX SPASI ANTAR MY PROJECTS & MY TEACHING PROJECTS */
+#my-projects .projects-grid {
+  margin-bottom: 100px; /* JARAK KE BAWAH SETELAH GRID MY PROJECTS */
+}
+
+#teaching-projects h3 {
+  margin-top: 40px; /* MARGIN-TOP KE JUDUL TEACHING (OPSI) */
+}
+
+/* PROJECTS (HIERARKI BERAT, PEMBEDA TEACHING) */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* CARD LEBIH BESAR */
+  gap: 30px; /* GAP LEBIH UNTUK RITME */
 }
 
 .project-card {
-  background: #ffffff;
-  padding: 32px 26px;
-  border-radius: 18px;
-  border: 3px solid #111;
-  box-shadow: 8px 8px 0px #111;
+  background: var(--card-bg);
+  padding: 40px 30px; /* PADDING LEBIH */
+  border-radius: 20px; /* RADIUS KONSISTEN */
+  border: 4px solid var(--border-color); /* BORDER TEBAL KONSISTEN */
+  box-shadow: 10px 10px 0px var(--shadow-color); /* SHADOW KONSISTEN */
   text-align: center;
-  transition: transform 0.2s ease;
+  transition: var(--transition);
 }
 
 .project-card:hover {
-  transform: translate(-4px, -4px);
+  transform: translate(-8px, -8px); /* HOVER LEBIH DRAMATIS */
+  box-shadow: 16px 16px 0px var(--shadow-color);
 }
 
 .project-card p {
-  font-weight: 700;
-  margin-bottom: 6px;
+  font-weight: 800; /* BOLD LEBIH */
+  margin-bottom: 10px;
+  transition: var(--transition);
 }
 
 .project-card span {
-  font-size: 0.9rem;
-  color: #555;
+  font-size: 1rem; /* LEBIH BESAR */
+  color: var(--text-color);
+  opacity: 0.7;
+  margin-bottom: 12px;
+  display: block;
 }
 
-/* ABOUT */
+.project-card small {
+  font-size: 0.9rem;
+  color: var(--accent-color); /* AKSEN WARNA */
+  font-weight: 700;
+}
+
+/* TEACHING CARDS (PEMBEDA VISUAL) */
+.teaching-card {
+  background: var(--teaching-bg); /* BACKGROUND BERBEDA */
+  border: 3px solid var(--accent-color); /* BORDER AKSEN */
+  box-shadow: 8px 8px 0px var(--accent-color); /* SHADOW AKSEN */
+  padding: 35px 25px; /* SEDIKIT LEBIH KECIL */
+}
+
+.teaching-card:hover {
+  transform: translate(-6px, -6px);
+  box-shadow: 14px 14px 0px var(--accent-color);
+}
+
+/* ABOUT (TENANG) */
 .about-card {
-  background: #ffffff;
-  padding: 36px;
+  background: var(--card-bg);
+  padding: 40px; /* PADDING LEBIH */
   border-radius: 20px;
-  border: 3px solid #111;
-  box-shadow: 8px 8px 0px #111;
+  border: 4px solid var(--border-color);
+  box-shadow: 10px 10px 0px var(--shadow-color);
   max-width: 720px;
+  transition: var(--transition);
+}
+
+/* SKILLS (TENANG, AKSEN) */
+.skills-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* GAP LEBIH */
+  max-width: 600px;
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* GAP LEBIH */
+}
+
+.skill-name {
+  font-weight: 700; /* BOLD */
+  min-width: 120px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 24px; /* LEBIH TINGGI */
+  background: var(--bg-color);
+  border: 3px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 3px 3px 0px var(--shadow-color);
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent-color); /* AKSEN */
+  transition: width 0.5s ease;
+}
+
+.skill-percent {
+  font-weight: 700;
+  min-width: 40px;
+  text-align: right;
+  color: var(--accent-color); /* AKSEN */
+}
+
+/* CONTACT (TENANG) */
+.contact-card {
+  background: var(--card-bg);
+  padding: 40px;
+  border-radius: 20px;
+  border: 4px solid var(--border-color);
+  box-shadow: 10px 10px 0px var(--shadow-color);
+  max-width: 400px;
+  text-align: center;
+}
+
+.contact-card a {
+  color: var(--accent-color); /* AKSEN */
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.contact-card a:hover {
+  text-decoration: underline;
 }
 
 /* FOOTER */
 footer {
-  margin-top: 80px;
-  padding: 30px;
+  margin-top: 120px; /* MARGIN LEBIH */
+  padding: 40px; /* PADDING LEBIH */
   text-align: center;
-  background: #ffffff;
-  border-top: 3px solid #111;
-  font-size: 0.9rem;
+  background: var(--footer-bg);
+  border-top: 4px solid var(--border-color);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+/* RESPONSIVE (VISUAL HP) */
+@media (max-width: 768px) {
+  .hero {
+    padding: 120px 20px 80px;
+  }
+  .profile-img {
+    width: 140px;
+    height: 140px;
+  }
+  .hero h1 {
+    font-size: 2rem;
+  }
+  .subtitle {
+    font-size: 1rem;
+    padding: 6px 12px;
+  }
+  .hero-desc {
+    font-size: 1.1rem;
+  }
+  .section {
+    margin: 80px auto;
+  }
+  .section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+  }
+  .sub-section h3 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+  }
+  #my-projects .projects-grid {
+    margin-bottom: 80px; /* JARAK LEBIH KECIL DI MOBILE */
+  }
+  #teaching-projects h3 {
+    margin-top: 30px; /* MARGIN-TOP LEBIH KECIL DI MOBILE */
+  }
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .project-card {
+    padding: 30px 20px;
+  }
+  .teaching-card {
+    padding: 25px 20px;
+  }
+  .about-card {
+    padding: 30px;
+  }
+  .skills-container {
+    gap: 20px;
+  }
+  .skill-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .contact-card {
+    padding: 30px;
+  }
+  .footer {
+    margin-top: 100px;
+    padding: 30px;
+  }
+  .nav-menu {
+    display: none; /* Sederhana, bisa dikembangkan jadi hamburger */
+  }
+  .nav-title {
+    font-size: 1.2rem;
+  }
+  .theme-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
 }
