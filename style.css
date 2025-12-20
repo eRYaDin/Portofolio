@@ -217,6 +217,13 @@ body {
   margin-top: 40px; /* MARGIN-TOP KE JUDUL TEACHING (OPSI) */
 }
 
+/* PROJECT LINK (UNTUK CLICKABLE CARD) */
+.project-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 /* PROJECTS (HIERARKI BERAT, PEMBEDA TEACHING) */
 .projects-grid {
   display: grid;
