@@ -1,0 +1,332 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* CSS VARIABLES UNTUK DARK MODE & AKSEN (SESUAI PORTFOLIO) */
+:root {
+  --bg-color: #f2f5ff;
+  --hero-bg: linear-gradient(135deg, #e0e7ff, #fdf2f8);
+  --card-bg: #ffffff;
+  --text-color: #222;
+  --border-color: #111;
+  --shadow-color: #111;
+  --subtitle-bg: #ffffff;
+  --footer-bg: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --transition: all 0.3s ease;
+  --accent-color: #007bff; /* WARNA AKSEN UTAMA */
+  --teaching-bg: #f8f9fa; /* BACKGROUND LEMBUT UNTUK TEACHING */
+}
+
+/* DARK MODE VARIABLES */
+[data-theme="dark"] {
+  --bg-color: #1a1a2e;
+  --hero-bg: linear-gradient(135deg, #16213e, #0f3460);
+  --card-bg: #0f3460;
+  --text-color: #e0e7ff;
+  --border-color: #e0e7ff;
+  --shadow-color: #e0e7ff;
+  --subtitle-bg: #16213e;
+  --footer-bg: #16213e;
+  --nav-bg: rgba(26, 26, 46, 0.9);
+  --accent-color: #a0c4ff; /* AKSEN DARK */
+  --teaching-bg: #1e2a3c; /* TEACHING BG DARK */
+}
+
+/* BODY (SESUAI PORTFOLIO) */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  transition: var(--transition);
+  padding-top: 80px; /* UNTUK NAV FIXED */
+}
+
+/* NAVIGATION (SESUAI PORTFOLIO – DENGAN BACK BUTTON) */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--border-color);
+  z-index: 100;
+  transition: var(--transition);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.back-btn {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.back-btn:hover {
+  color: var(--text-color);
+}
+
+.nav-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.theme-btn {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 3px 3px 0px var(--shadow-color);
+  transition: var(--transition);
+}
+
+.theme-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px var(--shadow-color);
+}
+
+/* MENU UTAMA (SESUAI PORTFOLIO) */
+#start-menu, #main-menu, #mini-game {
+  max-width: 1000px;
+  margin: 50px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+#start-menu h1, #main-menu h1, #mini-game h1 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  font-weight: 900;
+  color: var(--text-color);
+}
+
+#start-menu p {
+  font-size: 1.1rem;
+  margin-bottom: 40px;
+  opacity: 0.8;
+}
+
+#start-menu button, #mini-game-btn, #back-to-main {
+  background: var(--card-bg);
+  border: 3px solid var(--border-color);
+  padding: 12px 24px;
+  margin: 0 15px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 20px;
+  box-shadow: 6px 6px 0px var(--shadow-color);
+  color: var(--text-color);
+  transition: var(--transition);
+}
+
+#start-menu button:hover, #mini-game-btn:hover, #back-to-main:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 10px 10px 0px var(--shadow-color);
+}
+
+/* SECTION (SESUAI PORTFOLIO – KOMIK STYLE) */
+.section {
+  background: var(--card-bg);
+  border: 4px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: 10px 10px 0px var(--shadow-color);
+  padding: 30px;
+  margin: 30px 0;
+  transition: var(--transition);
+}
+
+.section:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 14px 14px 0px var(--shadow-color);
+}
+
+.section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  font-weight: 800;
+  color: var(--accent-color);
+}
+
+/* CANVAS & GRAPH (SESUAI) */
+#joystick-canvas1, #joystick-canvas2, #joystick-canvas3, #joystick-canvas4 {
+  border: 3px solid var(--border-color);
+  background: var(--card-bg);
+  border-radius: 15px;
+  margin-bottom: 20px;
+  max-width: 100%;
+  height: auto;
+}
+
+.labels {
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.stats {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.graph-container {
+  width: 100%;
+  max-width: 400px;
+  height: 300px;
+  border: 3px solid var(--border-color);
+  border-radius: 15px;
+  background: var(--card-bg);
+  margin-top: 20px;
+}
+
+/* MINI GAME */
+#mini-game p {
+  font-size: 1rem;
+  margin-bottom: 30px;
+  opacity: 0.8;
+}
+
+#game-canvas {
+  border: 3px solid var(--border-color);
+  background: var(--bg-color);
+  border-radius: 15px;
+  margin-top: 20px;
+  max-width: 100%;
+  height: auto;
+}
+
+#game-stats {
+  font-size: 1.1rem;
+  margin-top: 15px;
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+/* MINI JOYSTICKS */
+.mini-joysticks {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.mini-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 15px;
+  background: var(--card-bg);
+  border: 3px solid var(--border-color);
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 6px 6px 0px var(--shadow-color);
+  transition: var(--transition);
+}
+
+.mini-section:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px var(--shadow-color);
+}
+
+.mini-section h4 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+#mini-joystick1, #mini-joystick2, #mini-joystick3, #mini-joystick4 {
+  border: 2px solid var(--border-color);
+  background: var(--card-bg);
+  border-radius: 10px;
+  max-width: 100%;
+  height: auto;
+}
+
+/* RESPONSIVE (SESUAI PORTFOLIO) */
+@media (max-width: 768px) {
+  body {
+    padding-top: 70px;
+  }
+  .nav-container {
+    padding: 10px 15px;
+  }
+  .nav-title {
+    font-size: 1.2rem;
+  }
+  .theme-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+  #start-menu, #main-menu, #mini-game {
+    margin: 30px auto;
+    padding: 0 15px;
+  }
+  #start-menu h1, #main-menu h1, #mini-game h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+  .section {
+    padding: 20px;
+    margin: 20px 0;
+  }
+  .section h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+  #joystick-canvas1, #joystick-canvas2, #joystick-canvas3, #joystick-canvas4 {
+    width: 280px !important;
+    height: 280px !important;
+  }
+  .graph-container {
+    height: 250px;
+  }
+  .mini-joysticks {
+    justify-content: center;
+  }
+  .mini-section {
+    margin: 10px;
+    padding: 10px;
+  }
+  #mini-joystick1, #mini-joystick2, #mini-joystick3, #mini-joystick4 {
+    width: 120px !important;
+    height: 120px !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .section {
+    padding: 40px;
+    margin: 40px 0;
+  }
+  .section h3 {
+    font-size: 1.6rem;
+  }
+  #joystick-canvas1, #joystick-canvas2, #joystick-canvas3, #joystick-canvas4 {
+    width: 400px !important;
+    height: 400px !important;
+  }
+  .graph-container {
+    height: 350px;
+  }
+}
