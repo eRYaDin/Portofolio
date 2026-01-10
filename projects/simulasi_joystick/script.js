@@ -1,23 +1,57 @@
-// DARK MODE TOGGLE (Tanpa localStorage)
+// ===== DARK MODE TOGGLE (In-Memory State) =====
 const themeToggle = document.getElementById('theme-toggle');
 const body = document.body;
-let currentTheme = 'light'; // State in-memory
+let currentTheme = 'light';
 
-// Set tema awal
 body.setAttribute('data-theme', currentTheme);
 updateButtonText(currentTheme);
 
-themeToggle.addEventListener('click', () => {
+themeToggle?.addEventListener('click', () => {
   currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
   body.setAttribute('data-theme', currentTheme);
   updateButtonText(currentTheme);
 });
 
 function updateButtonText(theme) {
-  themeToggle.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+  if (themeToggle) {
+    themeToggle.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+  }
 }
 
-// ===== KONSTANTA DAN VARIABEL GLOBAL =====
+// ===== NAVIGATION CONTROLS =====
+const startScreen = document.getElementById('start-screen');
+const mainContent = document.getElementById('main-content');
+const gameSection = document.getElementById('game-section');
+const btnDesktop = document.getElementById('btn-desktop');
+const btnMobile = document.getElementById('btn-mobile');
+const btnShowGame = document.getElementById('btn-show-game');
+const btnBackSimulator = document.getElementById('btn-back-simulator');
+
+btnDesktop?.addEventListener('click', () => {
+  startScreen?.classList.add('hidden');
+  mainContent?.classList.remove('hidden');
+  body.classList.remove('mobile-mode');
+});
+
+btnMobile?.addEventListener('click', () => {
+  startScreen?.classList.add('hidden');
+  mainContent?.classList.remove('hidden');
+  body.classList.add('mobile-mode');
+});
+
+btnShowGame?.addEventListener('click', () => {
+  mainContent?.classList.add('hidden');
+  gameSection?.classList.remove('hidden');
+  startMiniGame();
+});
+
+btnBackSimulator?.addEventListener('click', () => {
+  gameSection?.classList.add('hidden');
+  mainContent?.classList.remove('hidden');
+  stopMiniGame();
+});
+
+// ===== CONSTANTS & STATE =====
 const CONFIG = {
   WIDTH: 350,
   HEIGHT: 350,
@@ -39,23 +73,22 @@ const CONFIG = {
   GAME_CANVAS_HEIGHT: 600
 };
 
-// Data storage
 const sensorData = {
   hall: [],
   tmr: [],
   analog: []
 };
 
-// Game state
 const gameState = {
   carX: 400,
   carY: 300,
   coins: [],
   score: 0,
-  running: false
+  running: false,
+  animationFrame: null
 };
 
-// ===== FUNGSI UTILITAS =====
+// ===== UTILITY FUNCTIONS =====
 function calculateAvgNoise(data, target) {
   if (data.length === 0) return 0;
   const deviations = data.map(val => Math.abs(val - target));
@@ -78,7 +111,10 @@ function clamp(value, min, max) {
 // ===== JOYSTICK CREATOR =====
 function createJoystick(canvasId, labelId, onMove, type, isMini = false) {
   const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
+  if (!canvas) {
+    console.warn(`Canvas ${canvasId} not found`);
+    return;
+  }
   
   const ctx = canvas.getContext('2d');
   const width = isMini ? CONFIG.MINI_WIDTH : CONFIG.WIDTH;
@@ -98,7 +134,8 @@ function createJoystick(canvasId, labelId, onMove, type, isMini = false) {
   function drawOuterCircle() {
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-color') || '#000';
+    const borderColor = getComputedStyle(document.body).getPropertyValue('--border-color') || '#2c3e50';
+    ctx.strokeStyle = borderColor;
     ctx.lineWidth = 2;
     ctx.stroke();
   }
@@ -142,7 +179,6 @@ function createJoystick(canvasId, labelId, onMove, type, isMini = false) {
     let normX = Math.round((dx / radius) * maxOutput);
     let normY = Math.round((dy / radius) * maxOutput);
 
-    // Apply deadzone for analog
     if (type === 'analog') {
       if (Math.abs(normX) < CONFIG.DEADZONE) normX = 0;
       if (Math.abs(normY) < CONFIG.DEADZONE) normY = 0;
@@ -171,7 +207,6 @@ function createJoystick(canvasId, labelId, onMove, type, isMini = false) {
     animationFrame = requestAnimationFrame(smoothCenter);
   }
 
-  // Event handlers
   const handleStart = (e) => {
     isDragging = true;
     if (animationFrame) cancelAnimationFrame(animationFrame);
@@ -205,7 +240,10 @@ function createJoystick(canvasId, labelId, onMove, type, isMini = false) {
 // ===== GRAPH CREATOR =====
 function createGraph(canvasId, datasets) {
   const graphCanvas = document.getElementById(canvasId);
-  if (!graphCanvas) return () => {};
+  if (!graphCanvas) {
+    console.warn(`Graph canvas ${canvasId} not found`);
+    return () => {};
+  }
   
   const chart = new Chart(graphCanvas, {
     type: 'line',
@@ -216,9 +254,7 @@ function createGraph(canvasId, datasets) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animation: {
-        duration: 0
-      },
+      animation: { duration: 0 },
       elements: {
         point: { radius: 0 },
         line: { borderWidth: 2, tension: 0.1 }
@@ -227,7 +263,8 @@ function createGraph(canvasId, datasets) {
         x: {
           type: 'linear',
           position: 'bottom',
-          grid: { display: true, color: 'rgba(128,128,128,0.2)' }
+          grid: { display: true, color: 'rgba(128,128,128,0.2)' },
+          ticks: { display: false }
         },
         y: {
           min: -1600,
@@ -237,9 +274,13 @@ function createGraph(canvasId, datasets) {
       },
       plugins: {
         tooltip: { enabled: true, mode: 'index', intersect: false },
-        legend: { display: true },
+        legend: { display: true, position: 'top' },
         zoom: {
-          zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'xy' },
+          zoom: { 
+            wheel: { enabled: true }, 
+            pinch: { enabled: true }, 
+            mode: 'xy' 
+          },
           pan: { enabled: true, mode: 'xy' }
         }
       }
@@ -253,7 +294,9 @@ function createGraph(canvasId, datasets) {
     chart.data.labels.push(timeStep);
     
     datasets.forEach((dataset, index) => {
-      dataset.data.push(values[index]);
+      if (values[index] !== undefined) {
+        dataset.data.push(values[index]);
+      }
     });
 
     if (chart.data.labels.length > CONFIG.MAX_DATA_POINTS) {
@@ -265,34 +308,38 @@ function createGraph(canvasId, datasets) {
   };
 }
 
-// ===== SENSOR UPDATE HANDLERS =====
-function createSensorHandler(type, labelId, statsId, updateGraphFn, noise) {
+// ===== SENSOR HANDLERS =====
+function createSensorHandler(type, labelId, statsId, updateGraphFn) {
   return (normX, normY) => {
     const label = document.getElementById(labelId);
     const stats = document.getElementById(statsId);
     
     let outputX = normX;
+    let originalX = normX;
     
-    // Apply sensor-specific noise
     if (type === 'hall') {
       outputX += Math.floor(Math.random() * (CONFIG.HALL_NOISE * 2 + 1)) - CONFIG.HALL_NOISE;
     } else if (type === 'tmr') {
       const jitter = Math.sin(Date.now() / 100) * 5;
       outputX += Math.floor(Math.random() * (CONFIG.TMR_NOISE * 2 + 1)) - CONFIG.TMR_NOISE + jitter;
     } else if (type === 'analog') {
-      if (Math.abs(normX) < CONFIG.DEADZONE) normX = 0;
+      if (Math.abs(normX) < CONFIG.DEADZONE) {
+        originalX = 0;
+        normX = 0;
+      }
       outputX = normX + Math.floor(Math.random() * (CONFIG.ANALOG_NOISE * 2 + 1)) - CONFIG.ANALOG_NOISE;
     }
     
     if (label) {
       const displayX = type === 'tmr' ? Math.round(outputX) : outputX;
-      label.textContent = `${type.toUpperCase()}: X=${displayX}  Y=${normY}`;
+      const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
+      label.textContent = `${typeLabel}: X=${displayX}  Y=${normY}`;
     }
     
     addDataPoint(sensorData[type], outputX);
     
     if (stats) {
-      const avgNoise = calculateAvgNoise(sensorData[type], normX);
+      const avgNoise = calculateAvgNoise(sensorData[type], originalX);
       const accuracy = calculateAccuracy(avgNoise);
       stats.textContent = `Avg Noise: ${avgNoise} | Accuracy: ${accuracy}%`;
     }
@@ -301,7 +348,7 @@ function createSensorHandler(type, labelId, statsId, updateGraphFn, noise) {
   };
 }
 
-// ===== INITIALIZE JOYSTICKS AND GRAPHS =====
+// ===== INITIALIZE SENSORS =====
 const updateGraph1 = createGraph('graph-canvas1', [
   { label: 'Hall X', data: [], borderColor: '#3498db', fill: false }
 ]);
@@ -320,7 +367,7 @@ const updateGraph3 = createGraph('graph-canvas3', [
 createJoystick('joystick-canvas3', 'label-analog',
   createSensorHandler('analog', 'label-analog', 'stats-analog', updateGraph3), 'analog');
 
-// Comparison joystick
+// ===== COMPARISON JOYSTICK =====
 const updateGraph4 = createGraph('graph-canvas4', [
   { label: 'Hall X', data: [], borderColor: '#3498db', fill: false },
   { label: 'TMR X', data: [], borderColor: '#2ecc71', fill: false },
@@ -328,14 +375,14 @@ const updateGraph4 = createGraph('graph-canvas4', [
 ]);
 
 createJoystick('joystick-canvas4', 'label-comp-hall', (normX, normY) => {
-  // Hall
+  // Hall sensor
   const hallX = normX + Math.floor(Math.random() * (CONFIG.HALL_NOISE * 2 + 1)) - CONFIG.HALL_NOISE;
   const hallLabel = document.getElementById('label-comp-hall');
   if (hallLabel) hallLabel.textContent = `Hall: X=${hallX}  Y=${normY}`;
   addDataPoint(sensorData.hall, hallX);
   const hallAvgNoise = calculateAvgNoise(sensorData.hall, normX);
 
-  // TMR
+  // TMR sensor
   const jitter = Math.sin(Date.now() / 100) * 5;
   const tmrX = normX + Math.floor(Math.random() * (CONFIG.TMR_NOISE * 2 + 1)) - CONFIG.TMR_NOISE + jitter;
   const tmrLabel = document.getElementById('label-comp-tmr');
@@ -343,7 +390,7 @@ createJoystick('joystick-canvas4', 'label-comp-hall', (normX, normY) => {
   addDataPoint(sensorData.tmr, tmrX);
   const tmrAvgNoise = calculateAvgNoise(sensorData.tmr, normX);
 
-  // Analog
+  // Analog sensor
   let analogNormX = normX;
   if (Math.abs(analogNormX) < CONFIG.DEADZONE) analogNormX = 0;
   const analogX = analogNormX + Math.floor(Math.random() * (CONFIG.ANALOG_NOISE * 2 + 1)) - CONFIG.ANALOG_NOISE;
@@ -352,11 +399,13 @@ createJoystick('joystick-canvas4', 'label-comp-hall', (normX, normY) => {
   addDataPoint(sensorData.analog, analogX);
   const analogAvgNoise = calculateAvgNoise(sensorData.analog, analogNormX);
 
+  // Update stats
   const statsComp = document.getElementById('stats-comp');
   if (statsComp) {
     statsComp.textContent = `Hall Noise: ${hallAvgNoise} | TMR Noise: ${tmrAvgNoise} | Analog Noise: ${analogAvgNoise}`;
   }
 
+  // Update graph
   updateGraph4([hallX, tmrX, analogX]);
 
   // Update game car if running
@@ -391,37 +440,7 @@ createGameJoystick('mini-joystick2', false); // TMR
 createGameJoystick('mini-joystick3', true);  // Analog
 createGameJoystick('mini-joystick4', false); // Comparison
 
-// ===== MENU NAVIGATION =====
-const menuElements = {
-  startMenu: document.getElementById('start-menu'),
-  mainMenu: document.getElementById('main-menu'),
-  miniGame: document.getElementById('mini-game')
-};
-
-document.getElementById('desktop-mode-start')?.addEventListener('click', () => {
-  menuElements.startMenu.style.display = 'none';
-  menuElements.mainMenu.style.display = 'block';
-});
-
-document.getElementById('mobile-mode-start')?.addEventListener('click', () => {
-  menuElements.startMenu.style.display = 'none';
-  menuElements.mainMenu.style.display = 'block';
-  document.body.classList.add('mobile-mode');
-});
-
-document.getElementById('mini-game-btn')?.addEventListener('click', () => {
-  menuElements.mainMenu.style.display = 'none';
-  menuElements.miniGame.style.display = 'block';
-  startMiniGame();
-});
-
-document.getElementById('back-to-main')?.addEventListener('click', () => {
-  menuElements.miniGame.style.display = 'none';
-  menuElements.mainMenu.style.display = 'block';
-  stopMiniGame();
-});
-
-// ===== MINI GAME =====
+// ===== GAME LOGIC =====
 const gameCanvas = document.getElementById('game-canvas');
 const gameCtx = gameCanvas?.getContext('2d');
 
@@ -438,6 +457,10 @@ function startMiniGame() {
 
 function stopMiniGame() {
   gameState.running = false;
+  if (gameState.animationFrame) {
+    cancelAnimationFrame(gameState.animationFrame);
+    gameState.animationFrame = null;
+  }
 }
 
 function spawnCoins() {
@@ -458,6 +481,7 @@ function updateScoreDisplay() {
 function gameLoop() {
   if (!gameState.running || !gameCtx) return;
 
+  // Clear canvas
   gameCtx.clearRect(0, 0, CONFIG.GAME_CANVAS_WIDTH, CONFIG.GAME_CANVAS_HEIGHT);
 
   // Draw car
@@ -467,17 +491,20 @@ function gameLoop() {
   gameCtx.lineWidth = 2;
   gameCtx.strokeRect(gameState.carX - 15, gameState.carY - 15, 30, 30);
 
-  // Draw and check coins
+  // Draw coins and check collisions
   gameCtx.fillStyle = '#f39c12';
   for (let i = gameState.coins.length - 1; i >= 0; i--) {
     const coin = gameState.coins[i];
+    
+    // Draw coin
     gameCtx.beginPath();
     gameCtx.arc(coin.x, coin.y, coin.radius, 0, 2 * Math.PI);
     gameCtx.fill();
     gameCtx.strokeStyle = '#e67e22';
+    gameCtx.lineWidth = 2;
     gameCtx.stroke();
 
-    // Collision detection
+    // Check collision
     const dx = gameState.carX - coin.x;
     const dy = gameState.carY - coin.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -486,6 +513,8 @@ function gameLoop() {
       gameState.coins.splice(i, 1);
       gameState.score += 10;
       updateScoreDisplay();
+      
+      // Spawn new coin
       gameState.coins.push({
         x: Math.random() * 760 + 20,
         y: Math.random() * 560 + 20,
@@ -494,8 +523,10 @@ function gameLoop() {
     }
   }
 
-  requestAnimationFrame(gameLoop);
+  gameState.animationFrame = requestAnimationFrame(gameLoop);
 }
 
-// Initialize
-console.log('Joystick Simulator initialized successfully!');
+// ===== INITIALIZATION LOG =====
+console.log('🕹️ Joystick Simulator initialized successfully!');
+console.log('📊 Sensors: Hall Effect, TMR, Analog');
+console.log('🎮 Mini game ready!');
