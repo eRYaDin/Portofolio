@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konverter Satuan Fisika Pro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="background-layer"></div>
+    <div id="app-container">
+        <header>
+            <div class="header-left">
+                <a href="https://eryadin.github.io/Portofolio/" class="back-btn" title="Kembali ke Portofolio">
+                    ← Portofolio
+                </a>
+            </div>
+            <h1>⚡ Konverter Fisika Pro</h1>
+            <div class="header-controls">
+                <button class="icon-btn" id="history-toggle" title="Riwayat">📜</button>
+                <button class="icon-btn" id="theme-toggle" title="Tema">🌙</button>
+            </div>
+        </header>
+        <p>Konversi cepat satuan fisika dengan fitur pencarian dan riwayat!</p>
+        
+        <input type="text" id="search-bar" placeholder="🔍 Cari kategori (contoh: massa, energi, waktu...)">
+        
+        <!-- Main Tabs -->
+        <div class="main-tabs">
+            <button class="tab-btn active" data-tab="converter">📐 Konversi</button>
+            <button class="tab-btn" data-tab="calculator">🧮 Kalkulator</button>
+        </div>
+
+        <!-- Converter Section -->
+        <div id="converter-section" class="tab-content active">
+            <div id="menu-bar">
+                <button class="menu-item active" data-category="panjang">📏 Panjang</button>
+                <button class="menu-item" data-category="massa">⚖️ Massa</button>
+                <button class="menu-item" data-category="waktu">⏱ Waktu</button>
+                <button class="menu-item" data-category="kecepatan">🏃 Kecepatan</button>
+                <button class="menu-item" data-category="percepatan">🚀 Percepatan</button>
+                <button class="menu-item" data-category="gaya">💪 Gaya</button>
+                <button class="menu-item" data-category="arus">⚡ Arus Listrik</button>
+                <button class="menu-item" data-category="tegangan">🔌 Tegangan</button>
+                <button class="menu-item" data-category="hambatan">🛑 Hambatan</button>
+                <button class="menu-item" data-category="daya">💡 Daya</button>
+                <button class="menu-item" data-category="energi">🔋 Energi</button>
+                <button class="menu-item" data-category="muatan">⚡ Muatan Listrik</button>
+                <button class="menu-item" data-category="kapasitansi">🔋 Kapasitansi</button>
+                <button class="menu-item" data-category="induktansi">🌀 Induktansi</button>
+                <button class="menu-item" data-category="suhu">🌡️ Suhu</button>
+                <button class="menu-item" data-category="tekanan">🗜 Tekanan</button>
+                <button class="menu-item" data-category="frekuensi">📻 Frekuensi</button>
+                <button class="menu-item" data-category="luas">📐 Luas</button>
+                <button class="menu-item" data-category="volume">📦 Volume</button>
+            </div>
+        
+            <div class="card input-panel">
+                <div class="input-row">
+                    <label for="input-value">Nilai:</label>
+                    <input type="number" id="input-value" placeholder="Masukkan nilai" step="any">
+                </div>
+                <div class="swap-container">
+                    <div class="input-row" style="flex: 1;">
+                        <label for="input-unit">Dari:</label>
+                        <select id="input-unit"></select>
+                    </div>
+                    <button class="swap-btn" id="swap-btn" title="Tukar satuan">⇄</button>
+                    <div class="input-row" style="flex: 1;">
+                        <label for="output-unit">Ke:</label>
+                        <select id="output-unit"></select>
+                    </div>
+                </div>
+                <div class="button-row">
+                    <button id="convert-btn">🚀 Konversi</button>
+                    <button id="reset-btn">🔄 Reset</button>
+                    <button id="copy-btn">📋 Salin</button>
+                </div>
+            </div>
+        
+            <div class="card result-panel">
+                <p id="result">Siap konversi!</p>
+                <p id="equivalence"></p>
+                <div id="formula-container"></div>
+            </div>
+
+            <div class="card history-panel" id="history-panel" style="display: none;">
+                <h3 style="margin: 0 0 10px 0;">📜 Riwayat Konversi</h3>
+                <button id="clear-history" style="width: 100%; margin-bottom: 10px;">🗑️ Hapus Semua</button>
+                <div id="history-list"></div>
+            </div>
+
+            <div class="card tips-panel">
+                <h3>💡 Tips Cepat</h3>
+                <ul>
+                    <li>Tekan <strong>Enter</strong> untuk konversi cepat</li>
+                    <li>Klik riwayat untuk menggunakan ulang konversi</li>
+                    <li>Gunakan tombol ⇄ untuk menukar satuan</li>
+                    <li>Gunakan search bar untuk menemukan kategori</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Calculator Section -->
+        <div id="calculator-section" class="tab-content">
+            <div class="calculator-menu">
+                <div class="calc-card" data-calc="resistor">
+                    <h3>🔌 Total Hambatan</h3>
+                    <p>Hitung resistor seri/paralel</p>
+                </div>
+                <div class="calc-card" data-calc="ohm">
+                    <h3>⚡ Hukum Ohm</h3>
+                    <p>Cari V, I, atau R</p>
+                </div>
+                <div class="calc-card" data-calc="power">
+                    <h3>💡 Daya Listrik</h3>
+                    <p>Hitung daya (Watt)</p>
+                </div>
+                <div class="calc-card" data-calc="capacitor">
+                    <h3>🔋 Kapasitor</h3>
+                    <p>Total kapasitansi</p>
+                </div>
+                <div class="calc-card" data-calc="motion">
+                    <h3>🚀 GLB/GLBB</h3>
+                    <p>Kinematika gerak</p>
+                </div>
+                <div class="calc-card" data-calc="weight">
+                    <h3>⚖️ Berat Benda</h3>
+                    <p>W = m × g</p>
+                </div>
+                <div class="calc-card" data-calc="si-converter">
+                    <h3>🔬 Konversi SI</h3>
+                    <p>Ubah ke satuan SI</p>
+                </div>
+                <div class="calc-card" data-calc="scientific">
+                    <h3>📊 Notasi Ilmiah</h3>
+                    <p>Bentuk 10ⁿ</p>
+                </div>
+            </div>
+
+            <!-- Calculator Panels (Hidden by default) -->
+            <div id="calc-panels"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
