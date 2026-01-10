@@ -1,0 +1,825 @@
+/* ==================== ROOT VARIABLES ==================== */
+:root {
+    --bg-color: linear-gradient(135deg, #f5f0e1, #e8dcc0);
+    --app-bg: rgba(255, 255, 255, 0.95);
+    --card-bg: #fffacd;
+    --input-bg: linear-gradient(45deg, #add8e6, #87ceeb);
+    --result-bg: linear-gradient(45deg, #98fb98, #90ee90);
+    --text-color: #000;
+    --shadow: 6px 6px 0px #000, 12px 12px 0px rgba(0,0,0,0.3);
+    --symbol-color: #333;
+    --symbol-opacity: 0.08;
+    --history-bg: #ffe4b5;
+    --tips-bg: #ffd1dc;
+}
+
+.dark {
+    --bg-color: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+    --app-bg: rgba(30, 30, 30, 0.95);
+    --card-bg: #444;
+    --input-bg: linear-gradient(45deg, #1e3a5f, #2c5aa0);
+    --result-bg: linear-gradient(45deg, #2d5016, #4a7c2a);
+    --text-color: #e0e0e0;
+    --shadow: 6px 6px 0px #333, 12px 12px 0px rgba(0,0,0,0.5);
+    --symbol-color: #aaa;
+    --symbol-opacity: 0.05;
+    --history-bg: #3a3a3a;
+    --tips-bg: #4a4a4a;
+}
+
+/* ==================== BODY & BACKGROUND ==================== */
+body {
+    font-family: 'Comic Sans MS', cursive;
+    margin: 0;
+    padding: 0;
+    background: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    line-height: 1.4;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+#background-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 140vw;
+    height: 140vh;
+    pointer-events: none;
+    z-index: -1;
+    overflow: visible;
+}
+
+.symbol {
+    position: absolute;
+    font-size: 1rem;
+    opacity: var(--symbol-opacity);
+    color: var(--symbol-color);
+    font-weight: bold;
+    animation: float 30s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) translateX(0px); }
+    25% { transform: translateY(-15px) translateX(10px); }
+    50% { transform: translateY(10px) translateX(-15px); }
+    75% { transform: translateY(-10px) translateX(15px); }
+}
+
+/* ==================== APP CONTAINER ==================== */
+#app-container {
+    position: relative;
+    max-width: 850px;
+    margin: 50px auto;
+    padding: 25px;
+    background: var(--app-bg);
+    border: 4px solid #000;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    z-index: 1;
+    transform: rotate(0.2deg);
+}
+
+/* ==================== HEADER ==================== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.header-left {
+    flex-shrink: 0;
+}
+
+.back-btn {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #ff9800;
+    color: white;
+    text-decoration: none;
+    border: 3px solid #000;
+    border-radius: 5px;
+    box-shadow: 3px 3px 0px #000;
+    font-weight: bold;
+    font-size: 0.95rem;
+    transition: all 0.1s ease;
+    white-space: nowrap;
+}
+
+.back-btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000;
+    background: #f57c00;
+}
+
+.back-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #000;
+}
+
+h1 {
+    text-align: center;
+    color: var(--text-color);
+    font-size: 2.5rem;
+    text-shadow: 3px 3px 0px rgba(255,255,255,0.5), 6px 6px 0px rgba(0,0,0,0.2);
+    margin: 0;
+    transform: rotate(-0.5deg);
+    flex: 1;
+}
+
+.header-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background 0.2s ease;
+}
+
+.icon-btn:hover {
+    background: rgba(0,0,0,0.1);
+    transform: scale(1.1);
+}
+
+/* ==================== GENERAL TEXT ==================== */
+p {
+    text-align: center;
+    font-size: 1.1rem;
+    margin: 10px 0;
+    color: var(--text-color);
+}
+
+h3 {
+    color: var(--text-color);
+    margin: 0 0 10px 0;
+}
+
+/* ==================== SEARCH BAR ==================== */
+#search-bar {
+    margin: 20px 0;
+    padding: 12px;
+    width: 100%;
+    border: 3px solid #000;
+    border-radius: 4px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1);
+    color: #000;
+    box-sizing: border-box;
+}
+
+#search-bar:focus {
+    outline: none;
+    border-color: #ff5722;
+    box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1), 0 0 5px rgba(255,87,34,0.5);
+}
+
+/* ==================== TABS ==================== */
+.main-tabs {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 15px;
+    background: var(--card-bg);
+    border: 3px solid #000;
+    border-radius: 6px;
+    box-shadow: 4px 4px 0px #000;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    transition: all 0.1s ease;
+}
+
+.tab-btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px #000;
+    background: #ffe066;
+}
+
+.tab-btn.active {
+    background: #4caf50;
+    color: white;
+    border-width: 4px;
+    box-shadow: 5px 5px 0px #000;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ==================== MENU BAR ==================== */
+#menu-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.menu-item {
+    padding: 12px 18px;
+    background: var(--card-bg);
+    border: 3px solid #000;
+    border-radius: 6px;
+    box-shadow: 4px 4px 0px #000;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 1rem;
+    color: var(--text-color);
+    transition: all 0.1s ease;
+    transform: rotate(0deg);
+}
+
+.menu-item:hover {
+    transform: translate(2px, 2px) rotate(0.5deg);
+    box-shadow: 2px 2px 0px #000;
+    background: #ffe066;
+}
+
+.menu-item.active {
+    border-width: 5px;
+    transform: rotate(-1.5deg);
+    background: #add8e6;
+    box-shadow: 5px 5px 0px #000;
+}
+
+.menu-item.hidden {
+    display: none;
+}
+
+/* ==================== CARDS ==================== */
+.card {
+    margin: 25px 0;
+    padding: 18px;
+    background: var(--card-bg);
+    border: 4px solid #000;
+    border-radius: 6px;
+    box-shadow: 5px 5px 0px #000, 10px 10px 0px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transform: rotate(0deg);
+}
+
+.input-panel {
+    background: var(--input-bg);
+}
+
+.result-panel {
+    background: var(--result-bg);
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #d32f2f;
+    text-shadow: 1px 1px 0px #fff;
+}
+
+.history-panel {
+    background: var(--history-bg);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.tips-panel {
+    background: var(--tips-bg);
+}
+
+.tips-panel ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.tips-panel li {
+    margin: 8px 0;
+    color: var(--text-color);
+}
+
+/* ==================== HISTORY ITEMS ==================== */
+.history-item {
+    padding: 10px;
+    margin: 5px 0;
+    background: rgba(255,255,255,0.5);
+    border: 2px solid #000;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dark .history-item {
+    background: rgba(100,100,100,0.5);
+}
+
+.history-item:hover {
+    background: rgba(255,255,255,0.8);
+    transform: translateX(5px);
+}
+
+.dark .history-item:hover {
+    background: rgba(150,150,150,0.8);
+}
+
+.history-item-content {
+    flex: 1;
+}
+
+.history-timestamp {
+    font-size: 0.7rem;
+    color: #666;
+    margin-top: 3px;
+}
+
+.delete-btn {
+    background: #f44336;
+    color: white;
+    border: 2px solid #000;
+    border-radius: 3px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.delete-btn:hover {
+    background: #d32f2f;
+}
+
+/* ==================== INPUT ROWS & SWAP ==================== */
+.input-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.swap-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.swap-btn {
+    background: #ff9800;
+    color: white;
+    border: 3px solid #000;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #000;
+    transition: all 0.2s ease;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.swap-btn:hover {
+    transform: rotate(180deg);
+    background: #f57c00;
+}
+
+.button-row {
+    display: flex;
+    gap: 10px;
+}
+
+/* ==================== FORM ELEMENTS ==================== */
+label {
+    font-weight: bold;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+}
+
+input, select {
+    padding: 10px;
+    border: 3px solid #000;
+    border-radius: 4px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1);
+    color: #000;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #ff5722;
+    box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1), 0 0 5px rgba(255,87,34,0.5);
+}
+
+/* ==================== BUTTONS ==================== */
+button {
+    padding: 12px 20px;
+    background: #ffeb3b;
+    border: 3px solid #000;
+    border-radius: 5px;
+    box-shadow: 3px 3px 0px #000;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #000;
+    transition: all 0.1s ease;
+}
+
+button:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000;
+    background: #fdd835;
+}
+
+button:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #000;
+}
+
+#convert-btn {
+    background: #4caf50;
+    color: white;
+    flex: 2;
+}
+
+#convert-btn:hover {
+    background: #45a049;
+}
+
+#reset-btn {
+    background: #f44336;
+    color: white;
+    flex: 1;
+}
+
+#reset-btn:hover {
+    background: #d32f2f;
+}
+
+#copy-btn {
+    background: #2196f3;
+    color: white;
+    flex: 1;
+}
+
+#copy-btn:hover {
+    background: #1976d2;
+}
+
+#clear-history {
+    background: #ff5722;
+    color: white;
+}
+
+#clear-history:hover {
+    background: #e64a19;
+}
+
+/* ==================== RESULT & FORMULA ==================== */
+#result {
+    margin: 0;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+#equivalence {
+    margin: 5px 0 0;
+    font-size: 1rem;
+    color: #555;
+    text-align: center;
+    font-style: italic;
+}
+
+.dark #equivalence {
+    color: #aaa;
+}
+
+.formula-box {
+    background: rgba(255,255,255,0.7);
+    padding: 10px;
+    border: 2px solid #000;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #000;
+}
+
+.dark .formula-box {
+    background: rgba(100,100,100,0.7);
+    color: #fff;
+}
+
+/* ==================== NOTIFICATIONS ==================== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #4caf50;
+    color: white;
+    padding: 15px 20px;
+    border: 3px solid #000;
+    border-radius: 5px;
+    box-shadow: 4px 4px 0px #000;
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ==================== CALCULATOR CARDS ==================== */
+.calculator-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.calc-card {
+    padding: 20px;
+    background: var(--card-bg);
+    border: 3px solid #000;
+    border-radius: 6px;
+    box-shadow: 4px 4px 0px #000;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    transform: rotate(0deg);
+}
+
+.calc-card:hover {
+    transform: translate(2px, 2px) rotate(0.5deg);
+    box-shadow: 2px 2px 0px #000;
+    background: #add8e6;
+}
+
+.calc-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.3rem;
+}
+
+.calc-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+    text-align: left;
+}
+
+.dark .calc-card p {
+    color: #aaa;
+}
+
+/* ==================== CALCULATOR PANELS ==================== */
+.calc-panel {
+    margin: 20px 0;
+}
+
+.calc-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calc-panel-header h2 {
+    margin: 0;
+    color: var(--text-color);
+}
+
+.close-calc-btn {
+    background: #f44336;
+    color: white;
+    padding: 8px 15px;
+    border: 3px solid #000;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.calc-input-group {
+    margin: 15px 0;
+}
+
+.calc-input-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.calc-input-group small {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85rem;
+}
+
+.calc-result-box {
+    background: var(--result-bg);
+    padding: 20px;
+    border: 4px solid #000;
+    border-radius: 6px;
+    margin-top: 20px;
+    box-shadow: 5px 5px 0px #000;
+}
+
+.calc-result-box h3 {
+    margin: 0 0 10px 0;
+    color: #2e7d32;
+}
+
+.calc-formula {
+    background: rgba(255,255,255,0.7);
+    padding: 10px;
+    border: 2px solid #000;
+    border-radius: 4px;
+    margin: 10px 0;
+    font-family: 'Courier New', monospace;
+    color: #000;
+}
+
+.dark .calc-formula {
+    background: rgba(100,100,100,0.7);
+    color: #fff;
+}
+
+.resistor-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.resistor-input-item {
+    flex: 1;
+    min-width: 150px;
+}
+
+.add-resistor-btn {
+    background: #2196f3;
+    color: white;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.mode-selector {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 10px;
+    background: #e0e0e0;
+    border: 3px solid #000;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #000;
+}
+
+.mode-btn.active {
+    background: #4caf50;
+    color: white;
+}
+
+/* ==================== SCROLLBAR STYLING ==================== */
+.history-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-panel::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.history-panel::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.history-panel::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+    #app-container {
+        max-width: 95%;
+        margin: 20px auto;
+        padding: 15px;
+        transform: none;
+    }
+    
+    header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .header-left {
+        order: 1;
+        width: 100%;
+    }
+    
+    .back-btn {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+        font-size: 1rem;
+    }
+    
+    h1 {
+        order: 2;
+        font-size: 1.8rem;
+        transform: none;
+        width: 100%;
+    }
+    
+    .header-controls {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .main-tabs {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        padding: 12px;
+        font-size: 1rem;
+    }
+    
+    #menu-bar {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .menu-item {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .card {
+        padding: 15px;
+        gap: 12px;
+        transform: none;
+    }
+    
+    .button-row {
+        flex-direction: column;
+    }
+    
+    button {
+        width: 100%;
+    }
+    
+    .swap-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .swap-btn {
+        width: 100%;
+        border-radius: 5px;
+        margin: 5px 0;
+    }
+    
+    .swap-btn:hover {
+        transform: rotate(90deg);
+    }
+    
+    .calculator-menu {
+        grid-template-columns: 1fr;
+    }
+    
+    .resistor-inputs {
+        flex-direction: column;
+    }
+    
+    .resistor-input-item {
+        min-width: 100%;
+    }
+}
