@@ -110,6 +110,7 @@ body {
   gap: var(--space-sm);
   justify-content: center;
   flex-wrap: wrap;
+  margin-bottom: var(--space-lg);
 }
 
 .btn-start {
@@ -135,6 +136,25 @@ body {
   box-shadow: 0 4px 0px rgba(0, 0, 0, 0.2);
 }
 
+.back-to-portfolio {
+  display: inline-block;
+  margin-top: var(--space-lg);
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: var(--space-xs) var(--space-md);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+.back-to-portfolio:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.9);
+  transform: translateX(-4px);
+}
+
 /* ===== HEADER ===== */
 .app-header {
   background: var(--card-bg);
@@ -149,10 +169,30 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.back-link {
+  color: var(--accent-hall);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.back-link:hover {
+  background: var(--bg-color);
+  transform: translateX(-4px);
+}
+
 .app-title {
   font-size: 1.5rem;
   font-weight: 900;
   color: var(--text-color);
+  flex: 1;
+  text-align: center;
 }
 
 .header-actions {
@@ -518,6 +558,17 @@ canvas:active {
   .comparison-labels {
     grid-template-columns: 1fr;
   }
+  
+  .app-header {
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+  
+  .app-title {
+    order: -1;
+    flex-basis: 100%;
+    text-align: center;
+  }
 }
 
 @media (max-width: 768px) {
@@ -567,6 +618,14 @@ canvas:active {
     flex-direction: column;
     gap: var(--space-sm);
     padding: var(--space-sm);
+  }
+  
+  .back-link {
+    align-self: flex-start;
+  }
+  
+  .app-title {
+    font-size: 1.2rem;
   }
   
   .section-title {
@@ -662,7 +721,9 @@ body.mobile-mode .graph-wrapper {
   .btn,
   .btn-start,
   .theme-toggle-btn,
-  .btn-game {
+  .btn-game,
+  .back-link,
+  .back-to-portfolio {
     display: none;
   }
   
