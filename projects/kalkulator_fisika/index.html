@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konverter Satuan Fisika </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Konverter Satuan Fisika</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -58,7 +58,7 @@
             <div class="card input-panel">
                 <div class="input-row">
                     <label for="input-value">Nilai:</label>
-                    <input type="number" id="input-value" placeholder="Masukkan nilai" step="any">
+                    <input type="number" inputmode="decimal" id="input-value" placeholder="Masukkan nilai" step="any">
                 </div>
                 <div class="swap-container">
                     <div class="input-row" style="flex: 1;">
@@ -103,7 +103,9 @@
 
         <!-- Calculator Section -->
         <div id="calculator-section" class="tab-content">
+            <h3 style="text-align: center; margin: 20px 0;">🔌 Kalkulator Kelistrikan DC & AC</h3>
             <div class="calculator-menu">
+                <!-- DC Calculators -->
                 <div class="calc-card" data-calc="resistor">
                     <h3>🔌 Total Hambatan</h3>
                     <p>Hitung resistor seri/paralel</p>
@@ -112,14 +114,48 @@
                     <h3>⚡ Hukum Ohm</h3>
                     <p>Cari V, I, atau R</p>
                 </div>
-                <div class="calc-card" data-calc="power">
-                    <h3>💡 Daya Listrik</h3>
-                    <p>Hitung daya (Watt)</p>
+                <div class="calc-card" data-calc="power-dc">
+                    <h3>💡 Daya Listrik DC</h3>
+                    <p>P = VI, I²R, V²/R</p>
                 </div>
                 <div class="calc-card" data-calc="capacitor">
-                    <h3>🔋 Kapasitor</h3>
-                    <p>Total kapasitansi</p>
+                    <h3>🔋 Kapasitor Total</h3>
+                    <p>Seri & Paralel</p>
                 </div>
+                <div class="calc-card" data-calc="inductor">
+                    <h3>🌀 Induktor Total</h3>
+                    <p>Seri & Paralel</p>
+                </div>
+                <div class="calc-card" data-calc="voltage-divider">
+                    <h3>📊 Pembagi Tegangan</h3>
+                    <p>Voltage Divider</p>
+                </div>
+                
+                <!-- AC Calculators -->
+                <div class="calc-card" data-calc="reactance-l">
+                    <h3>🌀 Reaktansi Induktif</h3>
+                    <p>XL = 2πfL</p>
+                </div>
+                <div class="calc-card" data-calc="reactance-c">
+                    <h3>⚡ Reaktansi Kapasitif</h3>
+                    <p>XC = 1/(2πfC)</p>
+                </div>
+                <div class="calc-card" data-calc="impedance">
+                    <h3>⚙️ Impedansi RLC</h3>
+                    <p>Z dari R, XL, XC</p>
+                </div>
+                <div class="calc-card" data-calc="rlc-series">
+                    <h3>🔥 RLC Seri Lengkap</h3>
+                    <p>Dari R, L, C, f</p>
+                </div>
+                <div class="calc-card" data-calc="power-factor">
+                    <h3>📐 Faktor Daya</h3>
+                    <p>cos φ = R/Z</p>
+                </div>
+            </div>
+
+            <h3 style="text-align: center; margin: 30px 0 20px 0;">⚙️ Kalkulator Mekanika & Fisika Dasar</h3>
+            <div class="calculator-menu">
                 <div class="calc-card" data-calc="motion">
                     <h3>🚀 GLB/GLBB</h3>
                     <p>Kinematika gerak</p>
@@ -127,6 +163,26 @@
                 <div class="calc-card" data-calc="weight">
                     <h3>⚖️ Berat Benda</h3>
                     <p>W = m × g</p>
+                </div>
+                <div class="calc-card" data-calc="energy">
+                    <h3>⚡ Energi Kinetik & Potensial</h3>
+                    <p>Ek, Ep, Em</p>
+                </div>
+                <div class="calc-card" data-calc="momentum">
+                    <h3>🎯 Momentum & Impuls</h3>
+                    <p>p = mv, I = FΔt</p>
+                </div>
+                <div class="calc-card" data-calc="work-power">
+                    <h3>🔧 Usaha & Daya</h3>
+                    <p>W = Fs, P = W/t</p>
+                </div>
+                <div class="calc-card" data-calc="density">
+                    <h3>📦 Massa Jenis</h3>
+                    <p>ρ = m/V</p>
+                </div>
+                <div class="calc-card" data-calc="electric-energy">
+                    <h3>💡 Energi Listrik</h3>
+                    <p>kWh & biaya</p>
                 </div>
                 <div class="calc-card" data-calc="si-converter">
                     <h3>🔬 Konversi SI</h3>
@@ -142,6 +198,9 @@
             <div id="calc-panels"></div>
         </div>
     </div>
-    <script src="script.js"></script>
+    
+    <!-- Load JavaScript files -->
+    <script src="js/calculators.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
