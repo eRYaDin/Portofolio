@@ -103,106 +103,30 @@
 
         <!-- Calculator Section -->
         <div id="calculator-section" class="tab-content">
+            <!-- Kalkulator Kelistrikan -->
             <h3 style="text-align: center; margin: 20px 0;">🔌 Kalkulator Kelistrikan DC & AC</h3>
-            <div class="calculator-menu">
-                <!-- DC Calculators -->
-                <div class="calc-card" data-calc="resistor">
-                    <h3>🔌 Total Hambatan</h3>
-                    <p>Hitung resistor seri/paralel</p>
-                </div>
-                <div class="calc-card" data-calc="ohm">
-                    <h3>⚡ Hukum Ohm</h3>
-                    <p>Cari V, I, atau R</p>
-                </div>
-                <div class="calc-card" data-calc="power-dc">
-                    <h3>💡 Daya Listrik DC</h3>
-                    <p>P = VI, I²R, V²/R</p>
-                </div>
-                <div class="calc-card" data-calc="capacitor">
-                    <h3>🔋 Kapasitor Total</h3>
-                    <p>Seri & Paralel</p>
-                </div>
-                <div class="calc-card" data-calc="inductor">
-                    <h3>🌀 Induktor Total</h3>
-                    <p>Seri & Paralel</p>
-                </div>
-                <div class="calc-card" data-calc="voltage-divider">
-                    <h3>📊 Pembagi Tegangan</h3>
-                    <p>Voltage Divider</p>
-                </div>
-                
-                <!-- AC Calculators -->
-                <div class="calc-card" data-calc="reactance-l">
-                    <h3>🌀 Reaktansi Induktif</h3>
-                    <p>XL = 2πfL</p>
-                </div>
-                <div class="calc-card" data-calc="reactance-c">
-                    <h3>⚡ Reaktansi Kapasitif</h3>
-                    <p>XC = 1/(2πfC)</p>
-                </div>
-                <div class="calc-card" data-calc="impedance">
-                    <h3>⚙️ Impedansi RLC</h3>
-                    <p>Z dari R, XL, XC</p>
-                </div>
-                <div class="calc-card" data-calc="rlc-series">
-                    <h3>🔥 RLC Seri Lengkap</h3>
-                    <p>Dari R, L, C, f</p>
-                </div>
-                <div class="calc-card" data-calc="power-factor">
-                    <h3>📐 Faktor Daya</h3>
-                    <p>cos φ = R/Z</p>
-                </div>
+            <div id="calculator-menu-listrik" class="calculator-menu">
+                <!-- Akan diisi oleh JavaScript dari registry -->
             </div>
 
+            <!-- Kalkulator Mekanika -->
             <h3 style="text-align: center; margin: 30px 0 20px 0;">⚙️ Kalkulator Mekanika & Fisika Dasar</h3>
-            <div class="calculator-menu">
-                <div class="calc-card" data-calc="motion">
-                    <h3>🚀 GLB/GLBB</h3>
-                    <p>Kinematika gerak</p>
-                </div>
-                <div class="calc-card" data-calc="weight">
-                    <h3>⚖️ Berat Benda</h3>
-                    <p>W = m × g</p>
-                </div>
-                <div class="calc-card" data-calc="energy">
-                    <h3>⚡ Energi Kinetik & Potensial</h3>
-                    <p>Ek, Ep, Em</p>
-                </div>
-                <div class="calc-card" data-calc="momentum">
-                    <h3>🎯 Momentum & Impuls</h3>
-                    <p>p = mv, I = FΔt</p>
-                </div>
-                <div class="calc-card" data-calc="work-power">
-                    <h3>🔧 Usaha & Daya</h3>
-                    <p>W = Fs, P = W/t</p>
-                </div>
-                <div class="calc-card" data-calc="density">
-                    <h3>📦 Massa Jenis</h3>
-                    <p>ρ = m/V</p>
-                </div>
-                <div class="calc-card" data-calc="electric-energy">
-                    <h3>💡 Energi Listrik</h3>
-                    <p>kWh & biaya</p>
-                </div>
-                <div class="calc-card" data-calc="si-converter">
-                    <h3>🔬 Konversi SI</h3>
-                    <p>Ubah ke satuan SI</p>
-                </div>
-                <div class="calc-card" data-calc="scientific">
-                    <h3>📊 Notasi Ilmiah</h3>
-                    <p>Bentuk 10ⁿ</p>
-                </div>
+            <div id="calculator-menu-mekanika" class="calculator-menu">
+                <!-- Akan diisi oleh JavaScript dari registry -->
             </div>
 
-            <!-- Calculator Panels (Hidden by default) -->
+            <!-- Kalkulator Termodinamika -->
+            <h3 style="text-align: center; margin: 30px 0 20px 0;">🌡️ Kalkulator Termodinamika</h3>
+            <div id="calculator-menu-termodinamika" class="calculator-menu">
+                <!-- Akan diisi oleh JavaScript dari registry -->
+            </div>
+
+            <!-- Calculator Panels (Dinamis) -->
             <div id="calc-panels"></div>
         </div>
     </div>
     
-    <!-- Load JavaScript files IN ORDER -->
-    <script src="js/data.js"></script>
-    <script src="js/calc-listrik.js"></script>
-    <script src="js/calc-mekanika.js"></script>
-    <script src="js/main.js"></script>
+    <!-- Load JavaScript Modules -->
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
