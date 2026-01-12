@@ -463,7 +463,6 @@ input:focus, select:focus {
     box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1), 0 0 5px rgba(255,87,34,0.5);
 }
 
-/* Remove spinner on number input for cleaner mobile look */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -645,14 +644,19 @@ button:active {
 
 /* ==================== CALCULATOR PANELS ==================== */
 .calc-panel {
-    margin: 20px 0;
+    margin: 30px 0;
+    padding: 20px;
+    background: var(--card-bg);
+    border: 4px solid #000;
+    border-radius: 6px;
+    box-shadow: 5px 5px 0px #000;
 }
 
 .calc-panel-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     gap: 10px;
 }
 
@@ -733,28 +737,20 @@ button:active {
     color: #fff;
 }
 
-.resistor-inputs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+.calc-result-item {
+    padding: 10px;
+    background: rgba(255,255,255,0.5);
+    border: 2px solid #000;
+    border-radius: 4px;
+    margin: 8px 0;
+    font-size: 1.05rem;
 }
 
-.resistor-input-item {
-    flex: 1;
-    min-width: 100%;
+.dark .calc-result-item {
+    background: rgba(100,100,100,0.5);
 }
 
-.add-resistor-btn {
-    background: #2196f3;
-    color: white;
-    margin-top: 10px;
-    width: 100%;
-}
-
-.add-resistor-btn:active {
-    background: #1976d2;
-}
-
+/* ==================== MODE SELECTOR ==================== */
 .mode-selector {
     display: flex;
     gap: 10px;
@@ -783,7 +779,42 @@ button:active {
     color: white;
 }
 
-/* ==================== SCROLLBAR STYLING ==================== */
+/* ==================== DYNAMIC INPUTS ==================== */
+.dynamic-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.dynamic-input-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.dynamic-input-item input {
+    flex: 1;
+}
+
+.remove-btn {
+    background: #f44336;
+    color: white;
+    padding: 10px;
+    min-width: 48px;
+    min-height: 48px;
+    border: 3px solid #000;
+    border-radius: 5px;
+}
+
+.add-btn {
+    background: #2196f3;
+    color: white;
+    margin-top: 10px;
+    width: 100%;
+}
+
+/* ==================== SCROLLBAR ==================== */
 .history-panel::-webkit-scrollbar {
     width: 10px;
 }
@@ -868,10 +899,6 @@ button:active {
         grid-template-columns: 1fr;
     }
     
-    .resistor-input-item {
-        min-width: 100%;
-    }
-    
     .calc-panel-header {
         flex-direction: column;
         align-items: stretch;
@@ -899,10 +926,6 @@ button:active {
     
     .calculator-menu {
         grid-template-columns: repeat(3, 1fr);
-    }
-    
-    .resistor-input-item {
-        min-width: 150px;
     }
 }
 
