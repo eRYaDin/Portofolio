@@ -1,25 +1,23 @@
-// js/kalkulator-listrik/induktor.js
-import { validateNumberArray, calculateSeries, calculateParallel, formatNumber } from '../utils.js';
+// js/kalkulator-listrik/energi-kapasitor.js
+import { validatePositive, formatNumber } from '../utils.js';
 export const calculator = {
-    id: 'induktor',
-    title: '🌀 Total Induktor',
+    id: 'energi-kapasitor',
+    title: '⚡ Energi Kapasitor',
     inputs: [
-        { id: 'mode', type: 'mode', label: 'Tipe Rangkaian:', options: [
-            { value: 'series', label: 'Seri' },
-            { value: 'parallel', label: 'Paralel' }
-        ]},
-        { id: 'inductors', type: 'array', label: 'Induktor', unit: 'H', initial: 3 }
+        { id: 'c', type: 'number', label: 'Kapasitansi (C)', unit: 'F' },
+        { id: 'v', type: 'number', label: 'Tegangan (V)', unit: 'V' }
     ],
     calculate: (inputs) => {
-        const values = validateNumberArray(inputs.inductors, 'Induktor');
-        const total = inputs.mode === 'series' ? calculateSeries(values) : calculateParallel(values);
+        const c = validatePositive(inputs.c, 'Kapasitansi');
+        const v = validatePositive(inputs.v, 'Tegangan');
+        const e = 0.5 * c * v * v;
         return {
             results: [
-                { label: 'Total Induktansi', value: total, unit: 'H' },
-                { label: 'Total (mH)', value: total * 1000, unit: 'mH' }
+                { label: 'Energi Tersimpan', value: e, unit: 'J' },
+                { label: 'Energi (mJ)', value: e * 1000, unit: 'mJ' }
             ],
-            formula: inputs.mode === 'series' ? 'L_total = L₁ + L₂ + ...' : '1/L_total = 1/L₁ + 1/L₂ + ...',
-            calculation: `L_total = ${formatNumber(total)} H`
+            formula: 'E = ½CV²',
+            calculation: `E = ½ × ${formatNumber(c)} × ${formatNumber(v)}² = ${formatNumber(e)} J`
         };
     }
 };
