@@ -1,122 +1,120 @@
-// ==================== KALOR ====================
-// Q = m × c × ΔT
+// ==================== PEMUAIAN ====================
+// ΔL = α × L₀ × ΔT (Panjang), ΔV = γ × V₀ × ΔT (Volume)
 
 import { validatePositive, validateNumber, formatNumber } from '../utils.js';
 
-export default {
-  id: 'kalor',
-  title: '🔥 Kalor',
-
+export const calculator = {
+    id: 'pemuaian',
+    title: '📏 Pemuaian',
+    
     inputs: [
         { 
             id: 'mode', 
             type: 'mode', 
-            label: 'Hitung:', 
+            label: 'Jenis Pemuaian:', 
             options: [
-                { value: 'q', label: 'Kalor (Q)' },
-                { value: 'm', label: 'Massa (m)' },
-                { value: 'c', label: 'Kalor Jenis (c)' },
-                { value: 'dt', label: 'Perubahan Suhu (ΔT)' }
+                { value: 'panjang', label: 'Pemuaian Panjang' },
+                { value: 'luas', label: 'Pemuaian Luas' },
+                { value: 'volume', label: 'Pemuaian Volume' }
             ]
         },
-        { id: 'm', type: 'number', label: 'Massa (m)', unit: 'kg', condition: m => m !== 'm' },
-        { id: 'c', type: 'number', label: 'Kalor Jenis (c)', unit: 'J/(kg·°C)', condition: m => m !== 'c' },
-        { id: 't1', type: 'number', label: 'Suhu Awal (T₁)', unit: '°C', condition: m => m === 'q' || m === 'm' || m === 'c' },
-        { id: 't2', type: 'number', label: 'Suhu Akhir (T₂)', unit: '°C', condition: m => m === 'q' || m === 'm' || m === 'c' },
-        { id: 'q', type: 'number', label: 'Kalor (Q)', unit: 'J', condition: m => m === 'm' || m === 'c' || m === 'dt' },
-        { id: 'dt_in', type: 'number', label: 'Perubahan Suhu (ΔT)', unit: '°C', condition: m => m === 'm' || m === 'c' }
+        { id: 'l0', type: 'number', label: 'Panjang Awal (L₀)', unit: 'm', condition: m => m === 'panjang' },
+        { id: 'alpha', type: 'number', label: 'Koefisien Muai Panjang (α)', unit: '/°C', condition: m => m === 'panjang' },
+        { id: 'a0', type: 'number', label: 'Luas Awal (A₀)', unit: 'm²', condition: m => m === 'luas' },
+        { id: 'beta', type: 'number', label: 'Koefisien Muai Luas (β)', unit: '/°C', condition: m => m === 'luas' },
+        { id: 'v0', type: 'number', label: 'Volume Awal (V₀)', unit: 'm³', condition: m => m === 'volume' },
+        { id: 'gamma', type: 'number', label: 'Koefisien Muai Volume (γ)', unit: '/°C', condition: m => m === 'volume' },
+        { id: 't1', type: 'number', label: 'Suhu Awal (T₁)', unit: '°C' },
+        { id: 't2', type: 'number', label: 'Suhu Akhir (T₂)', unit: '°C' }
     ],
     
     calculate: (inputs) => {
         const mode = inputs.mode;
+        const t1 = validateNumber(inputs.t1, 'Suhu Awal');
+        const t2 = validateNumber(inputs.t2, 'Suhu Akhir');
+        const dt = t2 - t1;
         
-        if (mode === 'q') {
-            const m = validatePositive(inputs.m, 'Massa');
-            const c = validatePositive(inputs.c, 'Kalor Jenis');
-            const t1 = validateNumber(inputs.t1, 'Suhu Awal');
-            const t2 = validateNumber(inputs.t2, 'Suhu Akhir');
-            const dt = t2 - t1;
-            const q = m * c * dt;
+        if (mode === 'panjang') {
+            const l0 = validatePositive(inputs.l0, 'Panjang Awal');
+            const alpha = validatePositive(inputs.alpha, 'Koefisien Muai Panjang');
             
-            const process = q > 0 ? 'Melepas Kalor (Pemanasan)' : 'Menerima Kalor (Pendinginan)';
+            // Pertambahan panjang
+            const dl = alpha * l0 * dt;
+            
+            // Panjang akhir
+            const lt = l0 + dl;
             
             return {
                 results: [
-                    { label: 'Kalor (Q)', value: q, unit: 'J' },
-                    { label: 'Kalor', value: q / 1000, unit: 'kJ' },
-                    { label: 'Kalor', value: q / 4184, unit: 'kkal' },
-                    { label: 'Perubahan Suhu (ΔT)', value: dt, unit: '°C' },
-                    { label: 'Proses', value: process, unit: '' }
+                    { label: 'Pertambahan Panjang (ΔL)', value: dl, unit: 'm' },
+                    { label: 'Pertambahan Panjang', value: dl * 100, unit: 'cm' },
+                    { label: 'Pertambahan Panjang', value: dl * 1000, unit: 'mm' },
+                    { label: 'Panjang Akhir (Lt)', value: lt, unit: 'm' },
+                    { label: 'Panjang Awal (L₀)', value: l0, unit: 'm' },
+                    { label: 'Perubahan Suhu (ΔT)', value: dt, unit: '°C' }
                 ],
-                formula: 'Q = m × c × ΔT\nΔT = T₂ - T₁',
+                formula: 'ΔL = α × L₀ × ΔT\nLt = L₀ + ΔL',
                 calculation: `ΔT = ${formatNumber(t2)} - ${formatNumber(t1)} = ${formatNumber(dt)} °C\n` +
-                            `Q = ${formatNumber(m)} × ${formatNumber(c)} × ${formatNumber(dt)}\n` +
-                            `Q = ${formatNumber(q)} J = ${formatNumber(q / 1000)} kJ`
+                            `ΔL = ${formatNumber(alpha)} × ${formatNumber(l0)} × ${formatNumber(dt)}\n` +
+                            `ΔL = ${formatNumber(dl)} m = ${formatNumber(dl * 100)} cm\n` +
+                            `Lt = ${formatNumber(l0)} + ${formatNumber(dl)} = ${formatNumber(lt)} m`
             };
-        } else if (mode === 'm') {
-            const q = validateNumber(inputs.q, 'Kalor');
-            const c = validatePositive(inputs.c, 'Kalor Jenis');
-            const t1 = validateNumber(inputs.t1, 'Suhu Awal');
-            const t2 = validateNumber(inputs.t2, 'Suhu Akhir');
-            const dt = t2 - t1;
+        } else if (mode === 'luas') {
+            const a0 = validatePositive(inputs.a0, 'Luas Awal');
+            const beta = validatePositive(inputs.beta, 'Koefisien Muai Luas');
             
-            if (Math.abs(dt) < 0.001) {
-                throw new Error('Perubahan suhu tidak boleh nol');
-            }
+            // Pertambahan luas
+            const da = beta * a0 * dt;
             
-            const m = q / (c * dt);
+            // Luas akhir
+            const at = a0 + da;
+            
+            // Catatan: β ≈ 2α
+            const alpha_approx = beta / 2;
             
             return {
                 results: [
-                    { label: 'Massa (m)', value: m, unit: 'kg' },
-                    { label: 'Massa', value: m * 1000, unit: 'g' },
-                    { label: 'Kalor', value: q, unit: 'J' },
-                    { label: 'Perubahan Suhu', value: dt, unit: '°C' }
+                    { label: 'Pertambahan Luas (ΔA)', value: da, unit: 'm²' },
+                    { label: 'Pertambahan Luas', value: da * 10000, unit: 'cm²' },
+                    { label: 'Luas Akhir (At)', value: at, unit: 'm²' },
+                    { label: 'Luas Awal (A₀)', value: a0, unit: 'm²' },
+                    { label: 'Perubahan Suhu (ΔT)', value: dt, unit: '°C' },
+                    { label: 'α (perkiraan)', value: alpha_approx, unit: '/°C' }
                 ],
-                formula: 'm = Q / (c × ΔT)',
-                calculation: `m = ${formatNumber(q)} / (${formatNumber(c)} × ${formatNumber(dt)})\n` +
-                            `m = ${formatNumber(m)} kg`
-            };
-        } else if (mode === 'c') {
-            const q = validateNumber(inputs.q, 'Kalor');
-            const m = validatePositive(inputs.m, 'Massa');
-            const t1 = validateNumber(inputs.t1, 'Suhu Awal');
-            const t2 = validateNumber(inputs.t2, 'Suhu Akhir');
-            const dt = t2 - t1;
-            
-            if (Math.abs(dt) < 0.001) {
-                throw new Error('Perubahan suhu tidak boleh nol');
-            }
-            
-            const c = q / (m * dt);
-            
-            return {
-                results: [
-                    { label: 'Kalor Jenis (c)', value: c, unit: 'J/(kg·°C)' },
-                    { label: 'Massa', value: m, unit: 'kg' },
-                    { label: 'Kalor', value: q, unit: 'J' },
-                    { label: 'Perubahan Suhu', value: dt, unit: '°C' }
-                ],
-                formula: 'c = Q / (m × ΔT)',
-                calculation: `c = ${formatNumber(q)} / (${formatNumber(m)} × ${formatNumber(dt)})\n` +
-                            `c = ${formatNumber(c)} J/(kg·°C)`
+                formula: 'ΔA = β × A₀ × ΔT\nAt = A₀ + ΔA\nβ ≈ 2α',
+                calculation: `ΔT = ${formatNumber(t2)} - ${formatNumber(t1)} = ${formatNumber(dt)} °C\n` +
+                            `ΔA = ${formatNumber(beta)} × ${formatNumber(a0)} × ${formatNumber(dt)}\n` +
+                            `ΔA = ${formatNumber(da)} m²\n` +
+                            `At = ${formatNumber(a0)} + ${formatNumber(da)} = ${formatNumber(at)} m²`
             };
         } else {
-            const q = validateNumber(inputs.q, 'Kalor');
-            const m = validatePositive(inputs.m, 'Massa');
-            const c = validatePositive(inputs.c, 'Kalor Jenis');
-            const dt = q / (m * c);
+            const v0 = validatePositive(inputs.v0, 'Volume Awal');
+            const gamma = validatePositive(inputs.gamma, 'Koefisien Muai Volume');
+            
+            // Pertambahan volume
+            const dv = gamma * v0 * dt;
+            
+            // Volume akhir
+            const vt = v0 + dv;
+            
+            // Catatan: γ ≈ 3α
+            const alpha_approx = gamma / 3;
             
             return {
                 results: [
+                    { label: 'Pertambahan Volume (ΔV)', value: dv, unit: 'm³' },
+                    { label: 'Pertambahan Volume', value: dv * 1000, unit: 'L' },
+                    { label: 'Pertambahan Volume', value: dv * 1000000, unit: 'mL' },
+                    { label: 'Volume Akhir (Vt)', value: vt, unit: 'm³' },
+                    { label: 'Volume Awal (V₀)', value: v0, unit: 'm³' },
                     { label: 'Perubahan Suhu (ΔT)', value: dt, unit: '°C' },
-                    { label: 'Perubahan Suhu (K)', value: dt, unit: 'K' },
-                    { label: 'Kalor', value: q, unit: 'J' },
-                    { label: 'Massa', value: m, unit: 'kg' }
+                    { label: 'α (perkiraan)', value: alpha_approx, unit: '/°C' }
                 ],
-                formula: 'ΔT = Q / (m × c)',
-                calculation: `ΔT = ${formatNumber(q)} / (${formatNumber(m)} × ${formatNumber(c)})\n` +
-                            `ΔT = ${formatNumber(dt)} °C`
+                formula: 'ΔV = γ × V₀ × ΔT\nVt = V₀ + ΔV\nγ ≈ 3α',
+                calculation: `ΔT = ${formatNumber(t2)} - ${formatNumber(t1)} = ${formatNumber(dt)} °C\n` +
+                            `ΔV = ${formatNumber(gamma)} × ${formatNumber(v0)} × ${formatNumber(dt)}\n` +
+                            `ΔV = ${formatNumber(dv)} m³ = ${formatNumber(dv * 1000)} L\n` +
+                            `Vt = ${formatNumber(v0)} + ${formatNumber(dv)} = ${formatNumber(vt)} m³`
             };
         }
     }
