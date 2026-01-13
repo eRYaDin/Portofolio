@@ -3,10 +3,10 @@
 
 import { validatePositive, validateNumber, formatNumber } from '../utils.js';
 
-export const calculator = {
-    id: 'kalor',
-    title: '🔥 Kalor',
-    
+export default {
+  id: 'kalor',
+  title: '🔥 Kalor',
+   
     inputs: [
         { 
             id: 'mode', 
