@@ -180,14 +180,14 @@ export const registry = [
         kategori: "termodinamika",
         judul: "🔥 Kalor",
         deskripsi: "Q = mcΔT",
-        module: () => import('./kalkulator-termodinamika/kalor.js')
+        module: () => import('./termodinamika/kalor.js')
     },
     {
         id: "pemuaian",
         kategori: "termodinamika",
         judul: "📏 Pemuaian",
         deskripsi: "Pemuaian panjang & volume",
-        module: () => import('./kalkulator-termodinamika/pemuaian.js')
+        module: () => import('./termodinamika/pemuaian.js')
     }
 ];
 
