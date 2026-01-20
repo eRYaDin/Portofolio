@@ -1,1 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulasi Pantulan Bola - 2D Projectile Motion</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>⚡ SIMULASI PANTULAN BOLA</h1>
+    <p>Visualisasi energi kinetik, potensial, dan mekanik</p>
+  </header>
 
+  <div class="main-grid">
+    <!-- ==================== SIDEBAR KONTROL ==================== -->
+    <aside class="control-panel">
+      <!-- Pilihan Bola -->
+      <div class="card">
+        <div class="card-title">🎱 Pilih Bola</div>
+        <div class="form-group">
+          <label>Jenis Bola</label>
+          <select id="ballSelect"></select>
+          <div class="ball-preview">
+            <div class="ball-icon" id="ballIcon"></div>
+            <div class="ball-info" id="ballInfo">
+              Mass: 0.0027 kg<br>
+              Diameter: 0.04 m
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parameter Fisika -->
+      <div class="card">
+        <div class="card-title">⚙️ Parameter</div>
+        
+        <div class="form-group">
+          <label>Kecepatan Awal <span id="v0Display">20 m/s</span></label>
+          <input type="range" id="v0Slider" min="5" max="50" value="20" step="1">
+          <input type="number" id="v0Input" min="5" max="50" value="20" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>Sudut Peluncuran <span id="angleDisplay">45°</span></label>
+          <input type="range" id="angleSlider" min="5" max="85" value="45" step="1">
+          <input type="number" id="angleInput" min="5" max="85" value="45" step="1">
+        </div>
+
+        <div class="form-group">
+          <label>Koefisien Restitusi <span id="restDisplay">0.7</span></label>
+          <input type="range" id="restSlider" min="0.1" max="0.95" value="0.7" step="0.05">
+        </div>
+      </div>
+
+      <!-- Tombol Kontrol -->
+      <div class="card">
+        <div class="card-title">🎮 Kontrol</div>
+        <div class="button-group">
+          <button class="btn-start" id="startBtn">▶ Mulai</button>
+          <button class="btn-reset" id="resetBtn">↺ Reset</button>
+        </div>
+        <div class="button-group">
+          <button class="btn-theme" id="themeBtn">🌙</button>
+        </div>
+      </div>
+
+      <!-- Ringkasan -->
+      <div class="card">
+        <div class="card-title">📊 Ringkasan</div>
+        <div class="info-row">
+          <span class="info-label">Tinggi Maksimal</span>
+          <span class="info-value" id="maxHeight">0.00 m</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Jarak Total</span>
+          <span class="info-value" id="totalDistance">0.00 m</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Waktu Terbang</span>
+          <span class="info-value" id="flightTime">0.00 s</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Jumlah Pantulan</span>
+          <span class="info-value" id="bounceCount">0</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== AREA VISUALISASI ==================== -->
+    <main class="visualization-area">
+      <!-- Canvas Trajectory -->
+      <div class="card">
+        <div class="card-title">🎯 Animasi Lintasan</div>
+        <div class="canvas-container">
+          <canvas id="trajectoryCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Canvas Energi -->
+      <div class="card">
+        <div class="card-title">📈 Grafik Energi</div>
+        <div class="canvas-container">
+          <canvas id="energyCanvas"></canvas>
+        </div>
+        <div class="energy-legend">
+          <div class="legend-item">
+            <div class="legend-color legend-ke"></div>
+            <span>Energi Kinetik (KE)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color legend-pe"></div>
+            <span>Energi Potensial (PE)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color legend-me"></div>
+            <span>Energi Mekanik (ME)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistik Real-time -->
+      <div class="card">
+        <div class="card-title">⏱️ Statistik Real-Time</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value time" id="statTime">0.00</div>
+            <div class="stat-label">Waktu (s)</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value pos" id="statPosX">0.00</div>
+            <div class="stat-label">Posisi X (m)</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value pos" id="statPosY">0.00</div>
+            <div class="stat-label">Posisi Y (m)</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value vel" id="statVelX">0.00</div>
+            <div class="stat-label">Kecepatan X (m/s)</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value vel" id="statVelY">0.00</div>
+            <div class="stat-label">Kecepatan Y (m/s)</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value vel" id="statVelTotal">0.00</div>
+            <div class="stat-label">Kelajuan (m/s)</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value ke" id="statKE">0.00</div>
+            <div class="stat-label">Energi Kinetik (J)</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value pe" id="statPE">0.00</div>
+            <div class="stat-label">Energi Potensial (J)</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value me" id="statME">0.00</div>
+            <div class="stat-label">Energi Mekanik (J)</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>
+      Simulasi Pantulan Bola | Dibuat oleh 
+      <a href="https://eryadin.github.io/Portofolio/" target="_blank">Eryadin</a>
+    </p>
+  </footer>
+</div>
+
+<!-- Load Scripts -->
+<script src="js/data.js"></script>
+<script src="js/simulation.js"></script>
+<script src="js/canvas.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
