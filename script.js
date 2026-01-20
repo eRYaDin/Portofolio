@@ -1,141 +1,270 @@
-// DARK MODE TOGGLE
-const themeToggle = document.getElementById('theme-toggle');
-const body = document.body;
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Rafif Yasin | Portfolio Fisika</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-// Load saved theme
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-  body.setAttribute('data-theme', savedTheme);
-  updateButtonText(savedTheme);
-}
+  <!-- NAVIGASI (DENGAN DROPDOWN PROYEK) -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <h1 class="nav-title">Rafif Yasin</h1>
+      <ul class="nav-menu">
+        <li><a href="#beranda">Beranda</a></li>
+        <li class="dropdown">
+          <a href="#proyek" class="dropbtn">Proyek ▼</a>
+          <div class="dropdown-content">
+            <a href="#proyek-saya">Proyek Saya</a>
+            <a href="#proyek-pengajaran">Proyek Pengajaran</a>
+          </div>
+        </li>
+        <li><a href="#lini-masa">Lini Masa</a></li>
+        <li><a href="#tentang">Tentang</a></li>
+        <li><a href="#keahlian">Keahlian</a></li>
+        <li><a href="#kontak">Kontak</a></li>
+      </ul>
+      <button id="tombol-tema" class="tombol-tema">🌙 Mode Gelap</button>
+    </div>
+  </nav>
 
-themeToggle.addEventListener('click', () => {
-  const currentTheme = body.getAttribute('data-theme');
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  
-  body.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-  updateButtonText(newTheme);
-});
+  <!-- BERANDA (HERO) -->
+  <section id="beranda" class="hero">
+    <div class="hero-content">
 
-function updateButtonText(theme) {
-  themeToggle.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-}
+      <!-- FOTO PROFIL -->
+      <img
+        src="assets/images/profile/Profile.png"
+        alt="Foto Rafif"
+        class="gambar-profil"
+      >
 
-// SMOOTH SCROLL UNTUK NAV
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      target.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  });
-});
+      <h1>Rafif Yasin Habibullah Wiryawan</h1>
+      <p class="subjudul">
+        Mahasiswa Fisika · Pemrograman Fisika · Asisten Pengajaran
+      </p>
+      <p class="deskripsi-hero">
+        Fokus pada simulasi fisika, visualisasi data, dan pengajaran berbasis komputasi.
+      </p>
 
-// DROPDOWN INTERAKSI (UNTUK MOBILE ATAU TOUCH DEVICES – BONUS)
-document.addEventListener('click', (e) => {
-  if (!e.target.matches('.dropbtn')) {
-    const dropdowns = document.querySelectorAll('.dropdown-content');
-    dropdowns.forEach(dropdown => {
-      if (dropdown.style.display === 'block') {
-        dropdown.style.display = 'none';
-      }
-    });
-  }
-});
+    </div>
+  </section>
 
-// OPTIONAL: TOGGLE DROPDOWN PADA CLICK (UNTUK MOBILE)
-document.querySelectorAll('.dropbtn').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    const dropdown = btn.nextElementSibling;
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-  });
-});
+  <!-- PROYEK -->
+  <section id="proyek" class="bagian">
+    <h2>Proyek</h2>
 
-// DETEKSI DEVICE UNTUK OPTIMASI RESPONSIVE
-function detectDevice() {
-  const userAgent = navigator.userAgent;
-  const width = window.innerWidth;
-  
-  if (width <= 768) {
-    return 'mobile';
-  } else if (width <= 1024) {
-    return 'tablet';
-  } else {
-    return 'desktop';
-  }
-}
+    <!-- PROYEK SAYA -->
+    <div id="proyek-saya" class="sub-bagian">
+      <h3>Proyek Saya</h3>
+      <div class="grid-proyek">
+        <a href="projects/simulasi_joystick/index.html" class="tautan-proyek">
+          <div class="kartu-proyek">
+            <p>Simulasi Joystick</p>
+            <span>Simulasi joystick virtual untuk mempelajari kontrol arah, vektor, dan respon sistem interaktif.</span>
+            <small>Status: Selesai</small>
+          </div>
+        </a>
+        <a href="projects/kalkulator_fisika/index.html" class="tautan-proyek">
+          <div class="kartu-proyek">
+            <p>Kalkulator Fisika & Konverter Satuan</p>
+            <span>Kalkulator fisika untuk konversi satuan dan perhitungan dasar seperti gaya, energi, hambatan listrik, dan lainnya.</span>
+            <small>Status: Selesai</small>
+          </div>
+        </a>
+        <div class="kartu-proyek">
+          <p>Proyek Komputasi Numerik</p>
+          <span>Pemodelan numerik untuk persamaan diferensial fisika.</span>
+          <small>Status: Selesai</small>
+        </div>
+        <div class="kartu-proyek">
+          <p>Proyek Mandiri</p>
+          <span>Eksplorasi algoritma simulasi untuk fenomena gelombang.</span>
+          <small>Status: Berlangsung</small>
+        </div>
+      </div>
+    </div>
 
-// OPTIMASI BERDASARKAN DEVICE (BONUS)
-function optimizeForDevice() {
-  const device = detectDevice();
-  const navMenu = document.querySelector('.nav-menu');
-  const themeBtn = document.querySelector('.theme-btn');
-  
-  if (device === 'mobile') {
-    // Sembunyikan nav menu di mobile (sudah di CSS, tapi bisa tambah JS)
-    if (navMenu) {
-      navMenu.style.display = 'none';
-    }
-    // Tambah event listener untuk hamburger jika ada (opsional)
-    console.log('Optimized for mobile');
-  } else if (device === 'tablet') {
-    // Sesuaikan gap atau padding
-    if (navMenu) {
-      navMenu.style.gap = '18px';
-    }
-    console.log('Optimized for tablet');
-  } else {
-    // Desktop: full features
-    console.log('Optimized for desktop');
-  }
-}
+    <!-- PROYEK PENGAJARAN SAYA -->
+    <div id="proyek-pengajaran" class="sub-bagian">
+      <h3>Proyek Pengajaran Saya</h3>
+      <div class="grid-proyek">
+        <div class="kartu-proyek kartu-pengajaran">
+          <p>Simulasi Lemparan Proyektil (Praktikum)</p>
+          <span>Digunakan untuk membantu praktikan memahami hubungan sudut dan energi.</span>
+          <small>Status: Selesai</small>
+        </div>
+        <div class="kartu-proyek kartu-pengajaran">
+          <p>Modul Visualisasi Data Fisika</p>
+          <span>Bimbingan mahasiswa dalam membuat grafik interaktif untuk analisis data.</span>
+          <small>Status: Berlangsung</small>
+        </div>
+        <div class="kartu-proyek kartu-pengajaran">
+          <p>Pendekatan Mengajar Berbasis Komputasi</p>
+          <span>Fokus pada visualisasi dulu baru rumus, untuk pemahaman mendalam.</span>
+          <small>Status: Aktif</small>
+        </div>
+      </div>
+    </div>
+  </section>
 
-// RUN OPTIMASI PADA LOAD DAN RESIZE
-window.addEventListener('load', optimizeForDevice);
-window.addEventListener('resize', optimizeForDevice);
+  <!-- LINI MASA -->
+  <section id="lini-masa" class="bagian">
+    <h2>Lini Masa</h2>
 
-// ANIMASI PROGRESS BAR SKILLS (BONUS RESPONSIVE)
-function animateProgressBars() {
-  const progressFills = document.querySelectorAll('.progress-fill');
-  progressFills.forEach(fill => {
-    const width = fill.style.width;
-    fill.style.width = '0%';
-    setTimeout(() => {
-      fill.style.width = width;
-    }, 500);
-  });
-}
+    <div class="timeline">
 
-// ANIMASI PADA SCROLL (BONUS)
-function handleScrollAnimations() {
-  const sections = document.querySelectorAll('.section');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }
-    });
-  }, { threshold: 0.1 });
-  
-  sections.forEach(section => {
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(20px)';
-    section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-    observer.observe(section);
-  });
-}
+      <div class="timeline-item kiri fade">
+        <div class="kartu-timeline">
+          <h3>SDN 077 Bandung</h3>
+          <span>2012 – 2018</span>
+          <p>Pendidikan dasar</p>
+        </div>
+      </div>
 
-// RUN ANIMASI PADA LOAD
-window.addEventListener('load', () => {
-  animateProgressBars();
-  handleScrollAnimations();
-});
+      <div class="timeline-item kanan fade">
+        <div class="kartu-timeline">
+          <h3>SMPN 7 Bandung</h3>
+          <span>2018 – 2021</span>
+          <p>Pendidikan menengah pertama</p>
+        </div>
+      </div>
 
-console.log("Portfolio loaded with full responsive features!");
+      <div class="timeline-item kiri fade">
+        <div class="kartu-timeline">
+
+          <h3>SMKN 7 Bandung</h3>
+          <span class="tahun">2021 – 2024</span>
+          <p class="jurusan">Jurusan Analisis Pengujian Laboratorium</p>
+
+          <div class="pemisah-kecil"></div>
+
+          <div class="pkl">
+            <h4>Praktik Kerja Lapangan (PKL)</h4>
+
+            <div class="pkl-item">
+              <div class="pkl-header">
+                <strong>LPKL Bandung</strong>
+                <span>3 bulan</span>
+              </div>
+              <ul>
+                <li>Pengujian COD & BOD (2 bulan)</li>
+                <li>Bagian reagen (1 bulan)</li>
+                <li>Menyiapkan larutan dan pendataan bahan kimia</li>
+              </ul>
+            </div>
+
+            <div class="pkl-item">
+              <div class="pkl-header">
+                <strong>PT Mahatidana Sinergi Indonesia</strong>
+                <span>3 bulan</span>
+              </div>
+              <ul>
+                <li>Bagian reagen</li>
+                <li>Penyiapan larutan kimia</li>
+                <li>Manajemen bahan reagen laboratorium</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="timeline-item kanan fade">
+        <div class="kartu-timeline">
+          <h3>Universitas Padjadjaran</h3>
+          <span>2024 – Sekarang</span>
+          <p>S1 Fisika</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TENTANG -->
+  <section id="tentang" class="bagian">
+    <h2>Tentang Saya</h2>
+    <div class="kartu-tentang">
+      <p>
+        Saya adalah mahasiswa S1 Fisika Universitas Padjadjaran dengan minat pada pemrograman fisika, simulasi numerik, dan visualisasi data.
+        Selain mengembangkan proyek mandiri, saya juga aktif sebagai asisten laboratorium pemrograman fisika dan terlibat dalam proses pengajaran berbasis komputasi.
+      </p>
+    </div>
+  </section>
+
+  <!-- KEAHLIAN -->
+  <section id="keahlian" class="bagian">
+    <h2>Keahlian</h2>
+    <div class="wadah-keahlian">
+      <div class="item-keahlian">
+        <span class="nama-keahlian">Pemrograman</span>
+        <div class="bar-progress">
+          <div class="isi-progress" style="width: 80%;"></div>
+        </div>
+        <span class="persen-keahlian">80%</span>
+      </div>
+      <div class="item-keahlian">
+        <span class="nama-keahlian">Editing Video</span>
+        <div class="bar-progress">
+          <div class="isi-progress" style="width: 60%;"></div>
+        </div>
+        <span class="persen-keahlian">60%</span>
+      </div>
+      <div class="item-keahlian">
+        <span class="nama-keahlian">Visual Grafis</span>
+        <div class="bar-progress">
+          <div class="isi-progress" style="width: 90%;"></div>
+        </div>
+        <span class="persen-keahlian">90%</span>
+      </div>
+      <div class="item-keahlian">
+        <span class="nama-keahlian">Menulis / Novel</span>
+        <div class="bar-progress">
+          <div class="isi-progress" style="width: 90%;"></div>
+        </div>
+        <span class="persen-keahlian">90%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- KONTAK -->
+  <section id="kontak" class="bagian">
+    <h2>Kontak</h2>
+
+    <div class="kartu-kontak">
+      <p><strong>WhatsApp</strong></p>
+      <a
+        href="https://wa.me/6285722996051"
+        target="_blank"
+        class="tombol-wa"
+      >
+        💬 0857-2299-6051
+      </a>
+
+      <p style="margin-top: 20px;"><strong>Instagram</strong></p>
+      <a
+        href="https://www.instagram.com/ajk_rafif_yasin"
+        target="_blank"
+        class="tombol-ig"
+      >
+        📸 @ajk_rafif_yasin
+      </a>
+
+      <p style="margin-top: 20px;"><strong>Email</strong></p>
+      <p>rafif.yasin@example.com</p>
+
+      <p style="margin-top: 10px;"><strong>GitHub</strong></p>
+      <a href="https://github.com/username" target="_blank" class="tautan-github">github.com/username</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 Rafif Yasin</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
