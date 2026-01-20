@@ -24,6 +24,9 @@ function init() {
   initBallSelect();
   setupEventListeners();
   
+  // 🔥 PERBAIKAN 1: Setup parameter listeners (INI YANG HILANG!)
+  setupParameterListeners();
+  
   // Setup Canvas
   resizeCanvas(trajectoryCanvas);
   resizeCanvas(energyCanvas);
@@ -70,7 +73,7 @@ function startSimulation() {
   const params = getSimulationParams();
   currentBallIndex = params.ballIndex;
   
-  // Jalankan simulasi fisika
+  // 🔥 PERBAIKAN 2: Jalankan simulasi fisika dengan parameter baru
   const result = runSimulation(
     params.ballIndex, 
     params.v0, 
@@ -92,13 +95,14 @@ function startSimulation() {
 }
 
 /**
- * Reset simulasi ke kondisi awal
+ * 🔥 PERBAIKAN 3: Reset simulasi yang benar (sudah sesuai dengan gambar.js)
  */
 function resetSimulation() {
   // Stop animasi
   isRunning = false;
   if (animationId) {
     cancelAnimationFrame(animationId);
+    animationId = null;
   }
   
   // Reset state
@@ -109,11 +113,12 @@ function resetSimulation() {
   updateStartButton(false);
   resetStats();
   
-  // Clear canvas
+  // Resize dan clear canvas dengan benar
   resizeCanvas(trajectoryCanvas);
   resizeCanvas(energyCanvas);
-  trajCtx.clearRect(0, 0, trajectoryCanvas.offsetWidth, trajectoryCanvas.offsetHeight);
-  energyCtx.clearRect(0, 0, energyCanvas.offsetWidth, energyCanvas.offsetHeight);
+  
+  clearCanvas(trajCtx);
+  clearCanvas(energyCtx);
 }
 
 // ==================== ANIMATION LOOP ====================
