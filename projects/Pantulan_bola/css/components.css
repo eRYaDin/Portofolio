@@ -1,0 +1,213 @@
+/* ==================== FORM ELEMENTS ==================== */
+select, 
+input[type="number"] {
+  width: 100%;
+  padding: 14px;
+  min-height: 48px;
+  border: 3px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-color);
+  font-size: 1rem;
+  font-family: inherit;
+  box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.1);
+}
+
+select:focus, 
+input[type="number"]:focus {
+  outline: none;
+  border-color: #ff5722;
+  box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.1), 0 0 5px rgba(255, 87, 34, 0.5);
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* ==================== RANGE SLIDER ==================== */
+input[type="range"] {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  appearance: none;
+  cursor: pointer;
+  border: 2px solid var(--border-color);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffeb3b;
+  border: 3px solid var(--border-color);
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+  transition: transform 0.1s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffeb3b;
+  border: 3px solid var(--border-color);
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #000;
+}
+
+/* ==================== BUTTONS ==================== */
+button {
+  flex: 1;
+  padding: 14px 20px;
+  min-height: 48px;
+  border: 3px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: inherit;
+  touch-action: manipulation;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-start {
+  background: #4caf50;
+  color: white;
+  box-shadow: 3px 3px 0px #000;
+}
+
+.btn-start:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px #000;
+  background: #45a049;
+}
+
+.btn-start:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-reset {
+  background: #f44336;
+  color: white;
+  box-shadow: 3px 3px 0px #000;
+}
+
+.btn-reset:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px #000;
+  background: #d32f2f;
+}
+
+.btn-theme {
+  background: #ff9800;
+  color: white;
+  font-size: 1.2rem;
+  box-shadow: 3px 3px 0px #000;
+}
+
+.btn-theme:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px #000;
+  background: #f57c00;
+}
+
+/* ==================== STATS GRID ==================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.stat-item {
+  background: var(--stat-bg);
+  padding: 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.3rem;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+  color: #666;
+}
+
+.dark .stat-label {
+  color: #aaa;
+}
+
+/* Stat Value Colors */
+.stat-value.ke { color: #f44336; }
+.stat-value.pe { color: #2196f3; }
+.stat-value.me { color: #4caf50; }
+.stat-value.time { color: #ff9800; }
+.stat-value.pos { color: #9c27b0; }
+.stat-value.vel { color: #00bcd4; }
+
+/* ==================== ENERGY LEGEND ==================== */
+.energy-legend {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+
+.legend-color {
+  width: 20px;
+  height: 4px;
+  border: 2px solid var(--border-color);
+}
+
+.legend-ke { background: #f44336; }
+.legend-pe { background: #2196f3; }
+.legend-me { background: #4caf50; }
+
+/* ==================== RESPONSIVE BUTTONS ==================== */
+@media (max-width: 768px) {
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
