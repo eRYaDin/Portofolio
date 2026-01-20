@@ -13,6 +13,84 @@ function resizeCanvas(canvas) {
   ctx.scale(dpr, dpr);
 }
 
+/**
+ * Membersihkan canvas dengan benar
+ */
+function clearCanvas(ctx) {
+  if (!ctx) return;
+  const canvas = ctx.canvas;
+  ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+}
+
+/**
+ * Handler saat parameter berubah
+ * Membatalkan simulasi yang sedang berjalan dan reset data
+ */
+function parameterBerubah() {
+  // Hentikan animasi jika sedang berjalan
+  if (isRunning) {
+    isRunning = false;
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+    startBtn.textContent = "▶ Start";
+    startBtn.disabled = false;
+  }
+  
+  // Invalidate data lama
+  simulationData = [];
+  currentFrame = 0;
+  
+  // Bersihkan canvas
+  clearCanvas(trajCtx);
+  clearCanvas(energyCtx);
+}
+
+/**
+ * Preview simulasi tanpa animasi
+ * Menghitung dan menampilkan hasil akhir simulasi
+ */
+function previewSimulation() {
+  // Hitung simulasi baru
+  simulationData = runSimulation();
+  
+  // Tampilkan frame terakhir (hasil akhir)
+  if (simulationData.length > 0) {
+    currentFrame = simulationData.length - 1;
+    drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme);
+    drawEnergyGraph(energyCtx, simulationData, currentFrame, isDarkTheme);
+  }
+}
+
+/**
+ * Reset simulasi dengan benar
+ * Membersihkan semua state dan canvas
+ */
+function resetSimulation() {
+  // Hentikan animasi
+  isRunning = false;
+  if (animationId) {
+    cancelAnimationFrame(animationId);
+    animationId = null;
+  }
+  
+  // Reset frame dan data
+  currentFrame = 0;
+  simulationData = [];
+  
+  // Update UI
+  startBtn.textContent = "▶ Start";
+  startBtn.disabled = false;
+  
+  // Resize dan bersihkan canvas
+  resizeCanvas(trajectoryCanvas);
+  resizeCanvas(energyCanvas);
+  
+  clearCanvas(trajCtx);
+  clearCanvas(energyCtx);
+}
+
 // ==================== TRAJECTORY CANVAS ====================
 
 /**
@@ -335,3 +413,155 @@ function drawEnergyIndicator(ctx, cx, height, padding, current, toCanvasY, isDar
   drawDot(current.pe, "#2196f3");
   drawDot(current.me, "#4caf50");
 }
+
+// ==================== EVENT LISTENERS UNTUK PARAMETER ====================
+
+/**
+ * Setup event listeners untuk perubahan parameter
+ * Dipanggil saat inisialisasi aplikasi
+ */
+function setupParameterListeners() {
+  // Sudut - reset simulasi saat berubah
+  if (typeof angleSlider !== 'undefined' && angleSlider) {
+    angleSlider.addEventListener("input", parameterBerubah);
+  }
+  if (typeof angleInput !== 'undefined' && angleInput) {
+    angleInput.addEventListener("input", parameterBerubah);
+  }
+  
+  // Kecepatan awal - reset simulasi saat berubah
+  if (typeof v0Slider !== 'undefined' && v0Slider) {
+    v0Slider.addEventListener("input", parameterBerubah);
+  }
+  if (typeof v0Input !== 'undefined' && v0Input) {
+    v0Input.addEventListener("input", parameterBerubah);
+  }
+  
+  // Restitusi - reset simulasi saat berubah
+  if (typeof restSlider !== 'undefined' && restSlider) {
+    restSlider.addEventListener("input", parameterBerubah);
+  }
+  
+  // Jenis bola - reset dan preview
+  if (typeof ballSelect !== 'undefined' && ballSelect) {
+    ballSelect.addEventListener("change", () => {
+      parameterBerubah();
+      // Optional: auto-preview saat ganti bola
+      // previewSimulation();
+    });
+  }
+}
+
+/**
+ * OPSIONAL: Setup auto-preview saat parameter berubah
+ * Uncomment jika ingin preview langsung tanpa klik Start
+ */
+function setupAutoPreview() {
+  if (typeof angleSlider !== 'undefined' && angleSlider) {
+    angleSlider.addEventListener("input", previewSimulation);
+  }
+  if (typeof v0Slider !== 'undefined' && v0Slider) {
+    v0Slider.addEventListener("input", previewSimulation);
+  }
+  if (typeof restSlider !== 'undefined' && restSlider) {
+    restSlider.addEventListener("input", previewSimulation);
+  }
+  if (typeof ballSelect !== 'undefined' && ballSelect) {
+    ballSelect.addEventListener("change", previewSimulation);
+  }
+}
+
+// ==================== DEBUG HELPERS ====================
+
+/**
+ * Fungsi helper untuk debugging state simulasi
+ */
+function debugSimulationState() {
+  console.log("=== SIMULATION STATE ===");
+  console.log("isRunning:", typeof isRunning !== 'undefined' ? isRunning : 'undefined');
+  console.log("currentFrame:", typeof currentFrame !== 'undefined' ? currentFrame : 'undefined');
+  console.log("simulationData.length:", typeof simulationData !== 'undefined' ? simulationData.length : 'undefined');
+  console.log("animationId:", typeof animationId !== 'undefined' ? animationId : 'undefined');
+  console.log("========================");
+}
+
+/**
+ * Fungsi helper untuk force refresh semua canvas
+ */
+function forceRefreshCanvas() {
+  if (typeof trajectoryCanvas !== 'undefined' && trajectoryCanvas) {
+    resizeCanvas(trajectoryCanvas);
+  }
+  if (typeof energyCanvas !== 'undefined' && energyCanvas) {
+    resizeCanvas(energyCanvas);
+  }
+  
+  if (typeof simulationData !== 'undefined' && simulationData.length > 0 && 
+      typeof currentFrame !== 'undefined' && currentFrame < simulationData.length) {
+    if (typeof trajCtx !== 'undefined' && trajCtx) {
+      drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme);
+    }
+    if (typeof energyCtx !== 'undefined' && energyCtx) {
+      drawEnergyGraph(energyCtx, simulationData, currentFrame, isDarkTheme);
+    }
+  } else {
+    if (typeof trajCtx !== 'undefined' && trajCtx) {
+      clearCanvas(trajCtx);
+    }
+    if (typeof energyCtx !== 'undefined' && energyCtx) {
+      clearCanvas(energyCtx);
+    }
+  }
+}
+
+// ==================== CARA PENGGUNAAN ====================
+
+/**
+ * CARA INTEGRASI KE APLIKASI UTAMA:
+ * 
+ * 1. Di bagian inisialisasi (DOMContentLoaded atau init()), panggil:
+ *    setupParameterListeners();
+ * 
+ * 2. OPSIONAL - Jika mau auto-preview saat slider digeser:
+ *    setupAutoPreview();
+ * 
+ * 3. Pastikan variabel global ini ada:
+ *    - angleSlider, angleInput
+ *    - v0Slider, v0Input  
+ *    - restSlider
+ *    - ballSelect
+ *    - startBtn
+ *    - isRunning, animationId
+ *    - simulationData, currentFrame
+ *    - trajectoryCanvas, energyCanvas
+ *    - trajCtx, energyCtx
+ *    - currentBallIndex, isDarkTheme
+ *    - balls (array of ball objects)
+ *    - ballImages (array of Image objects)
+ * 
+ * 4. Pastikan fungsi runSimulation() sudah ada dan return array data
+ * 
+ * CONTOH INTEGRASI:
+ * 
+ * document.addEventListener("DOMContentLoaded", () => {
+ *   // Inisialisasi canvas
+ *   trajectoryCanvas = document.getElementById("trajectory-canvas");
+ *   energyCanvas = document.getElementById("energy-canvas");
+ *   trajCtx = trajectoryCanvas.getContext("2d");
+ *   energyCtx = energyCanvas.getContext("2d");
+ *   
+ *   // Inisialisasi controls
+ *   angleSlider = document.getElementById("angle-slider");
+ *   v0Slider = document.getElementById("v0-slider");
+ *   // ... dst
+ *   
+ *   // Setup event listeners (WAJIB)
+ *   setupParameterListeners();
+ *   
+ *   // OPSIONAL - Auto preview saat slider berubah
+ *   // setupAutoPreview();
+ *   
+ *   // Resize canvas saat window resize
+ *   window.addEventListener("resize", forceRefreshCanvas);
+ * });
+ */
