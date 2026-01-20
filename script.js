@@ -1,270 +1,244 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Rafif Yasin | Portfolio Fisika</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+// TOGGLE MODE GELAP
+const tombolTema = document.getElementById('tombol-tema');
+const body = document.body;
 
-  <!-- NAVIGASI (DENGAN DROPDOWN PROYEK) -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <h1 class="nav-title">Rafif Yasin</h1>
-      <ul class="nav-menu">
-        <li><a href="#beranda">Beranda</a></li>
-        <li class="dropdown">
-          <a href="#proyek" class="dropbtn">Proyek ▼</a>
-          <div class="dropdown-content">
-            <a href="#proyek-saya">Proyek Saya</a>
-            <a href="#proyek-pengajaran">Proyek Pengajaran</a>
-          </div>
-        </li>
-        <li><a href="#lini-masa">Lini Masa</a></li>
-        <li><a href="#tentang">Tentang</a></li>
-        <li><a href="#keahlian">Keahlian</a></li>
-        <li><a href="#kontak">Kontak</a></li>
-      </ul>
-      <button id="tombol-tema" class="tombol-tema">🌙 Mode Gelap</button>
-    </div>
-  </nav>
+// Muat tema yang tersimpan
+const temaTersimpan = localStorage.getItem('tema');
+if (temaTersimpan) {
+  body.setAttribute('data-theme', temaTersimpan);
+  perbaruiTeksTombol(temaTersimpan);
+}
 
-  <!-- BERANDA (HERO) -->
-  <section id="beranda" class="hero">
-    <div class="hero-content">
+tombolTema.addEventListener('click', () => {
+  const temaSaatIni = body.getAttribute('data-theme');
+  const temaBaru = temaSaatIni === 'dark' ? 'light' : 'dark';
+  
+  body.setAttribute('data-theme', temaBaru);
+  localStorage.setItem('tema', temaBaru);
+  perbaruiTeksTombol(temaBaru);
+});
 
-      <!-- FOTO PROFIL -->
-      <img
-        src="assets/images/profile/Profile.png"
-        alt="Foto Rafif"
-        class="gambar-profil"
-      >
+function perbaruiTeksTombol(tema) {
+  tombolTema.textContent = tema === 'dark' ? '☀️ Mode Terang' : '🌙 Mode Gelap';
+}
 
-      <h1>Rafif Yasin Habibullah Wiryawan</h1>
-      <p class="subjudul">
-        Mahasiswa Fisika · Pemrograman Fisika · Asisten Pengajaran
-      </p>
-      <p class="deskripsi-hero">
-        Fokus pada simulasi fisika, visualisasi data, dan pengajaran berbasis komputasi.
-      </p>
+// SMOOTH SCROLL UNTUK NAVIGASI
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  });
+});
 
-    </div>
-  </section>
+// DROPDOWN INTERAKSI (UNTUK MOBILE ATAU TOUCH DEVICES)
+document.addEventListener('click', (e) => {
+  if (!e.target.matches('.dropbtn')) {
+    const dropdowns = document.querySelectorAll('.dropdown-content');
+    dropdowns.forEach(dropdown => {
+      if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+      }
+    });
+  }
+});
 
-  <!-- PROYEK -->
-  <section id="proyek" class="bagian">
-    <h2>Proyek</h2>
+// TOGGLE DROPDOWN PADA CLICK (UNTUK MOBILE)
+document.querySelectorAll('.dropbtn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const dropdown = btn.nextElementSibling;
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+  });
+});
 
-    <!-- PROYEK SAYA -->
-    <div id="proyek-saya" class="sub-bagian">
-      <h3>Proyek Saya</h3>
-      <div class="grid-proyek">
-        <a href="projects/simulasi_joystick/index.html" class="tautan-proyek">
-          <div class="kartu-proyek">
-            <p>Simulasi Joystick</p>
-            <span>Simulasi joystick virtual untuk mempelajari kontrol arah, vektor, dan respon sistem interaktif.</span>
-            <small>Status: Selesai</small>
-          </div>
-        </a>
-        <a href="projects/kalkulator_fisika/index.html" class="tautan-proyek">
-          <div class="kartu-proyek">
-            <p>Kalkulator Fisika & Konverter Satuan</p>
-            <span>Kalkulator fisika untuk konversi satuan dan perhitungan dasar seperti gaya, energi, hambatan listrik, dan lainnya.</span>
-            <small>Status: Selesai</small>
-          </div>
-        </a>
-        <div class="kartu-proyek">
-          <p>Proyek Komputasi Numerik</p>
-          <span>Pemodelan numerik untuk persamaan diferensial fisika.</span>
-          <small>Status: Selesai</small>
-        </div>
-        <div class="kartu-proyek">
-          <p>Proyek Mandiri</p>
-          <span>Eksplorasi algoritma simulasi untuk fenomena gelombang.</span>
-          <small>Status: Berlangsung</small>
-        </div>
-      </div>
-    </div>
+// DETEKSI PERANGKAT UNTUK OPTIMASI RESPONSIVE
+function deteksiPerangkat() {
+  const lebar = window.innerWidth;
+  
+  if (lebar <= 768) {
+    return 'mobile';
+  } else if (lebar <= 1024) {
+    return 'tablet';
+  } else {
+    return 'desktop';
+  }
+}
 
-    <!-- PROYEK PENGAJARAN SAYA -->
-    <div id="proyek-pengajaran" class="sub-bagian">
-      <h3>Proyek Pengajaran Saya</h3>
-      <div class="grid-proyek">
-        <div class="kartu-proyek kartu-pengajaran">
-          <p>Simulasi Lemparan Proyektil (Praktikum)</p>
-          <span>Digunakan untuk membantu praktikan memahami hubungan sudut dan energi.</span>
-          <small>Status: Selesai</small>
-        </div>
-        <div class="kartu-proyek kartu-pengajaran">
-          <p>Modul Visualisasi Data Fisika</p>
-          <span>Bimbingan mahasiswa dalam membuat grafik interaktif untuk analisis data.</span>
-          <small>Status: Berlangsung</small>
-        </div>
-        <div class="kartu-proyek kartu-pengajaran">
-          <p>Pendekatan Mengajar Berbasis Komputasi</p>
-          <span>Fokus pada visualisasi dulu baru rumus, untuk pemahaman mendalam.</span>
-          <small>Status: Aktif</small>
-        </div>
-      </div>
-    </div>
-  </section>
+// OPTIMASI BERDASARKAN PERANGKAT
+function optimasiUntukPerangkat() {
+  const perangkat = deteksiPerangkat();
+  const menuNav = document.querySelector('.nav-menu');
+  
+  if (perangkat === 'mobile') {
+    // Sembunyikan nav menu di mobile (sudah di CSS, tapi bisa tambah JS)
+    if (menuNav) {
+      menuNav.style.display = 'none';
+    }
+    console.log('Dioptimasi untuk mobile');
+  } else if (perangkat === 'tablet') {
+    // Sesuaikan gap atau padding
+    if (menuNav) {
+      menuNav.style.gap = '18px';
+    }
+    console.log('Dioptimasi untuk tablet');
+  } else {
+    // Desktop: fitur penuh
+    console.log('Dioptimasi untuk desktop');
+  }
+}
 
-  <!-- LINI MASA -->
-  <section id="lini-masa" class="bagian">
-    <h2>Lini Masa</h2>
+// JALANKAN OPTIMASI PADA LOAD DAN RESIZE
+window.addEventListener('load', optimasiUntukPerangkat);
+window.addEventListener('resize', optimasiUntukPerangkat);
 
-    <div class="timeline">
+// ANIMASI PROGRESS BAR KEAHLIAN
+function animasiBarProgress() {
+  const progressFills = document.querySelectorAll('.isi-progress');
+  progressFills.forEach(fill => {
+    const lebar = fill.style.width;
+    fill.style.width = '0%';
+    setTimeout(() => {
+      fill.style.width = lebar;
+    }, 500);
+  });
+}
 
-      <div class="timeline-item kiri fade">
-        <div class="kartu-timeline">
-          <h3>SDN 077 Bandung</h3>
-          <span>2012 – 2018</span>
-          <p>Pendidikan dasar</p>
-        </div>
-      </div>
+// ANIMASI FADE-IN UNTUK TIMELINE DAN SECTION
+function animasiScrollFadeIn() {
+  const elemen = document.querySelectorAll('.fade');
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('show');
+      }
+    });
+  }, { 
+    threshold: 0.2,
+    rootMargin: '0px 0px -50px 0px'
+  });
+  
+  elemen.forEach(el => observer.observe(el));
+}
 
-      <div class="timeline-item kanan fade">
-        <div class="kartu-timeline">
-          <h3>SMPN 7 Bandung</h3>
-          <span>2018 – 2021</span>
-          <p>Pendidikan menengah pertama</p>
-        </div>
-      </div>
+// ANIMASI UNTUK SECTION (OPSIONAL)
+function aturAnimasiSection() {
+  const sections = document.querySelectorAll('.bagian');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  sections.forEach(section => {
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(20px)';
+    section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(section);
+  });
+}
 
-      <div class="timeline-item kiri fade">
-        <div class="kartu-timeline">
+// JALANKAN SEMUA ANIMASI PADA LOAD
+window.addEventListener('load', () => {
+  animasiBarProgress();
+  animasiScrollFadeIn();
+  aturAnimasiSection();
+});
 
-          <h3>SMKN 7 Bandung</h3>
-          <span class="tahun">2021 – 2024</span>
-          <p class="jurusan">Jurusan Analisis Pengujian Laboratorium</p>
+// FITUR TAMBAHAN: KLIK KARTU TIMELINE UNTUK EXPAND (OPSIONAL)
+// Uncomment jika ingin menambahkan fitur ini
+/*
+document.querySelectorAll('.kartu-timeline').forEach(kartu => {
+  kartu.addEventListener('click', () => {
+    kartu.classList.toggle('expanded');
+  });
+});
+*/
 
-          <div class="pemisah-kecil"></div>
+// LOG KONFIRMASI
+console.log("Portfolio dimuat dengan fitur responsive penuh!");
+console.log("Fitur aktif: Mode Gelap, Smooth Scroll, Animasi Timeline, Progress Bar");
 
-          <div class="pkl">
-            <h4>Praktik Kerja Lapangan (PKL)</h4>
+// DETEKSI SCROLL UNTUK NAVBAR (OPSIONAL - NAVBAR BERUBAH SAAT SCROLL)
+let scrollTerakhir = 0;
+window.addEventListener('scroll', () => {
+  const scrollSaatIni = window.pageYOffset;
+  const navbar = document.querySelector('.navbar');
+  
+  if (scrollSaatIni > 100) {
+    navbar.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+  } else {
+    navbar.style.boxShadow = 'none';
+  }
+  
+  scrollTerakhir = scrollSaatIni;
+});
 
-            <div class="pkl-item">
-              <div class="pkl-header">
-                <strong>LPKL Bandung</strong>
-                <span>3 bulan</span>
-              </div>
-              <ul>
-                <li>Pengujian COD & BOD (2 bulan)</li>
-                <li>Bagian reagen (1 bulan)</li>
-                <li>Menyiapkan larutan dan pendataan bahan kimia</li>
-              </ul>
-            </div>
+// FUNGSI UTILITAS: DETEKSI BROWSER
+function deteksiBrowser() {
+  const userAgent = navigator.userAgent;
+  let namaBrowser = "Tidak diketahui";
+  
+  if (userAgent.indexOf("Chrome") > -1) {
+    namaBrowser = "Chrome";
+  } else if (userAgent.indexOf("Safari") > -1) {
+    namaBrowser = "Safari";
+  } else if (userAgent.indexOf("Firefox") > -1) {
+    namaBrowser = "Firefox";
+  } else if (userAgent.indexOf("MSIE") > -1 || userAgent.indexOf("Trident") > -1) {
+    namaBrowser = "Internet Explorer";
+  }
+  
+  console.log("Browser terdeteksi:", namaBrowser);
+  return namaBrowser;
+}
 
-            <div class="pkl-item">
-              <div class="pkl-header">
-                <strong>PT Mahatidana Sinergi Indonesia</strong>
-                <span>3 bulan</span>
-              </div>
-              <ul>
-                <li>Bagian reagen</li>
-                <li>Penyiapan larutan kimia</li>
-                <li>Manajemen bahan reagen laboratorium</li>
-              </ul>
-            </div>
-          </div>
+// JALANKAN DETEKSI BROWSER
+deteksiBrowser();
 
-        </div>
-      </div>
+// FUNGSI UNTUK MENGHITUNG WAKTU LOADING
+const waktuMulai = performance.now();
+window.addEventListener('load', () => {
+  const waktuSelesai = performance.now();
+  const waktuLoading = ((waktuSelesai - waktuMulai) / 1000).toFixed(2);
+  console.log(`Halaman dimuat dalam ${waktuLoading} detik`);
+});
 
-      <div class="timeline-item kanan fade">
-        <div class="kartu-timeline">
-          <h3>Universitas Padjadjaran</h3>
-          <span>2024 – Sekarang</span>
-          <p>S1 Fisika</p>
-        </div>
-      </div>
+// PROTEKSI DARI SPAM KLIK TOMBOL
+let sedangAnimasi = false;
+tombolTema.addEventListener('click', () => {
+  if (sedangAnimasi) return;
+  sedangAnimasi = true;
+  setTimeout(() => {
+    sedangAnimasi = false;
+  }, 300);
+});
 
-    </div>
-  </section>
+// FUNGSI UNTUK MENDETEKSI KONEKSI INTERNET (OPSIONAL)
+function cekKoneksi() {
+  if (navigator.onLine) {
+    console.log("Status: Online");
+  } else {
+    console.log("Status: Offline");
+  }
+}
 
-  <!-- TENTANG -->
-  <section id="tentang" class="bagian">
-    <h2>Tentang Saya</h2>
-    <div class="kartu-tentang">
-      <p>
-        Saya adalah mahasiswa S1 Fisika Universitas Padjadjaran dengan minat pada pemrograman fisika, simulasi numerik, dan visualisasi data.
-        Selain mengembangkan proyek mandiri, saya juga aktif sebagai asisten laboratorium pemrograman fisika dan terlibat dalam proses pengajaran berbasis komputasi.
-      </p>
-    </div>
-  </section>
+window.addEventListener('online', () => {
+  console.log("Koneksi kembali!");
+});
 
-  <!-- KEAHLIAN -->
-  <section id="keahlian" class="bagian">
-    <h2>Keahlian</h2>
-    <div class="wadah-keahlian">
-      <div class="item-keahlian">
-        <span class="nama-keahlian">Pemrograman</span>
-        <div class="bar-progress">
-          <div class="isi-progress" style="width: 80%;"></div>
-        </div>
-        <span class="persen-keahlian">80%</span>
-      </div>
-      <div class="item-keahlian">
-        <span class="nama-keahlian">Editing Video</span>
-        <div class="bar-progress">
-          <div class="isi-progress" style="width: 60%;"></div>
-        </div>
-        <span class="persen-keahlian">60%</span>
-      </div>
-      <div class="item-keahlian">
-        <span class="nama-keahlian">Visual Grafis</span>
-        <div class="bar-progress">
-          <div class="isi-progress" style="width: 90%;"></div>
-        </div>
-        <span class="persen-keahlian">90%</span>
-      </div>
-      <div class="item-keahlian">
-        <span class="nama-keahlian">Menulis / Novel</span>
-        <div class="bar-progress">
-          <div class="isi-progress" style="width: 90%;"></div>
-        </div>
-        <span class="persen-keahlian">90%</span>
-      </div>
-    </div>
-  </section>
+window.addEventListener('offline', () => {
+  console.log("Koneksi terputus!");
+});
 
-  <!-- KONTAK -->
-  <section id="kontak" class="bagian">
-    <h2>Kontak</h2>
-
-    <div class="kartu-kontak">
-      <p><strong>WhatsApp</strong></p>
-      <a
-        href="https://wa.me/6285722996051"
-        target="_blank"
-        class="tombol-wa"
-      >
-        💬 0857-2299-6051
-      </a>
-
-      <p style="margin-top: 20px;"><strong>Instagram</strong></p>
-      <a
-        href="https://www.instagram.com/ajk_rafif_yasin"
-        target="_blank"
-        class="tombol-ig"
-      >
-        📸 @ajk_rafif_yasin
-      </a>
-
-      <p style="margin-top: 20px;"><strong>Email</strong></p>
-      <p>rafif.yasin@example.com</p>
-
-      <p style="margin-top: 10px;"><strong>GitHub</strong></p>
-      <a href="https://github.com/username" target="_blank" class="tautan-github">github.com/username</a>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <p>© 2025 Rafif Yasin</p>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
-</html>
+// JALANKAN CEK KONEKSI
+cekKoneksi();
