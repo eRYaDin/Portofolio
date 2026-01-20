@@ -113,18 +113,48 @@ function animasiBarProgress() {
 function animasiScrollFadeIn() {
   const elemen = document.querySelectorAll('.fade');
   
+  // Cek apakah ada elemen dengan class fade
+  if (elemen.length === 0) {
+    console.log('Tidak ada elemen dengan class .fade');
+    return;
+  }
+  
+  console.log(`Ditemukan ${elemen.length} elemen fade`);
+  
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('show');
+        console.log('Elemen muncul:', entry.target);
       }
     });
   }, { 
-    threshold: 0.2,
+    threshold: 0.1, // Turunkan dari 0.2 jadi 0.1 biar lebih mudah trigger
     rootMargin: '0px 0px -50px 0px'
   });
   
-  elemen.forEach(el => observer.observe(el));
+  elemen.forEach(el => {
+    observer.observe(el);
+    console.log('Mengamati elemen:', el);
+  });
+}
+
+// FALLBACK: Jika Intersection Observer tidak support
+function fallbackAnimasiFade() {
+  const elemen = document.querySelectorAll('.fade');
+  console.log('Menggunakan fallback animasi');
+  
+  elemen.forEach(el => {
+    el.classList.add('show');
+  });
+}
+
+// CEK SUPPORT INTERSECTION OBSERVER
+if (!('IntersectionObserver' in window)) {
+  console.warn('Browser tidak support Intersection Observer, menggunakan fallback');
+  window.addEventListener('load', fallbackAnimasiFade);
+} else {
+  window.addEventListener('load', animasiScrollFadeIn);
 }
 
 // ANIMASI UNTUK SECTION (OPSIONAL)
@@ -149,8 +179,9 @@ function aturAnimasiSection() {
 
 // JALANKAN SEMUA ANIMASI PADA LOAD
 window.addEventListener('load', () => {
+  console.log('Halaman selesai dimuat, menjalankan animasi...');
   animasiBarProgress();
-  animasiScrollFadeIn();
+  // animasiScrollFadeIn sudah dipanggil di atas dengan pengecekan support
   aturAnimasiSection();
 });
 
