@@ -161,3 +161,48 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
+// ==================== DEBUG & FORCE FIX ====================
+
+// Force attach event listeners
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    const angleSlider = document.getElementById("angleSlider");
+    const angleInput = document.getElementById("angleInput");
+    
+    if (angleSlider) {
+      console.log("✅ Attaching angleSlider listener...");
+      angleSlider.addEventListener("input", function() {
+        console.log("🔥 SUDUT DIUBAH KE:", this.value);
+        
+        // Reset simulasi
+        if (isRunning) {
+          isRunning = false;
+          if (animationId) cancelAnimationFrame(animationId);
+          updateStartButton(false);
+        }
+        
+        simulationData = [];
+        currentFrame = 0;
+        clearCanvas(trajCtx);
+        clearCanvas(energyCtx);
+      });
+    }
+    
+    if (angleInput) {
+      angleInput.addEventListener("input", function() {
+        console.log("🔥 SUDUT INPUT DIUBAH KE:", this.value);
+        
+        if (isRunning) {
+          isRunning = false;
+          if (animationId) cancelAnimationFrame(animationId);
+          updateStartButton(false);
+        }
+        
+        simulationData = [];
+        currentFrame = 0;
+        clearCanvas(trajCtx);
+        clearCanvas(energyCtx);
+      });
+    }
+  }, 500);
+});
