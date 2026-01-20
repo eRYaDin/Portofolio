@@ -479,8 +479,8 @@ body {
 
 /* ANIMASI FADE-IN */
 .fade {
-  opacity: 0;
-  transform: translateY(30px);
+  opacity: 1; /* Ubah dari 0 jadi 1 untuk langsung muncul */
+  transform: translateY(0); /* Ubah dari 30px jadi 0 */
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
