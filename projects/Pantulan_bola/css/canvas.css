@@ -1,0 +1,47 @@
+/* ==================== CANVAS CONTAINER ==================== */
+.canvas-container {
+  position: relative;
+  width: 100%;
+}
+
+/* ==================== CANVAS ELEMENTS ==================== */
+canvas {
+  width: 100%;
+  border: 3px solid var(--border-color);
+  border-radius: 4px;
+  display: block;
+  box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== TRAJECTORY CANVAS ==================== */
+#trajectoryCanvas {
+  background: linear-gradient(180deg, var(--canvas-bg-1) 0%, var(--canvas-bg-2) 100%);
+  height: 350px;
+}
+
+/* ==================== ENERGY CANVAS ==================== */
+#energyCanvas {
+  background: var(--stat-bg);
+  height: 250px;
+}
+
+/* ==================== RESPONSIVE CANVAS ==================== */
+@media (max-width: 768px) {
+  #trajectoryCanvas {
+    height: 300px;
+  }
+  
+  #energyCanvas {
+    height: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  #trajectoryCanvas {
+    height: 250px;
+  }
+  
+  #energyCanvas {
+    height: 200px;
+  }
+}
