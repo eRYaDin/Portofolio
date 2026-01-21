@@ -10,15 +10,11 @@ const v0Display = document.getElementById("v0Display");
 const angleSlider = document.getElementById("angleSlider");
 const angleInput = document.getElementById("angleInput");
 const angleDisplay = document.getElementById("angleDisplay");
-const heightSlider = document.getElementById("heightSlider");
-const heightInput = document.getElementById("heightInput");
-const heightDisplay = document.getElementById("heightDisplay");
 const restSlider = document.getElementById("restSlider");
 const restDisplay = document.getElementById("restDisplay");
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
 const themeBtn = document.getElementById("themeBtn");
-const loopCheckbox = document.getElementById("loopCheckbox");
 
 // ==================== INITIALIZATION ====================
 
@@ -59,21 +55,32 @@ function updateBallPreview() {
 // ==================== SLIDER SYNCHRONIZATION ====================
 
 /**
- * Sinkronisasi slider dan input number
+ * 🔥 PERBAIKAN: Sinkronisasi slider dan input number + RESET SIMULASI
  * @param {HTMLInputElement} slider 
  * @param {HTMLInputElement} input 
  * @param {HTMLElement} display 
  * @param {string} suffix 
+ * @param {boolean} shouldResetSimulation - Apakah harus reset simulasi saat berubah
  */
-function syncSliderInput(slider, input, display, suffix = "") {
+function syncSliderInput(slider, input, display, suffix = "", shouldResetSimulation = true) {
   slider.addEventListener("input", () => {
     input.value = slider.value;
     display.textContent = slider.value + suffix;
+    
+    // 🔥 RESET SIMULASI saat parameter berubah
+    if (shouldResetSimulation && typeof parameterBerubah !== 'undefined') {
+      parameterBerubah();
+    }
   });
   
   input.addEventListener("input", () => {
     slider.value = input.value;
     display.textContent = input.value + suffix;
+    
+    // 🔥 RESET SIMULASI saat parameter berubah
+    if (shouldResetSimulation && typeof parameterBerubah !== 'undefined') {
+      parameterBerubah();
+    }
   });
 }
 
@@ -158,20 +165,31 @@ function updateStartButton(isRunning) {
 // ==================== EVENT LISTENERS SETUP ====================
 
 /**
- * Setup semua event listeners
+ * 🔥 PERBAIKAN: Setup semua event listeners + reset simulasi
  */
 function setupEventListeners() {
-  // Ball selection
-  ballSelect.addEventListener("change", updateBallPreview);
+  // Ball selection - reset simulasi saat ganti bola
+  ballSelect.addEventListener("change", () => {
+    updateBallPreview();
+    
+    // Reset simulasi saat ganti bola
+    if (typeof parameterBerubah !== 'undefined') {
+      parameterBerubah();
+    }
+  });
   
-  // Slider synchronization
-  syncSliderInput(v0Slider, v0Input, v0Display, " m/s");
-  syncSliderInput(angleSlider, angleInput, angleDisplay, "°");
-  syncSliderInput(heightSlider, heightInput, heightDisplay, " m");
+  // 🔥 Slider synchronization + RESET SIMULASI
+  syncSliderInput(v0Slider, v0Input, v0Display, " m/s", true);
+  syncSliderInput(angleSlider, angleInput, angleDisplay, "°", true);
   
-  // Restitusi slider (tanpa input number)
+  // 🔥 Restitusi slider (tanpa input number) + RESET SIMULASI
   restSlider.addEventListener("input", () => {
     restDisplay.textContent = restSlider.value;
+    
+    // Reset simulasi saat restitusi berubah
+    if (typeof parameterBerubah !== 'undefined') {
+      parameterBerubah();
+    }
   });
 }
 
@@ -182,19 +200,20 @@ function setupEventListeners() {
  * @returns {Object}
  */
 function getSimulationParams() {
-  return {
+  // Ambil semua parameter dari UI
+  const params = {
     ballIndex: parseInt(ballSelect.value),
     v0: parseFloat(v0Input.value),
     angle: parseFloat(angleInput.value),
-    height: parseFloat(heightInput.value),
-    restitution: parseFloat(restSlider.value)
+    restitution: parseFloat(restSlider.value),
+    height: 0 // Default height
   };
-}
-
-/**
- * Cek apakah mode loop aktif
- * @returns {boolean}
- */
-function isLoopMode() {
-  return loopCheckbox.checked;
+  
+  // 🔥 Cek apakah ada input height
+  const heightInput = document.getElementById("heightInput");
+  if (heightInput) {
+    params.height = parseFloat(heightInput.value) || 0;
+  }
+  
+  return params;
 }
