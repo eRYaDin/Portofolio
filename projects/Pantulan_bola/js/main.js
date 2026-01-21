@@ -13,8 +13,6 @@ let animationId = null;
 let currentFrame = 0;
 let isDarkTheme = false;
 let currentBallIndex = 0;
-let currentV0 = 20;
-let currentAngle = 45;
 
 // ==================== INITIALIZATION ====================
 
@@ -25,6 +23,9 @@ function init() {
   // Setup UI
   initBallSelect();
   setupEventListeners();
+  
+  // 🔥 PERBAIKAN: Setup parameter listeners dari gambar.js
+  setupParameterListeners();
   
   // Setup Canvas
   resizeCanvas(trajectoryCanvas);
@@ -38,20 +39,13 @@ function init() {
     
     // Redraw canvas jika ada data
     if (simulationData.length > 0) {
-      drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme, currentV0, currentAngle);
+      drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme);
       drawEnergyGraph(energyCtx, simulationData, currentFrame, isDarkTheme);
     }
   });
   
-  // Reset otomatis saat parameter berubah
-  v0Slider.addEventListener("input", resetSimulation);
-  v0Input.addEventListener("input", resetSimulation);
-  angleSlider.addEventListener("input", resetSimulation);
-  angleInput.addEventListener("input", resetSimulation);
-  heightSlider.addEventListener("input", resetSimulation);
-  heightInput.addEventListener("input", resetSimulation);
-  restSlider.addEventListener("input", resetSimulation);
-  ballSelect.addEventListener("change", resetSimulation);
+  // 🔥 HAPUS event listener ganda di sini - sudah ada di setupParameterListeners()
+  // JANGAN pakai resetSimulation() langsung, pakai parameterBerubah() dari gambar.js
   
   // Window resize handler
   window.addEventListener("resize", () => {
@@ -60,7 +54,7 @@ function init() {
     
     // Redraw jika ada data
     if (simulationData.length > 0) {
-      drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme, currentV0, currentAngle);
+      drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme);
       drawEnergyGraph(energyCtx, simulationData, currentFrame, isDarkTheme);
     }
   });
@@ -80,22 +74,24 @@ function startSimulation() {
   
   // Ambil parameter dari UI
   const params = getSimulationParams();
-  
-  // PERBAIKAN: Update semua variabel state dengan nilai dari UI
   currentBallIndex = params.ballIndex;
-  currentV0 = params.v0;
-  currentAngle = params.angle; // INI YANG PENTING! Update angle dari input
+  
+  // 🔥 PERBAIKAN: Pastikan semua parameter terkirim dengan benar
+  console.log("🚀 Starting simulation with params:", params);
   
   // Jalankan simulasi fisika
   const result = runSimulation(
     params.ballIndex, 
     params.v0, 
-    params.angle,      // Gunakan params.angle (dari UI)
+    params.angle,      // Sudut dari UI
     params.restitution,
-    params.height
+    params.height || 0  // Default height = 0 jika tidak ada
   );
   
   simulationData = result.data;
+  
+  console.log("✅ Simulation data points:", simulationData.length);
+  console.log("📊 First point:", simulationData[0]);
   
   // Update summary
   updateSummary(result.summary);
@@ -116,6 +112,7 @@ function resetSimulation() {
   isRunning = false;
   if (animationId) {
     cancelAnimationFrame(animationId);
+    animationId = null;
   }
   
   // Reset state
@@ -126,11 +123,12 @@ function resetSimulation() {
   updateStartButton(false);
   resetStats();
   
-  // Clear canvas
+  // Clear canvas dengan benar
   resizeCanvas(trajectoryCanvas);
   resizeCanvas(energyCanvas);
-  trajCtx.clearRect(0, 0, trajectoryCanvas.offsetWidth, trajectoryCanvas.offsetHeight);
-  energyCtx.clearRect(0, 0, energyCanvas.offsetWidth, energyCanvas.offsetHeight);
+  
+  clearCanvas(trajCtx);
+  clearCanvas(energyCtx);
 }
 
 // ==================== ANIMATION LOOP ====================
@@ -147,19 +145,13 @@ function animate() {
   
   // Cek apakah sudah selesai
   if (currentFrame >= simulationData.length) {
-    if (isLoopMode()) {
-      // Loop mode: mulai dari awal
-      currentFrame = 0;
-    } else {
-      // Normal mode: stop
-      currentFrame = simulationData.length - 1;
-      isRunning = false;
-      updateStartButton(false);
-    }
+    currentFrame = simulationData.length - 1;
+    isRunning = false;
+    updateStartButton(false);
   }
   
-  // Gambar trajectory dan energi (gunakan currentV0 dan currentAngle yang sudah diupdate)
-  drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme, currentV0, currentAngle);
+  // 🔥 PERBAIKAN: Gambar tanpa parameter extra yang tidak perlu
+  drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme);
   drawEnergyGraph(energyCtx, simulationData, currentFrame, isDarkTheme);
   
   // Update stats
