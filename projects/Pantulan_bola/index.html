@@ -54,6 +54,12 @@
         </div>
 
         <div class="form-group">
+          <label>Ketinggian Awal <span id="heightDisplay">10 m</span></label>
+          <input type="range" id="heightSlider" min="0" max="20" value="10" step="0.5">
+          <input type="number" id="heightInput" min="0" max="20" value="10" step="0.5">
+        </div>
+
+        <div class="form-group">
           <label>Koefisien Restitusi <span id="restDisplay">0.7</span></label>
           <input type="range" id="restSlider" min="0.1" max="0.95" value="0.7" step="0.05">
         </div>
@@ -68,6 +74,12 @@
         </div>
         <div class="button-group">
           <button class="btn-theme" id="themeBtn">🌙</button>
+        </div>
+        <div class="form-group" style="margin-top: 10px;">
+          <label style="cursor: pointer;">
+            <input type="checkbox" id="loopCheckbox" style="width: auto; margin-right: 8px;">
+            Loop Animasi
+          </label>
         </div>
       </div>
 
@@ -111,15 +123,15 @@
         </div>
         <div class="energy-legend">
           <div class="legend-item">
-            <div class="legend-color legend-ke"></div>
+            <i class="legend-color legend-ke"></i>
             <span>Energi Kinetik (KE)</span>
           </div>
           <div class="legend-item">
-            <div class="legend-color legend-pe"></div>
+            <i class="legend-color legend-pe"></i>
             <span>Energi Potensial (PE)</span>
           </div>
           <div class="legend-item">
-            <div class="legend-color legend-me"></div>
+            <i class="legend-color legend-me"></i>
             <span>Energi Mekanik (ME)</span>
           </div>
         </div>
