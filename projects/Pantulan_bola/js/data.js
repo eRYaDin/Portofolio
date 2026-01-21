@@ -93,6 +93,11 @@ const balls = [
 const G = 9.81;  // Gravitasi bumi (m/s²)
 const DT = 0.01; // Time step untuk simulasi (detik)
 
+// ==================== KONSTANTA UI ====================
+const DEFAULT_Y0 = 10;    // Ketinggian awal default (m)
+const MIN_Y0 = 0;         // Ketinggian minimum (m)
+const MAX_Y0 = 20;        // Ketinggian maksimum (m)
+
 // ==================== PRELOAD IMAGES ====================
 // Load semua gambar bola di awal agar rendering smooth
 const ballImages = {};
