@@ -13,15 +13,6 @@ function resizeCanvas(canvas) {
   ctx.scale(dpr, dpr);
 }
 
-/**
- * Membersihkan canvas dengan benar
- */
-function clearCanvas(ctx) {
-  if (!ctx) return;
-  const canvas = ctx.canvas;
-  ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-}
-
 // ==================== TRAJECTORY CANVAS ====================
 
 /**
@@ -31,8 +22,10 @@ function clearCanvas(ctx) {
  * @param {number} frameIndex 
  * @param {number} ballIndex 
  * @param {boolean} isDark 
+ * @param {number} v0 - Kecepatan awal
+ * @param {number} angleDeg - Sudut peluncuran
  */
-function drawTrajectory(ctx, simulationData, frameIndex, ballIndex, isDark) {
+function drawTrajectory(ctx, simulationData, frameIndex, ballIndex, isDark, v0, angleDeg) {
   const canvas = ctx.canvas;
   const width = canvas.offsetWidth;
   const height = canvas.offsetHeight;
@@ -66,6 +59,12 @@ function drawTrajectory(ctx, simulationData, frameIndex, ballIndex, isDark) {
     const current = simulationData[frameIndex];
     const ballX = toCanvasX(current.x);
     const ballY = toCanvasY(current.y);
+    
+    // Gambar panah arah lemparan di frame pertama
+    if (frameIndex === 0) {
+      const angleRad = angleDeg * Math.PI / 180;
+      drawLaunchVector(ctx, ballX, ballY, v0 * Math.cos(angleRad), v0 * Math.sin(angleRad), isDark);
+    }
     
     gambarBola(ctx, ball, ballX, ballY, ballIndex);
     drawVelocityVector(ctx, ballX, ballY, current.vx, current.vy, isDark);
@@ -179,7 +178,7 @@ function gambarBola(ctx, ball, x, y, ballIndex) {
 }
 
 /**
- * Menggambar vektor kecepatan
+ * Menggambar vektor kecepatan (ORANYE)
  */
 function drawVelocityVector(ctx, x, y, vx, vy, isDark) {
   ctx.strokeStyle = isDark ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)";
@@ -203,6 +202,37 @@ function drawVelocityVector(ctx, x, y, vx, vy, isDark) {
   ctx.moveTo(arrowX, arrowY);
   ctx.lineTo(arrowX - 8 * Math.cos(angle - Math.PI / 6), arrowY + 8 * Math.sin(angle - Math.PI / 6));
   ctx.lineTo(arrowX - 8 * Math.cos(angle + Math.PI / 6), arrowY + 8 * Math.sin(angle + Math.PI / 6));
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+}
+
+/**
+ * Menggambar panah arah lemparan awal (MERAH)
+ */
+function drawLaunchVector(ctx, x, y, vx, vy, isDark) {
+  const scale = 4;
+  
+  ctx.strokeStyle = "#ff5722";
+  ctx.lineWidth = 3;
+  
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + vx * scale, y - vy * scale);
+  ctx.stroke();
+  
+  // Arrow head
+  const arrowX = x + vx * scale;
+  const arrowY = y - vy * scale;
+  const angle = Math.atan2(-vy, vx);
+  
+  ctx.fillStyle = "#ff5722";
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(arrowX, arrowY);
+  ctx.lineTo(arrowX - 10 * Math.cos(angle - Math.PI / 6), arrowY + 10 * Math.sin(angle - Math.PI / 6));
+  ctx.lineTo(arrowX - 10 * Math.cos(angle + Math.PI / 6), arrowY + 10 * Math.sin(angle + Math.PI / 6));
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
@@ -343,113 +373,4 @@ function drawEnergyIndicator(ctx, cx, height, padding, current, toCanvasY, isDar
   drawDot(current.ke, "#f44336");
   drawDot(current.pe, "#2196f3");
   drawDot(current.me, "#4caf50");
-}
-
-// ==================== PARAMETER CHANGE HANDLERS ====================
-
-/**
- * Handler saat parameter berubah
- * Membatalkan simulasi yang sedang berjalan dan reset data
- */
-function parameterBerubah() {
-  console.log("🔄 Parameter berubah - Reset simulasi");
-  
-  // Hentikan animasi jika sedang berjalan
-  if (typeof isRunning !== 'undefined' && isRunning) {
-    isRunning = false;
-    if (typeof animationId !== 'undefined' && animationId) {
-      cancelAnimationFrame(animationId);
-      animationId = null;
-    }
-    if (typeof startBtn !== 'undefined' && startBtn) {
-      startBtn.textContent = "▶ Mulai";
-      startBtn.disabled = false;
-    }
-  }
-  
-  // Invalidate data lama
-  if (typeof simulationData !== 'undefined') {
-    simulationData = [];
-  }
-  if (typeof currentFrame !== 'undefined') {
-    currentFrame = 0;
-  }
-  
-  // Bersihkan canvas
-  if (typeof trajCtx !== 'undefined') {
-    clearCanvas(trajCtx);
-  }
-  if (typeof energyCtx !== 'undefined') {
-    clearCanvas(energyCtx);
-  }
-}
-
-/**
- * Setup event listeners untuk perubahan parameter
- */
-function setupParameterListeners() {
-  console.log("✅ Setting up parameter listeners");
-  
-  // Sudut - reset simulasi saat berubah
-  if (typeof angleSlider !== 'undefined' && angleSlider) {
-    angleSlider.addEventListener("input", () => {
-      console.log("📐 Sudut berubah ke:", angleSlider.value, "°");
-      parameterBerubah();
-    });
-  }
-  if (typeof angleInput !== 'undefined' && angleInput) {
-    angleInput.addEventListener("input", () => {
-      console.log("📐 Sudut input berubah ke:", angleInput.value, "°");
-      parameterBerubah();
-    });
-  }
-  
-  // Kecepatan awal - reset simulasi saat berubah
-  if (typeof v0Slider !== 'undefined' && v0Slider) {
-    v0Slider.addEventListener("input", () => {
-      console.log("🚀 V0 berubah ke:", v0Slider.value, "m/s");
-      parameterBerubah();
-    });
-  }
-  if (typeof v0Input !== 'undefined' && v0Input) {
-    v0Input.addEventListener("input", () => {
-      console.log("🚀 V0 input berubah ke:", v0Input.value, "m/s");
-      parameterBerubah();
-    });
-  }
-  
-  // Restitusi - reset simulasi saat berubah
-  if (typeof restSlider !== 'undefined' && restSlider) {
-    restSlider.addEventListener("input", () => {
-      console.log("⚡ Restitusi berubah ke:", restSlider.value);
-      parameterBerubah();
-    });
-  }
-  
-  // Height - reset simulasi saat berubah (jika ada)
-  const heightSlider = document.getElementById("heightSlider");
-  const heightInput = document.getElementById("heightInput");
-  
-  if (heightSlider) {
-    heightSlider.addEventListener("input", () => {
-      console.log("📏 Height berubah ke:", heightSlider.value, "m");
-      parameterBerubah();
-    });
-  }
-  if (heightInput) {
-    heightInput.addEventListener("input", () => {
-      console.log("📏 Height input berubah ke:", heightInput.value, "m");
-      parameterBerubah();
-    });
-  }
-  
-  // Jenis bola - reset dan preview
-  if (typeof ballSelect !== 'undefined' && ballSelect) {
-    ballSelect.addEventListener("change", () => {
-      console.log("⚽ Bola berubah ke index:", ballSelect.value);
-      parameterBerubah();
-    });
-  }
-  
-  console.log("✅ Parameter listeners setup complete!");
 }
