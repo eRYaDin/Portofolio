@@ -1,6 +1,6 @@
 // ==================== CANVAS RENDERING ENGINE ====================
 
-/**
+/
  * Mengatur ukuran canvas dengan device pixel ratio
  * @param {HTMLCanvasElement} canvas 
  */
