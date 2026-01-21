@@ -10,11 +10,15 @@ const v0Display = document.getElementById("v0Display");
 const angleSlider = document.getElementById("angleSlider");
 const angleInput = document.getElementById("angleInput");
 const angleDisplay = document.getElementById("angleDisplay");
+const heightSlider = document.getElementById("heightSlider");
+const heightInput = document.getElementById("heightInput");
+const heightDisplay = document.getElementById("heightDisplay");
 const restSlider = document.getElementById("restSlider");
 const restDisplay = document.getElementById("restDisplay");
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
 const themeBtn = document.getElementById("themeBtn");
+const loopCheckbox = document.getElementById("loopCheckbox");
 
 // ==================== INITIALIZATION ====================
 
@@ -55,32 +59,21 @@ function updateBallPreview() {
 // ==================== SLIDER SYNCHRONIZATION ====================
 
 /**
- * 🔥 PERBAIKAN: Sinkronisasi slider dan input number + RESET SIMULASI
+ * Sinkronisasi slider dan input number
  * @param {HTMLInputElement} slider 
  * @param {HTMLInputElement} input 
  * @param {HTMLElement} display 
  * @param {string} suffix 
- * @param {boolean} shouldResetSimulation - Apakah harus reset simulasi saat berubah
  */
-function syncSliderInput(slider, input, display, suffix = "", shouldResetSimulation = true) {
+function syncSliderInput(slider, input, display, suffix = "") {
   slider.addEventListener("input", () => {
     input.value = slider.value;
     display.textContent = slider.value + suffix;
-    
-    // 🔥 RESET SIMULASI saat parameter berubah
-    if (shouldResetSimulation && typeof parameterBerubah !== 'undefined') {
-      parameterBerubah();
-    }
   });
   
   input.addEventListener("input", () => {
     slider.value = input.value;
     display.textContent = input.value + suffix;
-    
-    // 🔥 RESET SIMULASI saat parameter berubah
-    if (shouldResetSimulation && typeof parameterBerubah !== 'undefined') {
-      parameterBerubah();
-    }
   });
 }
 
@@ -165,31 +158,20 @@ function updateStartButton(isRunning) {
 // ==================== EVENT LISTENERS SETUP ====================
 
 /**
- * 🔥 PERBAIKAN: Setup semua event listeners + reset simulasi
+ * Setup semua event listeners
  */
 function setupEventListeners() {
-  // Ball selection - reset simulasi saat ganti bola
-  ballSelect.addEventListener("change", () => {
-    updateBallPreview();
-    
-    // Reset simulasi saat ganti bola
-    if (typeof parameterBerubah !== 'undefined') {
-      parameterBerubah();
-    }
-  });
+  // Ball selection
+  ballSelect.addEventListener("change", updateBallPreview);
   
-  // 🔥 Slider synchronization + RESET SIMULASI
-  syncSliderInput(v0Slider, v0Input, v0Display, " m/s", true);
-  syncSliderInput(angleSlider, angleInput, angleDisplay, "°", true);
+  // Slider synchronization
+  syncSliderInput(v0Slider, v0Input, v0Display, " m/s");
+  syncSliderInput(angleSlider, angleInput, angleDisplay, "°");
+  syncSliderInput(heightSlider, heightInput, heightDisplay, " m");
   
-  // 🔥 Restitusi slider (tanpa input number) + RESET SIMULASI
+  // Restitusi slider (tanpa input number)
   restSlider.addEventListener("input", () => {
     restDisplay.textContent = restSlider.value;
-    
-    // Reset simulasi saat restitusi berubah
-    if (typeof parameterBerubah !== 'undefined') {
-      parameterBerubah();
-    }
   });
 }
 
@@ -204,6 +186,15 @@ function getSimulationParams() {
     ballIndex: parseInt(ballSelect.value),
     v0: parseFloat(v0Input.value),
     angle: parseFloat(angleInput.value),
+    height: parseFloat(heightInput.value),
     restitution: parseFloat(restSlider.value)
   };
+}
+
+/**
+ * Cek apakah mode loop aktif
+ * @returns {boolean}
+ */
+function isLoopMode() {
+  return loopCheckbox.checked;
 }
