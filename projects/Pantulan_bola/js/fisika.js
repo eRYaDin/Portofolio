@@ -115,7 +115,7 @@ function calculateEnergy(mass, vx, vy, y) {
   return { ke, pe, me };
 }
 
-/**
+/
  * Menghitung trajectory ideal tanpa pantulan (untuk referensi)
  * @param {number} v0 - Kecepatan awal (m/s)
  * @param {number} angleDeg - Sudut peluncuran (derajat)
