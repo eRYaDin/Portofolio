@@ -10,11 +10,15 @@ const v0Display = document.getElementById("v0Display");
 const angleSlider = document.getElementById("angleSlider");
 const angleInput = document.getElementById("angleInput");
 const angleDisplay = document.getElementById("angleDisplay");
+const heightSlider = document.getElementById("heightSlider");
+const heightInput = document.getElementById("heightInput");
+const heightDisplay = document.getElementById("heightDisplay");
 const restSlider = document.getElementById("restSlider");
 const restDisplay = document.getElementById("restDisplay");
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
 const themeBtn = document.getElementById("themeBtn");
+const loopCheckbox = document.getElementById("loopCheckbox");
 
 // ==================== INITIALIZATION ====================
 
@@ -55,8 +59,7 @@ function updateBallPreview() {
 // ==================== SLIDER SYNCHRONIZATION ====================
 
 /**
- * Sinkronisasi slider dan input number (TANPA reset otomatis)
- * Reset dihandle oleh setupParameterListeners() di gambar.js
+ * Sinkronisasi slider dan input number
  * @param {HTMLInputElement} slider 
  * @param {HTMLInputElement} input 
  * @param {HTMLElement} display 
@@ -155,30 +158,21 @@ function updateStartButton(isRunning) {
 // ==================== EVENT LISTENERS SETUP ====================
 
 /**
- * Setup semua event listeners untuk UI
- * TIDAK termasuk parameter change - itu dihandle oleh setupParameterListeners() di gambar.js
+ * Setup semua event listeners
  */
 function setupEventListeners() {
-  // Ball selection - hanya update preview, reset dihandle gambar.js
+  // Ball selection
   ballSelect.addEventListener("change", updateBallPreview);
   
-  // Slider synchronization (HANYA sync display, TIDAK reset simulasi)
+  // Slider synchronization
   syncSliderInput(v0Slider, v0Input, v0Display, " m/s");
   syncSliderInput(angleSlider, angleInput, angleDisplay, "°");
+  syncSliderInput(heightSlider, heightInput, heightDisplay, " m");
   
   // Restitusi slider (tanpa input number)
   restSlider.addEventListener("input", () => {
     restDisplay.textContent = restSlider.value;
   });
-  
-  // Height slider (jika ada)
-  const heightSlider = document.getElementById("heightSlider");
-  const heightInput = document.getElementById("heightInput");
-  const heightDisplay = document.getElementById("heightDisplay");
-  
-  if (heightSlider && heightInput && heightDisplay) {
-    syncSliderInput(heightSlider, heightInput, heightDisplay, " m");
-  }
 }
 
 // ==================== GETTERS ====================
@@ -188,19 +182,19 @@ function setupEventListeners() {
  * @returns {Object}
  */
 function getSimulationParams() {
-  const params = {
+  return {
     ballIndex: parseInt(ballSelect.value),
     v0: parseFloat(v0Input.value),
     angle: parseFloat(angleInput.value),
-    restitution: parseFloat(restSlider.value),
-    height: 0
+    height: parseFloat(heightInput.value),
+    restitution: parseFloat(restSlider.value)
   };
-  
-  // Cek apakah ada input height
-  const heightInput = document.getElementById("heightInput");
-  if (heightInput && heightInput.value) {
-    params.height = parseFloat(heightInput.value);
-  }
-  
-  return params;
+}
+
+/**
+ * Cek apakah mode loop aktif
+ * @returns {boolean}
+ */
+function isLoopMode() {
+  return loopCheckbox.checked;
 }
