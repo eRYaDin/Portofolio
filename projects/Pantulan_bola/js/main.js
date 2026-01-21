@@ -80,15 +80,17 @@ function startSimulation() {
   
   // Ambil parameter dari UI
   const params = getSimulationParams();
+  
+  // PERBAIKAN: Update semua variabel state dengan nilai dari UI
   currentBallIndex = params.ballIndex;
   currentV0 = params.v0;
-  currentAngle = params.angle;
+  currentAngle = params.angle; // INI YANG PENTING! Update angle dari input
   
   // Jalankan simulasi fisika
   const result = runSimulation(
     params.ballIndex, 
     params.v0, 
-    params.angle, 
+    params.angle,      // Gunakan params.angle (dari UI)
     params.restitution,
     params.height
   );
@@ -156,7 +158,7 @@ function animate() {
     }
   }
   
-  // Gambar trajectory dan energi
+  // Gambar trajectory dan energi (gunakan currentV0 dan currentAngle yang sudah diupdate)
   drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme, currentV0, currentAngle);
   drawEnergyGraph(energyCtx, simulationData, currentFrame, isDarkTheme);
   
