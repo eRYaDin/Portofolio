@@ -6,37 +6,27 @@
  * @param {number} v0 - Kecepatan awal (m/s)
  * @param {number} angleDeg - Sudut peluncuran (derajat)
  * @param {number} restitution - Koefisien restitusi (0-1)
- * @param {number} y0 - Ketinggian awal (m), default 0
+ * @param {number} y0 - Ketinggian awal (m)
  * @returns {Object} - { data, summary }
  */
-function runSimulation(ballIndex, v0, angleDeg, restitution, y0 = 0) {
-  console.log("🔬 Running physics simulation:");
-  console.log("  Ball:", balls[ballIndex].name);
-  console.log("  V0:", v0, "m/s");
-  console.log("  Angle:", angleDeg, "°");
-  console.log("  Restitution:", restitution);
-  console.log("  Initial Height:", y0, "m");
-  
+function runSimulation(ballIndex, v0, angleDeg, restitution, y0) {
   const ball = balls[ballIndex];
-  const angle = angleDeg * Math.PI / 180; // KONVERSI DERAJAT KE RADIAN
+  const angle = angleDeg * Math.PI / 180;
   const mass = ball.mass;
+
   const simulationData = [];
-  
   let t = 0;
   let x = 0;
   let y = y0; // Mulai dari ketinggian y0
-  let vx = v0 * Math.cos(angle); // GUNAKAN SUDUT YANG BENAR
-  let vy = v0 * Math.sin(angle); // GUNAKAN SUDUT YANG BENAR
+  let vx = v0 * Math.cos(angle);
+  let vy = v0 * Math.sin(angle);
   let bounces = 0;
   let maxHeight = y0; // Max height minimal = ketinggian awal
   let isBouncing = true;
-  
+
   const maxIterations = 50000;
   let iteration = 0;
-  
-  console.log("  Initial Vx:", vx.toFixed(2), "m/s");
-  console.log("  Initial Vy:", vy.toFixed(2), "m/s");
-  
+
   while (iteration < maxIterations) {
     iteration++;
     
@@ -45,7 +35,7 @@ function runSimulation(ballIndex, v0, angleDeg, restitution, y0 = 0) {
     const ke = 0.5 * mass * speed * speed;
     const pe = mass * G * Math.max(0, y);
     const me = ke + pe;
-    
+
     // Simpan data frame
     simulationData.push({ 
       t, 
@@ -58,12 +48,12 @@ function runSimulation(ballIndex, v0, angleDeg, restitution, y0 = 0) {
       pe, 
       me 
     });
-    
+
     // Update max height
     if (y > maxHeight) {
       maxHeight = y;
     }
-    
+
     // Update velocity (gravitasi)
     vy -= G * DT;
     
@@ -71,7 +61,7 @@ function runSimulation(ballIndex, v0, angleDeg, restitution, y0 = 0) {
     x += vx * DT;
     y += vy * DT;
     t += DT;
-    
+
     // Deteksi pantulan dengan tanah
     if (y <= 0 && vy < 0) {
       y = 0;
@@ -84,26 +74,18 @@ function runSimulation(ballIndex, v0, angleDeg, restitution, y0 = 0) {
         isBouncing = false;
       }
     }
-    
+
     // Stop jika bola sudah berhenti
     if (!isBouncing && Math.abs(vx) < 0.01) {
       break;
     }
-    
+
     // Safety break untuk waktu terlalu lama
     if (t > 100) {
       break;
     }
   }
-  
-  console.log("✅ Simulation finished:");
-  console.log("  Iterations:", iteration);
-  console.log("  Data points:", simulationData.length);
-  console.log("  Max height:", maxHeight.toFixed(2), "m");
-  console.log("  Total distance:", x.toFixed(2), "m");
-  console.log("  Flight time:", t.toFixed(2), "s");
-  console.log("  Bounces:", bounces);
-  
+
   // Return data dan summary
   return {
     data: simulationData,
