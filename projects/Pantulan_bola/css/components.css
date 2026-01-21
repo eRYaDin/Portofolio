@@ -13,6 +13,12 @@ input[type="number"] {
   box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.1);
 }
 
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
 select:focus, 
 input[type="number"]:focus {
   outline: none;
@@ -185,16 +191,17 @@ button {
 }
 
 .legend-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
 }
 
 .legend-color {
-  width: 20px;
+  width: 18px;
   height: 4px;
-  border: 2px solid var(--border-color);
+  display: inline-block;
+  border: none;
 }
 
 .legend-ke { background: #f44336; }
