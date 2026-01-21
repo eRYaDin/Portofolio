@@ -6,9 +6,10 @@
  * @param {number} v0 - Kecepatan awal (m/s)
  * @param {number} angleDeg - Sudut peluncuran (derajat)
  * @param {number} restitution - Koefisien restitusi (0-1)
+ * @param {number} y0 - Ketinggian awal (m)
  * @returns {Object} - { data, summary }
  */
-function runSimulation(ballIndex, v0, angleDeg, restitution) {
+function runSimulation(ballIndex, v0, angleDeg, restitution, y0) {
   const ball = balls[ballIndex];
   const angle = angleDeg * Math.PI / 180;
   const mass = ball.mass;
@@ -16,11 +17,11 @@ function runSimulation(ballIndex, v0, angleDeg, restitution) {
   const simulationData = [];
   let t = 0;
   let x = 0;
-  let y = 0.01; // Mulai sedikit di atas tanah
+  let y = y0; // Mulai dari ketinggian y0
   let vx = v0 * Math.cos(angle);
   let vy = v0 * Math.sin(angle);
   let bounces = 0;
-  let maxHeight = 0;
+  let maxHeight = y0; // Max height minimal = ketinggian awal
   let isBouncing = true;
 
   const maxIterations = 50000;
