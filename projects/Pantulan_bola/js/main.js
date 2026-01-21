@@ -13,6 +13,8 @@ let animationId = null;
 let currentFrame = 0;
 let isDarkTheme = false;
 let currentBallIndex = 0;
+let currentV0 = 20;
+let currentAngle = 45;
 
 // ==================== INITIALIZATION ====================
 
@@ -23,9 +25,6 @@ function init() {
   // Setup UI
   initBallSelect();
   setupEventListeners();
-  
-  // 🔥 PERBAIKAN 1: Setup parameter listeners (INI YANG HILANG!)
-  setupParameterListeners();
   
   // Setup Canvas
   resizeCanvas(trajectoryCanvas);
@@ -39,10 +38,20 @@ function init() {
     
     // Redraw canvas jika ada data
     if (simulationData.length > 0) {
-      drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme);
+      drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme, currentV0, currentAngle);
       drawEnergyGraph(energyCtx, simulationData, currentFrame, isDarkTheme);
     }
   });
+  
+  // Reset otomatis saat parameter berubah
+  v0Slider.addEventListener("input", resetSimulation);
+  v0Input.addEventListener("input", resetSimulation);
+  angleSlider.addEventListener("input", resetSimulation);
+  angleInput.addEventListener("input", resetSimulation);
+  heightSlider.addEventListener("input", resetSimulation);
+  heightInput.addEventListener("input", resetSimulation);
+  restSlider.addEventListener("input", resetSimulation);
+  ballSelect.addEventListener("change", resetSimulation);
   
   // Window resize handler
   window.addEventListener("resize", () => {
@@ -51,7 +60,7 @@ function init() {
     
     // Redraw jika ada data
     if (simulationData.length > 0) {
-      drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme);
+      drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme, currentV0, currentAngle);
       drawEnergyGraph(energyCtx, simulationData, currentFrame, isDarkTheme);
     }
   });
@@ -72,13 +81,16 @@ function startSimulation() {
   // Ambil parameter dari UI
   const params = getSimulationParams();
   currentBallIndex = params.ballIndex;
+  currentV0 = params.v0;
+  currentAngle = params.angle;
   
-  // 🔥 PERBAIKAN 2: Jalankan simulasi fisika dengan parameter baru
+  // Jalankan simulasi fisika
   const result = runSimulation(
     params.ballIndex, 
     params.v0, 
     params.angle, 
-    params.restitution
+    params.restitution,
+    params.height
   );
   
   simulationData = result.data;
@@ -95,14 +107,13 @@ function startSimulation() {
 }
 
 /**
- * 🔥 PERBAIKAN 3: Reset simulasi yang benar (sudah sesuai dengan gambar.js)
+ * Reset simulasi ke kondisi awal
  */
 function resetSimulation() {
   // Stop animasi
   isRunning = false;
   if (animationId) {
     cancelAnimationFrame(animationId);
-    animationId = null;
   }
   
   // Reset state
@@ -113,12 +124,11 @@ function resetSimulation() {
   updateStartButton(false);
   resetStats();
   
-  // Resize dan clear canvas dengan benar
+  // Clear canvas
   resizeCanvas(trajectoryCanvas);
   resizeCanvas(energyCanvas);
-  
-  clearCanvas(trajCtx);
-  clearCanvas(energyCtx);
+  trajCtx.clearRect(0, 0, trajectoryCanvas.offsetWidth, trajectoryCanvas.offsetHeight);
+  energyCtx.clearRect(0, 0, energyCanvas.offsetWidth, energyCanvas.offsetHeight);
 }
 
 // ==================== ANIMATION LOOP ====================
@@ -135,13 +145,19 @@ function animate() {
   
   // Cek apakah sudah selesai
   if (currentFrame >= simulationData.length) {
-    currentFrame = simulationData.length - 1;
-    isRunning = false;
-    updateStartButton(false);
+    if (isLoopMode()) {
+      // Loop mode: mulai dari awal
+      currentFrame = 0;
+    } else {
+      // Normal mode: stop
+      currentFrame = simulationData.length - 1;
+      isRunning = false;
+      updateStartButton(false);
+    }
   }
   
   // Gambar trajectory dan energi
-  drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme);
+  drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme, currentV0, currentAngle);
   drawEnergyGraph(energyCtx, simulationData, currentFrame, isDarkTheme);
   
   // Update stats
@@ -161,48 +177,3 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
-// ==================== DEBUG & FORCE FIX ====================
-
-// Force attach event listeners
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    const angleSlider = document.getElementById("angleSlider");
-    const angleInput = document.getElementById("angleInput");
-    
-    if (angleSlider) {
-      console.log("✅ Attaching angleSlider listener...");
-      angleSlider.addEventListener("input", function() {
-        console.log("🔥 SUDUT DIUBAH KE:", this.value);
-        
-        // Reset simulasi
-        if (isRunning) {
-          isRunning = false;
-          if (animationId) cancelAnimationFrame(animationId);
-          updateStartButton(false);
-        }
-        
-        simulationData = [];
-        currentFrame = 0;
-        clearCanvas(trajCtx);
-        clearCanvas(energyCtx);
-      });
-    }
-    
-    if (angleInput) {
-      angleInput.addEventListener("input", function() {
-        console.log("🔥 SUDUT INPUT DIUBAH KE:", this.value);
-        
-        if (isRunning) {
-          isRunning = false;
-          if (animationId) cancelAnimationFrame(animationId);
-          updateStartButton(false);
-        }
-        
-        simulationData = [];
-        currentFrame = 0;
-        clearCanvas(trajCtx);
-        clearCanvas(energyCtx);
-      });
-    }
-  }, 500);
-});
