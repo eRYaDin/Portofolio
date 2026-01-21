@@ -1,4 +1,4 @@
-// ==================== PHYSICS SIMULATION ENGINE ====================
+// ==================== PHYSICS SIMULATION ENGINE ===================
 
 /**
  * Menjalankan simulasi fisika projectile motion dengan bouncing
