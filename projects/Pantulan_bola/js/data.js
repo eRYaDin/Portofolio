@@ -42,14 +42,14 @@ const balls = [
     name: "Bola Voli",
     mass: 0.27, // kg
     diameter: 0.21, // m
-    image: "assets/voli.png",
+    image: "assets/voly.png",
     scale: 1.5
   },
   {
     name: "Bola Sepak",
     mass: 0.43, // kg
     diameter: 0.22, // m
-    image: "assets/sepakbola.png",
+    image: "assets/bolasepak.png",
     scale: 1.6
   },
   {
