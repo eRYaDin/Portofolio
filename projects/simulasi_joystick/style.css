@@ -1,740 +1,842 @@
-/* ===== RESET ===== */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* OPTIMASI ANDROID - HAPUS HIGHLIGHT */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
-/* ===== CSS VARIABLES ===== */
+/* VARIABEL CSS UNTUK MODE GELAP & AKSEN */
 :root {
-  /* Light Mode */
-  --bg-color: #f5f7fa;
-  --hero-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --card-bg: #ffffff;
-  --text-color: #1a1a1a;
-  --text-secondary: #666666;
-  --border-color: #2c3e50;
-  --shadow-color: #2c3e50;
-  --accent-hall: #3498db;
-  --accent-tmr: #2ecc71;
-  --accent-analog: #e67e22;
-  --accent-danger: #e74c3c;
-  --accent-warning: #f39c12;
-  
-  /* Spacing */
-  --space-xs: 8px;
-  --space-sm: 16px;
-  --space-md: 24px;
-  --space-lg: 40px;
-  --space-xl: 60px;
-  --space-2xl: 100px;
-  
-  /* Borders & Shadows */
-  --border-thick: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --shadow-sm: 4px 4px 0px var(--shadow-color);
-  --shadow-md: 8px 8px 0px var(--shadow-color);
-  --shadow-lg: 12px 12px 0px var(--shadow-color);
-  --shadow-xl: 16px 16px 0px var(--shadow-color);
-  
-  /* Transitions */
-  --transition: all 0.3s ease;
+  --warna-bg: #f2f5ff;
+  --hero-bg: linear-gradient(135deg, #e0e7ff, #fdf2f8);
+  --warna-kartu: #ffffff;
+  --warna-teks: #222;
+  --warna-border: #111;
+  --warna-bayangan: #111;
+  --warna-subjudul: #ffffff;
+  --warna-footer: #ffffff;
+  --warna-nav: rgba(255, 255, 255, 0.9);
+  --transisi: all 0.3s ease;
+  --warna-aksen: #007bff;
+  --warna-pengajaran: #f8f9fa;
 }
 
-/* ===== DARK MODE ===== */
+/* VARIABEL MODE GELAP */
 [data-theme="dark"] {
-  --bg-color: #0f172a;
-  --hero-bg: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  --card-bg: #1e293b;
-  --text-color: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --border-color: #64748b;
-  --shadow-color: #475569;
-  --accent-hall: #60a5fa;
-  --accent-tmr: #4ade80;
-  --accent-analog: #fb923c;
-  --accent-danger: #f87171;
-  --accent-warning: #fbbf24;
+  --warna-bg: #1a1a2e;
+  --hero-bg: linear-gradient(135deg, #16213e, #0f3460);
+  --warna-kartu: #0f3460;
+  --warna-teks: #e0e7ff;
+  --warna-border: #e0e7ff;
+  --warna-bayangan: #e0e7ff;
+  --warna-subjudul: #16213e;
+  --warna-footer: #16213e;
+  --warna-nav: rgba(26, 26, 46, 0.9);
+  --warna-aksen: #a0c4ff;
+  --warna-pengajaran: #1e2a3c;
 }
 
-/* ===== BODY ===== */
+/* BODY */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: var(--bg-color);
-  color: var(--text-color);
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: var(--warna-bg);
+  color: var(--warna-teks);
   line-height: 1.6;
+  transition: var(--transisi);
+  /* OPTIMASI TOUCH SCROLLING */
+  -webkit-overflow-scrolling: touch;
   overflow-x: hidden;
-  transition: var(--transition);
 }
 
-/* ===== START SCREEN ===== */
-.start-screen {
+/* NAVIGASI */
+.navbar {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: var(--hero-bg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: var(--space-md);
+  width: 100%;
+  background: var(--warna-nav);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--warna-border);
+  z-index: 100;
+  transition: var(--transisi);
 }
 
-.start-content {
-  text-align: center;
-  max-width: 600px;
-}
-
-.start-title {
-  font-size: 3.5rem;
-  font-weight: 900;
-  color: white;
-  margin-bottom: var(--space-md);
-  text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
-  line-height: 1.1;
-}
-
-.start-subtitle {
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: var(--space-xl);
-}
-
-.start-buttons {
-  display: flex;
-  gap: var(--space-sm);
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: var(--space-lg);
-}
-
-.btn-start {
-  background: white;
-  color: #667eea;
-  border: none;
-  padding: var(--space-sm) var(--space-lg);
-  font-size: 1.1rem;
-  font-weight: 700;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  box-shadow: 0 8px 0px rgba(0, 0, 0, 0.2);
-  transition: var(--transition);
-}
-
-.btn-start:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 0px rgba(0, 0, 0, 0.2);
-}
-
-.btn-start:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 0px rgba(0, 0, 0, 0.2);
-}
-
-.back-to-portfolio {
-  display: inline-block;
-  margin-top: var(--space-lg);
-  color: rgba(255, 255, 255, 0.9);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1rem;
-  padding: var(--space-xs) var(--space-md);
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  border-radius: var(--radius-md);
-  transition: var(--transition);
-}
-
-.back-to-portfolio:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.9);
-  transform: translateX(-4px);
-}
-
-/* ===== HEADER ===== */
-.app-header {
-  background: var(--card-bg);
-  border-bottom: var(--border-thick) solid var(--border-color);
-  padding: var(--space-sm) var(--space-md);
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: var(--shadow-sm);
 }
 
-.back-link {
-  color: var(--accent-hall);
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  transition: var(--transition);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.back-link:hover {
-  background: var(--bg-color);
-  transform: translateX(-4px);
-}
-
-.app-title {
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: var(--text-color);
-  flex: 1;
-  text-align: center;
-}
-
-.header-actions {
-  display: flex;
-  gap: var(--space-sm);
-  align-items: center;
-}
-
-.theme-toggle-btn {
-  background: var(--bg-color);
-  border: 3px solid var(--border-color);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: 999px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-  color: var(--text-color);
-  font-size: 0.9rem;
-}
-
-.theme-toggle-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--shadow-color);
-}
-
-.btn-game {
-  background: var(--accent-danger);
-  color: white;
-  border: 3px solid var(--border-color);
-  padding: var(--space-xs) var(--space-md);
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-  font-size: 0.9rem;
-}
-
-.btn-game:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--shadow-color);
-}
-
-/* ===== MAIN CONTAINER ===== */
-.main-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: var(--space-xl) var(--space-md);
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: var(--space-xl);
-}
-
-.section-title {
-  font-size: 2.5rem;
-  font-weight: 900;
-  margin-bottom: var(--space-sm);
-  color: var(--text-color);
-}
-
-.section-description {
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-/* ===== SENSOR GRID ===== */
-.sensors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: var(--space-lg);
-  margin-bottom: var(--space-2xl);
-}
-
-/* ===== SENSOR CARDS ===== */
-.sensor-card {
-  background: var(--card-bg);
-  border: var(--border-thick) solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-lg);
-  transition: var(--transition);
-}
-
-.sensor-card:hover {
-  transform: translate(-4px, -4px);
-  box-shadow: var(--shadow-xl);
-}
-
-.sensor-card.hall {
-  border-color: var(--accent-hall);
-}
-
-.sensor-card.tmr {
-  border-color: var(--accent-tmr);
-}
-
-.sensor-card.analog {
-  border-color: var(--accent-analog);
-}
-
-.sensor-header {
-  text-align: center;
-  margin-bottom: var(--space-md);
-}
-
-.sensor-title {
+.nav-title {
   font-size: 1.5rem;
   font-weight: 800;
-  margin-bottom: var(--space-xs);
-  color: var(--text-color);
+  color: var(--warna-teks);
+  /* AREA TOUCH LEBIH BESAR */
+  padding: 10px;
+  margin: -10px;
 }
 
-.sensor-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.sensor-card.hall .sensor-badge {
-  background: var(--accent-hall);
-  color: white;
-}
-
-.sensor-card.tmr .sensor-badge {
-  background: var(--accent-tmr);
-  color: white;
-}
-
-.sensor-card.analog .sensor-badge {
-  background: var(--accent-analog);
-  color: white;
-}
-
-.sensor-description {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  text-align: center;
-  margin-bottom: var(--space-md);
-}
-
-/* ===== JOYSTICK ===== */
-.joystick-wrapper {
+.nav-menu {
+  list-style: none;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
+  gap: 20px;
 }
 
-canvas {
-  border: 3px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-color);
-  cursor: grab;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+.nav-menu li {
+  position: relative;
 }
 
-canvas:active {
-  cursor: grabbing;
-}
-
-.joystick-label {
-  font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text-color);
-  background: var(--bg-color);
-  padding: var(--space-xs) var(--space-md);
-  border-radius: var(--radius-sm);
-  border: 2px solid var(--border-color);
-  min-width: 280px;
-  text-align: center;
-}
-
-.sensor-stats {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  font-weight: 600;
-  text-align: center;
-  padding: var(--space-xs);
-  background: var(--bg-color);
-  border-radius: var(--radius-sm);
-  border: 2px solid var(--border-color);
-}
-
-/* ===== GRAPH ===== */
-.graph-wrapper {
-  background: var(--card-bg);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  border: 3px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-  height: 300px;
-}
-
-.graph-wrapper canvas {
-  border: none !important;
-  box-shadow: none !important;
-  background: transparent !important;
-}
-
-/* ===== COMPARISON SECTION ===== */
-.comparison-section {
-  background: var(--card-bg);
-  border: var(--border-thick) solid var(--accent-warning);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xl);
-  box-shadow: var(--shadow-lg);
-  margin-bottom: var(--space-2xl);
-}
-
-.comparison-section:hover {
-  transform: translate(-4px, -4px);
-  box-shadow: var(--shadow-xl);
-}
-
-.comparison-labels {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-
-/* ===== GAME SECTION ===== */
-.game-section {
-  background: var(--card-bg);
-  border: var(--border-thick) solid var(--accent-danger);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xl);
-  box-shadow: var(--shadow-lg);
-}
-
-.game-header {
-  text-align: center;
-  margin-bottom: var(--space-lg);
-}
-
-.score-display {
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--accent-warning);
-  padding: var(--space-sm) var(--space-lg);
-  background: var(--bg-color);
-  border: var(--border-thick) solid var(--border-color);
-  border-radius: var(--radius-md);
-  display: inline-block;
-  box-shadow: var(--shadow-sm);
-}
-
-.game-layout {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  gap: var(--space-md);
-  align-items: start;
-}
-
-.mini-joysticks {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-.mini-joystick-card {
-  background: var(--bg-color);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  border: 3px solid var(--border-color);
-  box-shadow: var(--shadow-md);
-  text-align: center;
-}
-
-.mini-joystick-title {
-  font-size: 0.9rem;
-  font-weight: 700;
-  margin-bottom: var(--space-sm);
-  color: var(--text-color);
-}
-
-.game-canvas-wrapper {
-  background: var(--bg-color);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  border: var(--border-thick) solid var(--border-color);
-  box-shadow: var(--shadow-md);
-}
-
-#game-canvas {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: var(--radius-sm);
-}
-
-/* ===== BUTTONS ===== */
-.btn {
-  padding: var(--space-sm) var(--space-lg);
-  font-size: 1rem;
-  font-weight: 700;
-  border: 3px solid var(--border-color);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  box-shadow: var(--shadow-md);
-  transition: var(--transition);
+.nav-menu a {
+  color: var(--warna-teks);
   text-decoration: none;
+  font-weight: 600;
+  transition: var(--transisi);
+  /* AREA TOUCH LEBIH BESAR */
+  padding: 12px 16px;
+  display: block;
+  border-radius: 8px;
+}
+
+.nav-menu a:hover,
+.nav-menu a:active {
+  color: var(--warna-aksen);
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: var(--warna-kartu);
+  border: 2px solid var(--warna-border);
+  border-radius: 8px;
+  box-shadow: 4px 4px 0px var(--warna-bayangan);
+  min-width: 160px;
+  z-index: 1;
+  /* OPTIMASI ANDROID */
+  margin-top: 5px;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  color: var(--warna-teks);
+  padding: 14px 18px;
+  text-decoration: none;
+  display: block;
+  transition: var(--transisi);
+  /* AREA TOUCH LEBIH BESAR */
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-content a:hover,
+.dropdown-content a:active {
+  background: var(--warna-bg);
+}
+
+.tombol-tema {
+  background: var(--warna-kartu);
+  border: 2px solid var(--warna-border);
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 3px 3px 0px var(--warna-bayangan);
+  transition: var(--transisi);
+  color: var(--warna-teks);
+  /* AREA TOUCH LEBIH BESAR */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* HAPUS USER SELECT */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.tombol-tema:hover,
+.tombol-tema:active {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px var(--warna-bayangan);
+}
+
+/* HERO (BERANDA – DOMINAN) */
+.hero {
+  background: var(--hero-bg);
+  padding: 140px 20px 100px;
+  text-align: center;
+  transition: var(--transisi);
+}
+
+.hero-content {
+  max-width: 720px;
+  margin: auto;
+}
+
+.gambar-profil {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid var(--warna-kartu);
+  background: var(--warna-kartu);
+  box-shadow: 8px 8px 0px var(--warna-bayangan);
+  margin-bottom: 30px;
+  transition: var(--transisi);
+  /* OPTIMASI LOADING GAMBAR */
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin-bottom: 15px;
+  transition: var(--transisi);
+}
+
+.subjudul {
+  font-size: 1.1rem;
+  color: var(--warna-teks);
+  background: var(--warna-subjudul);
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 999px;
+  box-shadow: 4px 4px 0px var(--warna-bayangan);
+  margin-bottom: 20px;
+  transition: var(--transisi);
+}
+
+.deskripsi-hero {
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--warna-teks);
+  opacity: 0.8;
+}
+
+/* BAGIAN (HIERARKI & SPASI) */
+.bagian {
+  max-width: 1000px;
+  margin: 100px auto;
+  padding: 0 20px;
+  transition: var(--transisi);
+}
+
+.bagian h2 {
+  font-size: 2rem;
+  margin-bottom: 40px;
+  font-weight: 900;
+  transition: var(--transisi);
+}
+
+.sub-bagian h3 {
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+  font-weight: 800;
+}
+
+/* SPASI ANTAR PROYEK SAYA & PROYEK PENGAJARAN */
+#proyek-saya .grid-proyek {
+  margin-bottom: 100px;
+}
+
+#proyek-pengajaran h3 {
+  margin-top: 40px;
+}
+
+/* TAUTAN PROYEK (UNTUK KARTU YANG BISA DIKLIK) */
+.tautan-proyek {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  /* OPTIMASI TOUCH */
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+/* PROYEK (HIERARKI BERAT, PEMBEDA PENGAJARAN) */
+.grid-proyek {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.kartu-proyek {
+  background: var(--warna-kartu);
+  padding: 40px 30px;
+  border-radius: 20px;
+  border: 4px solid var(--warna-border);
+  box-shadow: 10px 10px 0px var(--warna-bayangan);
+  text-align: center;
+  transition: var(--transisi);
+  /* AREA TOUCH LEBIH RESPONSIF */
+  cursor: pointer;
+  position: relative;
+  /* HAPUS USER SELECT */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.kartu-proyek:hover,
+.kartu-proyek:active {
+  transform: translate(-8px, -8px);
+  box-shadow: 16px 16px 0px var(--warna-bayangan);
+}
+
+.kartu-proyek p {
+  font-weight: 800;
+  margin-bottom: 10px;
+  transition: var(--transisi);
+}
+
+.kartu-proyek span {
+  font-size: 1rem;
+  color: var(--warna-teks);
+  opacity: 0.7;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.kartu-proyek small {
+  font-size: 0.9rem;
+  color: var(--warna-aksen);
+  font-weight: 700;
+}
+
+/* KARTU PENGAJARAN (PEMBEDA VISUAL) */
+.kartu-pengajaran {
+  background: var(--warna-pengajaran);
+  border: 3px solid var(--warna-aksen);
+  box-shadow: 8px 8px 0px var(--warna-aksen);
+  padding: 35px 25px;
+}
+
+.kartu-pengajaran:hover,
+.kartu-pengajaran:active {
+  transform: translate(-6px, -6px);
+  box-shadow: 14px 14px 0px var(--warna-aksen);
+}
+
+/* LINI MASA (TIMELINE) */
+.timeline {
+  position: relative;
+  max-width: 900px;
+  margin: 60px auto;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--warna-border);
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  width: 50%;
+  padding: 20px 40px;
+  position: relative;
+}
+
+.timeline-item.kiri {
+  left: 0;
+  text-align: right;
+}
+
+.timeline-item.kanan {
+  left: 50%;
+  text-align: left;
+}
+
+/* TITIK PADA TIMELINE */
+.timeline-item::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: var(--warna-aksen);
+  border: 4px solid var(--warna-kartu);
+  border-radius: 50%;
+  top: 30px;
+  z-index: 1;
+}
+
+.timeline-item.kiri::after {
+  right: -10px;
+}
+
+.timeline-item.kanan::after {
+  left: -10px;
+}
+
+/* KARTU TIMELINE */
+.kartu-timeline {
+  background: var(--warna-kartu);
+  border: 4px solid var(--warna-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 8px 8px 0 var(--warna-bayangan);
+  transition: var(--transisi);
+  /* HAPUS USER SELECT */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.kartu-timeline:hover,
+.kartu-timeline:active {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0 var(--warna-bayangan);
+}
+
+/* KARTU TIMELINE - TEKS ATAS */
+.kartu-timeline h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: var(--warna-teks);
+  text-align: center;
+}
+
+.kartu-timeline .tahun {
+  font-size: 0.95rem;
+  color: var(--warna-aksen);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.kartu-timeline .jurusan {
+  font-size: 0.95rem;
+  color: var(--warna-teks);
+  opacity: 0.8;
+  text-align: center;
+}
+
+.kartu-timeline p {
+  font-size: 1rem;
+  color: var(--warna-teks);
+  opacity: 0.8;
+}
+
+/* GARIS PEMISAH KECIL */
+.pemisah-kecil {
+  width: 40px;
+  height: 3px;
+  background: var(--warna-aksen);
+  margin: 14px auto;
+  border-radius: 999px;
+  border: none;
+}
+
+/* PKL SECTION */
+.pkl {
+  margin-top: 16px;
+  text-align: left;
+}
+
+.pkl h4 {
+  text-align: left;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--warna-aksen);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px dashed var(--warna-border);
+}
+
+/* ITEM PKL - TANPA BERANTEM */
+.pkl-item {
+  background: var(--warna-bg);
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: none;
+}
+
+/* HEADER PKL */
+.pkl-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.pkl-header strong {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--warna-teks);
+}
+
+.pkl-header span {
+  font-size: 0.85rem;
+  color: var(--warna-aksen);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* LIST PKL */
+.pkl-item ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.pkl-item li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  opacity: 0.85;
+  margin-bottom: 4px;
+  color: var(--warna-teks);
+}
+
+/* ANIMASI FADE-IN */
+.fade {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* TENTANG (TENANG) */
+.kartu-tentang {
+  background: var(--warna-kartu);
+  padding: 40px;
+  border-radius: 20px;
+  border: 4px solid var(--warna-border);
+  box-shadow: 10px 10px 0px var(--warna-bayangan);
+  max-width: 720px;
+  transition: var(--transisi);
+}
+
+/* KEAHLIAN (TENANG, AKSEN) */
+.wadah-keahlian {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  max-width: 600px;
+}
+
+.item-keahlian {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nama-keahlian {
+  font-weight: 700;
+  min-width: 120px;
+}
+
+.bar-progress {
+  flex: 1;
+  height: 24px;
+  background: var(--warna-bg);
+  border: 3px solid var(--warna-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 3px 3px 0px var(--warna-bayangan);
+}
+
+.isi-progress {
+  height: 100%;
+  background: var(--warna-aksen);
+  transition: width 0.5s ease;
+}
+
+.persen-keahlian {
+  font-weight: 700;
+  min-width: 40px;
+  text-align: right;
+  color: var(--warna-aksen);
+}
+
+/* KONTAK (TENANG) */
+.kartu-kontak {
+  background: var(--warna-kartu);
+  padding: 40px;
+  border-radius: 20px;
+  border: 4px solid var(--warna-border);
+  box-shadow: 10px 10px 0px var(--warna-bayangan);
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+  transition: var(--transisi);
+}
+
+.kartu-kontak a {
+  color: var(--warna-aksen);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.kartu-kontak a:hover,
+.kartu-kontak a:active {
+  text-decoration: underline;
+}
+
+/* TOMBOL WHATSAPP & INSTAGRAM */
+.tombol-wa,
+.tombol-ig {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 3px solid var(--warna-border);
+  box-shadow: 4px 4px 0 var(--warna-bayangan);
+  transition: var(--transisi);
+  /* AREA TOUCH LEBIH BESAR */
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* HAPUS USER SELECT */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* WhatsApp */
+.tombol-wa {
+  background: #25d366;
+  color: #fff;
+}
+
+.tombol-wa:hover,
+.tombol-wa:active {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0 var(--warna-bayangan);
+}
+
+/* Instagram */
+.tombol-ig {
+  background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af);
+  color: #fff;
+}
+
+.tombol-ig:hover,
+.tombol-ig:active {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0 var(--warna-bayangan);
+}
+
+/* Link GitHub */
+.tautan-github {
+  color: var(--warna-aksen);
+  text-decoration: none;
+  font-weight: 700;
+  /* AREA TOUCH LEBIH BESAR */
+  padding: 8px;
   display: inline-block;
 }
 
-.btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--shadow-lg);
+.tautan-github:hover,
+.tautan-github:active {
+  text-decoration: underline;
 }
 
-.btn:active {
-  transform: translate(0, 0);
-  box-shadow: var(--shadow-sm);
-}
-
-.btn-danger {
-  background: var(--accent-danger);
-  color: white;
-}
-
-.btn-block {
-  width: 100%;
+/* FOOTER */
+footer {
+  margin-top: 120px;
+  padding: 40px;
   text-align: center;
+  background: var(--warna-footer);
+  border-top: 4px solid var(--warna-border);
+  font-size: 1rem;
+  transition: var(--transisi);
 }
 
-/* ===== UTILITY ===== */
-.hidden {
-  display: none !important;
-}
-
-.text-center {
-  text-align: center;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
-  .game-layout {
-    grid-template-columns: 1fr;
-  }
-  
-  .mini-joysticks {
-    flex-direction: row;
-    overflow-x: auto;
-    padding-bottom: var(--space-sm);
-  }
-  
-  .sensors-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .comparison-labels {
-    grid-template-columns: 1fr;
-  }
-  
-  .app-header {
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-  }
-  
-  .app-title {
-    order: -1;
-    flex-basis: 100%;
-    text-align: center;
-  }
-}
-
+/* ============================================ */
+/* RESPONSIVE (VISUAL MOBILE) - OPTIMASI ANDROID */
+/* ============================================ */
 @media (max-width: 768px) {
-  .start-title {
-    font-size: 2.5rem;
+  .hero {
+    padding: 120px 20px 80px;
   }
   
-  .section-title {
+  .gambar-profil {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .hero h1 {
     font-size: 2rem;
   }
   
-  .sensor-card {
-    padding: var(--space-md);
-  }
-  
-  .header-actions {
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-  }
-  
-  .theme-toggle-btn,
-  .btn-game {
-    font-size: 0.85rem;
+  .subjudul {
+    font-size: 1rem;
     padding: 6px 12px;
   }
   
-  .graph-wrapper {
-    height: 250px;
+  .deskripsi-hero {
+    font-size: 1.1rem;
   }
   
-  canvas {
-    max-width: 100%;
-    height: auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .start-title {
-    font-size: 2rem;
+  .bagian {
+    margin: 80px auto;
   }
   
-  .start-subtitle {
-    font-size: 1rem;
+  .bagian h2 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
   }
   
-  .app-header {
+  .sub-bagian h3 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+  }
+  
+  #proyek-saya .grid-proyek {
+    margin-bottom: 80px;
+  }
+  
+  #proyek-pengajaran h3 {
+    margin-top: 30px;
+  }
+  
+  .grid-proyek {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .kartu-proyek {
+    padding: 30px 20px;
+    /* AREA TOUCH LEBIH BESAR DI MOBILE */
+    min-height: 180px;
+  }
+  
+  .kartu-pengajaran {
+    padding: 25px 20px;
+    min-height: 180px;
+  }
+  
+  /* TIMELINE RESPONSIVE */
+  .timeline::before {
+    left: 20px;
+  }
+  
+  .timeline-item {
+    width: 100%;
+    padding-left: 60px;
+    padding-right: 20px;
+    left: 0 !important;
+    text-align: left;
+  }
+  
+  .timeline-item::after {
+    left: 10px !important;
+    right: auto !important;
+  }
+  
+  .kartu-tentang {
+    padding: 30px;
+  }
+  
+  .wadah-keahlian {
+    gap: 20px;
+  }
+  
+  .item-keahlian {
     flex-direction: column;
-    gap: var(--space-sm);
-    padding: var(--space-sm);
+    align-items: flex-start;
+    gap: 10px;
   }
   
-  .back-link {
-    align-self: flex-start;
+  .kartu-kontak {
+    padding: 30px;
   }
   
-  .app-title {
-    font-size: 1.2rem;
+  /* TOMBOL KONTAK FULL WIDTH DI MOBILE */
+  .tombol-wa,
+  .tombol-ig {
+    width: 100%;
+    text-align: center;
+    /* AREA TOUCH LEBIH BESAR */
+    min-height: 52px;
+    font-size: 1.05rem;
   }
   
-  .section-title {
-    font-size: 1.5rem;
+  footer {
+    margin-top: 100px;
+    padding: 30px;
   }
   
-  .sensor-title {
-    font-size: 1.2rem;
-  }
-  
-  .score-display {
-    font-size: 1.5rem;
-    padding: var(--space-xs) var(--space-md);
-  }
-  
-  .mini-joysticks {
-    flex-direction: column;
-  }
-  
-  .game-canvas-wrapper {
-    padding: var(--space-sm);
-  }
-}
-
-/* ===== MOBILE MODE CLASS ===== */
-body.mobile-mode .sensor-card {
-  padding: var(--space-sm);
-}
-
-body.mobile-mode canvas {
-  width: 100% !important;
-  height: auto !important;
-}
-
-body.mobile-mode .graph-wrapper {
-  height: 200px;
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-up {
-  animation: slideUp 0.5s ease-out;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-.pulse {
-  animation: pulse 2s infinite;
-}
-
-/* ===== SCROLLBAR STYLING ===== */
-::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-color);
-  border: 2px solid var(--border-color);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--accent-hall);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-sm);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-tmr);
-}
-
-/* ===== PRINT STYLES ===== */
-@media print {
-  .app-header,
-  .start-screen,
-  .btn,
-  .btn-start,
-  .theme-toggle-btn,
-  .btn-game,
-  .back-link,
-  .back-to-portfolio {
+  .nav-menu {
     display: none;
   }
   
-  body {
-    background: white;
-    color: black;
+  .nav-title {
+    font-size: 1.2rem;
   }
   
-  .sensor-card {
-    page-break-inside: avoid;
-    box-shadow: none;
-    border: 2px solid black;
+  .tombol-tema {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    /* AREA TOUCH TETAP BESAR */
+    min-height: 44px;
   }
+  
+  /* DROPDOWN MOBILE - AREA TOUCH LEBIH BESAR */
+  .dropdown-content a {
+    padding: 16px 20px;
+    min-height: 52px;
+    font-size: 1.05rem;
+  }
+}
+
+/* ============================================ */
+/* OPTIMASI KHUSUS UNTUK LAYAR SANGAT KECIL */
+/* ============================================ */
+@media (max-width: 360px) {
+  .hero h1 {
+    font-size: 1.7rem;
+  }
+  
+  .kartu-proyek {
+    padding: 25px 15px;
+  }
+  
+  .nav-container {
+    padding: 12px 15px;
+  }
+}
+
+/* ============================================ */
+/* OPTIMASI UNTUK LANDSCAPE MOBILE */
+/* ============================================ */
+@media (max-width: 768px) and (orientation: landscape) {
+  .hero {
+    padding: 100px 20px 60px;
+  }
+  
+  .gambar-profil {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* ============================================ */
+/* ACTIVE STATE UNTUK SEMUA ELEMEN INTERAKTIF */
+/* ============================================ */
+a:active,
+button:active,
+.kartu-proyek:active,
+.kartu-timeline:active {
+  opacity: 0.8;
 }
