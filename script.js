@@ -1,4 +1,33 @@
+// ============================================
+// OPTIMASI ANDROID - MENCEGAH KLIK BERGANDA
+// ============================================
+
+// Debounce function untuk mencegah klik terlalu cepat
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Mencegah double tap zoom di iOS/Android
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) {
+    event.preventDefault();
+  }
+  lastTouchEnd = now;
+}, { passive: false });
+
+// ============================================
 // TOGGLE MODE GELAP
+// ============================================
 const tombolTema = document.getElementById('tombol-tema');
 const body = document.body;
 
@@ -9,55 +38,154 @@ if (temaTersimpan) {
   perbaruiTeksTombol(temaTersimpan);
 }
 
-tombolTema.addEventListener('click', () => {
+// Handler toggle tema dengan debounce
+const toggleTema = debounce(() => {
   const temaSaatIni = body.getAttribute('data-theme');
   const temaBaru = temaSaatIni === 'dark' ? 'light' : 'dark';
   
   body.setAttribute('data-theme', temaBaru);
   localStorage.setItem('tema', temaBaru);
   perbaruiTeksTombol(temaBaru);
-});
+}, 300);
 
-function perbaruiTeksTombol(tema) {
-  tombolTema.textContent = tema === 'dark' ? '☀️ Mode Terang' : '🌙 Mode Gelap';
+// Event listener dengan passive untuk performa lebih baik
+if (tombolTema) {
+  tombolTema.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleTema();
+  }, { passive: false });
+  
+  // Tambah visual feedback untuk touch
+  tombolTema.addEventListener('touchstart', () => {
+    tombolTema.style.opacity = '0.7';
+  }, { passive: true });
+  
+  tombolTema.addEventListener('touchend', () => {
+    tombolTema.style.opacity = '1';
+  }, { passive: true });
 }
 
+function perbaruiTeksTombol(tema) {
+  if (tombolTema) {
+    tombolTema.textContent = tema === 'dark' ? '☀️ Mode Terang' : '🌙 Mode Gelap';
+  }
+}
+
+// ============================================
 // SMOOTH SCROLL UNTUK NAVIGASI
+// ============================================
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     e.preventDefault();
+    e.stopPropagation();
+    
     const target = document.querySelector(this.getAttribute('href'));
     if (target) {
+      // Smooth scroll
       target.scrollIntoView({
         behavior: 'smooth',
         block: 'start'
       });
+      
+      // Tutup semua dropdown setelah klik
+      const dropdowns = document.querySelectorAll('.dropdown-content');
+      dropdowns.forEach(dropdown => {
+        dropdown.style.display = 'none';
+      });
     }
-  });
+  }, { passive: false });
+  
+  // Visual feedback untuk touch
+  anchor.addEventListener('touchstart', function() {
+    this.style.opacity = '0.7';
+  }, { passive: true });
+  
+  anchor.addEventListener('touchend', function() {
+    this.style.opacity = '1';
+  }, { passive: true });
 });
 
-// DROPDOWN INTERAKSI (UNTUK MOBILE ATAU TOUCH DEVICES)
+// ============================================
+// DROPDOWN INTERAKSI (OPTIMASI MOBILE)
+// ============================================
+
+// Tutup dropdown ketika klik di luar
 document.addEventListener('click', (e) => {
-  if (!e.target.matches('.dropbtn')) {
+  if (!e.target.closest('.dropdown')) {
     const dropdowns = document.querySelectorAll('.dropdown-content');
     dropdowns.forEach(dropdown => {
-      if (dropdown.style.display === 'block') {
-        dropdown.style.display = 'none';
-      }
+      dropdown.style.display = 'none';
     });
   }
-});
+}, { passive: true });
 
-// TOGGLE DROPDOWN PADA CLICK (UNTUK MOBILE)
+// Toggle dropdown dengan debounce
+const toggleDropdown = debounce((dropdown) => {
+  // Tutup semua dropdown lain
+  document.querySelectorAll('.dropdown-content').forEach(dd => {
+    if (dd !== dropdown) {
+      dd.style.display = 'none';
+    }
+  });
+  
+  // Toggle dropdown yang diklik
+  dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}, 200);
+
 document.querySelectorAll('.dropbtn').forEach(btn => {
   btn.addEventListener('click', (e) => {
     e.preventDefault();
+    e.stopPropagation();
     const dropdown = btn.nextElementSibling;
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-  });
+    if (dropdown) {
+      toggleDropdown(dropdown);
+    }
+  }, { passive: false });
+  
+  // Visual feedback
+  btn.addEventListener('touchstart', function() {
+    this.style.opacity = '0.7';
+  }, { passive: true });
+  
+  btn.addEventListener('touchend', function() {
+    this.style.opacity = '1';
+  }, { passive: true });
 });
 
+// ============================================
+// KARTU PROYEK - OPTIMASI KLIK
+// ============================================
+document.querySelectorAll('.tautan-proyek').forEach(link => {
+  // Mencegah klik berganda
+  let isClicking = false;
+  
+  link.addEventListener('click', function(e) {
+    if (isClicking) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    
+    isClicking = true;
+    setTimeout(() => {
+      isClicking = false;
+    }, 1000);
+  }, { passive: false });
+  
+  // Visual feedback
+  link.addEventListener('touchstart', function() {
+    this.querySelector('.kartu-proyek').style.transform = 'scale(0.98)';
+  }, { passive: true });
+  
+  link.addEventListener('touchend', function() {
+    this.querySelector('.kartu-proyek').style.transform = '';
+  }, { passive: true });
+});
+
+// ============================================
 // DETEKSI PERANGKAT UNTUK OPTIMASI RESPONSIVE
+// ============================================
 function deteksiPerangkat() {
   const lebar = window.innerWidth;
   
@@ -76,28 +204,27 @@ function optimasiUntukPerangkat() {
   const menuNav = document.querySelector('.nav-menu');
   
   if (perangkat === 'mobile') {
-    // Sembunyikan nav menu di mobile (sudah di CSS, tapi bisa tambah JS)
     if (menuNav) {
       menuNav.style.display = 'none';
     }
     console.log('Dioptimasi untuk mobile');
   } else if (perangkat === 'tablet') {
-    // Sesuaikan gap atau padding
     if (menuNav) {
       menuNav.style.gap = '18px';
     }
     console.log('Dioptimasi untuk tablet');
   } else {
-    // Desktop: fitur penuh
     console.log('Dioptimasi untuk desktop');
   }
 }
 
-// JALANKAN OPTIMASI PADA LOAD DAN RESIZE
+// JALANKAN OPTIMASI PADA LOAD DAN RESIZE (dengan debounce)
 window.addEventListener('load', optimasiUntukPerangkat);
-window.addEventListener('resize', optimasiUntukPerangkat);
+window.addEventListener('resize', debounce(optimasiUntukPerangkat, 250));
 
+// ============================================
 // ANIMASI PROGRESS BAR KEAHLIAN
+// ============================================
 function animasiBarProgress() {
   const progressFills = document.querySelectorAll('.isi-progress');
   progressFills.forEach(fill => {
@@ -109,11 +236,12 @@ function animasiBarProgress() {
   });
 }
 
+// ============================================
 // ANIMASI FADE-IN UNTUK TIMELINE DAN SECTION
+// ============================================
 function animasiScrollFadeIn() {
   const elemen = document.querySelectorAll('.fade');
   
-  // Cek apakah ada elemen dengan class fade
   if (elemen.length === 0) {
     console.log('Tidak ada elemen dengan class .fade');
     return;
@@ -129,7 +257,7 @@ function animasiScrollFadeIn() {
       }
     });
   }, { 
-    threshold: 0.1, // Turunkan dari 0.2 jadi 0.1 biar lebih mudah trigger
+    threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
   });
   
@@ -157,7 +285,9 @@ if (!('IntersectionObserver' in window)) {
   window.addEventListener('load', animasiScrollFadeIn);
 }
 
-// ANIMASI UNTUK SECTION (OPSIONAL)
+// ============================================
+// ANIMASI UNTUK SECTION
+// ============================================
 function aturAnimasiSection() {
   const sections = document.querySelectorAll('.bagian');
   const observer = new IntersectionObserver((entries) => {
@@ -177,44 +307,46 @@ function aturAnimasiSection() {
   });
 }
 
+// ============================================
 // JALANKAN SEMUA ANIMASI PADA LOAD
+// ============================================
 window.addEventListener('load', () => {
   console.log('Halaman selesai dimuat, menjalankan animasi...');
   animasiBarProgress();
-  // animasiScrollFadeIn sudah dipanggil di atas dengan pengecekan support
   aturAnimasiSection();
 });
 
-// FITUR TAMBAHAN: KLIK KARTU TIMELINE UNTUK EXPAND (OPSIONAL)
-// Uncomment jika ingin menambahkan fitur ini
-/*
-document.querySelectorAll('.kartu-timeline').forEach(kartu => {
-  kartu.addEventListener('click', () => {
-    kartu.classList.toggle('expanded');
-  });
-});
-*/
-
+// ============================================
 // LOG KONFIRMASI
-console.log("Portfolio dimuat dengan fitur responsive penuh!");
+// ============================================
+console.log("Portfolio dimuat dengan optimasi Android!");
 console.log("Fitur aktif: Mode Gelap, Smooth Scroll, Animasi Timeline, Progress Bar");
+console.log("Optimasi: Debounce, Touch Feedback, Prevent Double Click");
 
-// DETEKSI SCROLL UNTUK NAVBAR (OPSIONAL - NAVBAR BERUBAH SAAT SCROLL)
+// ============================================
+// DETEKSI SCROLL UNTUK NAVBAR
+// ============================================
 let scrollTerakhir = 0;
-window.addEventListener('scroll', () => {
+const handleScroll = debounce(() => {
   const scrollSaatIni = window.pageYOffset;
   const navbar = document.querySelector('.navbar');
   
-  if (scrollSaatIni > 100) {
-    navbar.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-  } else {
-    navbar.style.boxShadow = 'none';
+  if (navbar) {
+    if (scrollSaatIni > 100) {
+      navbar.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    } else {
+      navbar.style.boxShadow = 'none';
+    }
   }
   
   scrollTerakhir = scrollSaatIni;
-});
+}, 100);
 
+window.addEventListener('scroll', handleScroll, { passive: true });
+
+// ============================================
 // FUNGSI UTILITAS: DETEKSI BROWSER
+// ============================================
 function deteksiBrowser() {
   const userAgent = navigator.userAgent;
   let namaBrowser = "Tidak diketahui";
@@ -236,7 +368,9 @@ function deteksiBrowser() {
 // JALANKAN DETEKSI BROWSER
 deteksiBrowser();
 
+// ============================================
 // FUNGSI UNTUK MENGHITUNG WAKTU LOADING
+// ============================================
 const waktuMulai = performance.now();
 window.addEventListener('load', () => {
   const waktuSelesai = performance.now();
@@ -244,17 +378,9 @@ window.addEventListener('load', () => {
   console.log(`Halaman dimuat dalam ${waktuLoading} detik`);
 });
 
-// PROTEKSI DARI SPAM KLIK TOMBOL
-let sedangAnimasi = false;
-tombolTema.addEventListener('click', () => {
-  if (sedangAnimasi) return;
-  sedangAnimasi = true;
-  setTimeout(() => {
-    sedangAnimasi = false;
-  }, 300);
-});
-
-// FUNGSI UNTUK MENDETEKSI KONEKSI INTERNET (OPSIONAL)
+// ============================================
+// FUNGSI UNTUK MENDETEKSI KONEKSI INTERNET
+// ============================================
 function cekKoneksi() {
   if (navigator.onLine) {
     console.log("Status: Online");
@@ -273,3 +399,33 @@ window.addEventListener('offline', () => {
 
 // JALANKAN CEK KONEKSI
 cekKoneksi();
+
+// ============================================
+// OPTIMASI KHUSUS ANDROID - HAPUS HIGHLIGHT
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Tambahkan style untuk menghilangkan highlight di Android
+  const style = document.createElement('style');
+  style.textContent = `
+    * {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    input, textarea {
+      -webkit-user-select: text;
+      -khtml-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  console.log('Optimasi Android diterapkan: tap highlight removed');
+});
