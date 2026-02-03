@@ -198,3 +198,366 @@ function getSimulationParams() {
 function isLoopMode() {
   return loopCheckbox.checked;
 }
+
+
+// ==================== NOTEBOOK: FETCH & RENDER (TAMBAHAN BARU) ====================
+
+// Simpan raw source di sini agar bisa di-download & di-copy
+let _notebookRawSource = null;
+
+/**
+ * Fetch source .py dari GitHub raw, lalu render sebagai notebook
+ */
+async function fetchAndRenderNotebook() {
+  const loading = document.getElementById("notebookLoading");
+  const error   = document.getElementById("notebookError");
+  const cells   = document.getElementById("notebookCells");
+
+  // Reset state
+  loading.style.display = "flex";
+  error.style.display   = "none";
+  cells.innerHTML       = "";
+
+  try {
+    const res = await fetch(NOTEBOOK_CONFIG.rawUrl);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const pySource = await res.text();
+    _notebookRawSource = pySource;           // simpan untuk download
+
+    // Sembunyikan loading
+    loading.style.display = "none";
+
+    // Render intro markdown (dari NOTEBOOK_CONFIG)
+    const introHtml = markdownToHtml(NOTEBOOK_CONFIG.introMarkdown.join("\n"));
+    cells.appendChild(createMarkdownCell(introHtml));
+
+    // Parsing .py → cells (markdown comment-block & code)
+    const parsed = parsePythonToCells(pySource);
+    parsed.forEach((cell, idx) => {
+      if (cell.type === "markdown") {
+        cells.appendChild(createMarkdownCell(markdownToHtml(cell.content)));
+      } else {
+        cells.appendChild(createCodeCell(cell.content, idx + 1));
+      }
+    });
+
+  } catch (err) {
+    loading.style.display = "none";
+    error.style.display   = "flex";
+    document.getElementById("errorMessage").textContent = err.message || "Periksa koneksi internet Anda.";
+  }
+}
+
+// ==================== NOTEBOOK: PARSING ====================
+
+/**
+ * Parsing isi .py menjadi array cell { type, content }
+ * Aturan:
+ *   - Block """ ... """ atau ''' ... ''' → markdown cell
+ *   - Baris kosong beruntun (2+) → pemisah cell baru
+ *   - Sisanya → code cell
+ */
+function parsePythonToCells(source) {
+  const lines  = source.split("\n");
+  const cells  = [];
+  let buffer   = [];
+  let inTriple = false;    // sedang di dalam """ / '''
+  let tripleChar = null;   // """ atau '''
+  let mdBuffer = [];       // buffer untuk markdown (isi triple-quote)
+
+  function flushCode() {
+    // Buang trailing blank lines
+    while (buffer.length && buffer[buffer.length - 1].trim() === "") buffer.pop();
+    if (buffer.length) {
+      cells.push({ type: "code", content: buffer.join("\n") });
+      buffer = [];
+    }
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // --- Masuk / keluar triple-quote ---
+    if (!inTriple) {
+      // Cek opening triple-quote (standalone atau di awal variabel = """...""")
+      const openMatch = trimmed.match(/^(?:\w+\s*=\s*)?("""|''')/);
+      if (openMatch) {
+        tripleChar = openMatch[1];
+        // Cek apakah closing ada di baris yang sama (single-line docstring)
+        const afterOpen = trimmed.slice(trimmed.indexOf(tripleChar) + 3);
+        if (afterOpen.includes(tripleChar)) {
+          // Single-line triple-quote → ambil isi
+          flushCode();
+          const inner = afterOpen.slice(0, afterOpen.indexOf(tripleChar)).trim();
+          if (inner) cells.push({ type: "markdown", content: inner });
+          continue;
+        }
+        // Multi-line: masuk mode triple
+        flushCode();
+        inTriple = true;
+        mdBuffer = [];
+        continue;
+      }
+
+      // Bukan triple-quote → tambah ke code buffer
+      buffer.push(line);
+
+    } else {
+      // --- Di dalam triple-quote ---
+      if (trimmed.includes(tripleChar)) {
+        // Closing line
+        const before = trimmed.slice(0, trimmed.indexOf(tripleChar));
+        if (before.trim()) mdBuffer.push(before);
+        // Flush sebagai markdown cell
+        cells.push({ type: "markdown", content: mdBuffer.join("\n").trim() });
+        mdBuffer = [];
+        inTriple = false;
+        tripleChar = null;
+      } else {
+        mdBuffer.push(line);
+      }
+    }
+  }
+
+  // Flush sisa
+  if (inTriple && mdBuffer.length) {
+    cells.push({ type: "markdown", content: mdBuffer.join("\n").trim() });
+  }
+  flushCode();
+
+  // Gabungkan code cells yang kosong / terlalu pendek jika ada
+  return cells.filter(c => c.content.trim().length > 0);
+}
+
+// ==================== NOTEBOOK: MARKDOWN RENDERER ====================
+
+/**
+ * Simple markdown → HTML
+ * Mendukung: heading, bold, italic, inline code, code block, list, blockquote, link
+ */
+function markdownToHtml(md) {
+  let lines = md.split("\n");
+  let html  = "";
+  let inList = false;
+  let listTag = "";
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+
+    // Heading
+    if (line.startsWith("### ")) { closeLst(); html += `<h3>${inlineFormat(line.slice(4))}</h3>`; continue; }
+    if (line.startsWith("## "))  { closeLst(); html += `<h2>${inlineFormat(line.slice(3))}</h2>`; continue; }
+    if (line.startsWith("# "))   { closeLst(); html += `<h1>${inlineFormat(line.slice(2))}</h1>`; continue; }
+
+    // Blockquote
+    if (line.startsWith("> ")) {
+      closeLst();
+      html += `<blockquote style="border-left:4px solid #ff9800;margin:8px 0;padding:6px 14px;background:rgba(255,152,0,0.08);border-radius:0 4px 4px 0;font-style:italic;color:#555;">${inlineFormat(line.slice(2))}</blockquote>`;
+      continue;
+    }
+
+    // Ordered list
+    if (/^\d+\.\s/.test(line)) {
+      if (!inList || listTag !== "ol") { closeLst(); html += "<ol>"; inList = true; listTag = "ol"; }
+      html += `<li>${inlineFormat(line.replace(/^\d+\.\s/, ""))}</li>`;
+      continue;
+    }
+
+    // Unordered list  (-, *, or •)
+    if (/^[-*•]\s/.test(line)) {
+      if (!inList || listTag !== "ul") { closeLst(); html += "<ul>"; inList = true; listTag = "ul"; }
+      html += `<li>${inlineFormat(line.replace(/^[-*•]\s/, ""))}</li>`;
+      continue;
+    }
+
+    // Kosong → tutup list, buat <br> ringan
+    if (line.trim() === "") {
+      closeLst();
+      html += "<br>";
+      continue;
+    }
+
+    // Paragraph biasa
+    closeLst();
+    html += `<p>${inlineFormat(line)}</p>`;
+  }
+
+  closeLst();
+  return html;
+
+  function closeLst() {
+    if (inList) { html += `</${listTag}>`; inList = false; listTag = ""; }
+  }
+}
+
+/**
+ * Inline formatting: bold, italic, inline code, link
+ */
+function inlineFormat(text) {
+  // Escape HTML entities dulu
+  text = text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  // Inline code  `...`
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // Link [text](url)
+  text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:#2196f3;">$1</a>');
+  // Bold **text**
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Italic *text*
+  text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  return text;
+}
+
+// ==================== NOTEBOOK: DOM BUILDERS ====================
+
+let _cellCounter = 0;
+
+/**
+ * Buat elemen DOM untuk markdown cell
+ */
+function createMarkdownCell(htmlContent) {
+  const cell = document.createElement("div");
+  cell.className = "nb-cell cell-markdown";
+
+  cell.innerHTML = `
+    <div class="nb-gutter"></div>
+    <div class="nb-body">${htmlContent}</div>
+  `;
+  return cell;
+}
+
+/**
+ * Buat elemen DOM untuk code cell
+ * @param {string} code
+ * @param {number} num — nomor cell (untuk gutter)
+ */
+function createCodeCell(code, num) {
+  _cellCounter++;
+
+  const cell = document.createElement("div");
+  cell.className = "nb-cell cell-code";
+
+  // Escape HTML di dalam code
+  const escaped = code
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  cell.innerHTML = `
+    <div class="nb-gutter">In [${num}]</div>
+    <div class="nb-body"><pre>${escaped}</pre></div>
+    <button class="nb-cell-copy" data-code="${escapeAttr(code)}">Copy</button>
+  `;
+
+  // Event: copy single cell
+  cell.querySelector(".nb-cell-copy").addEventListener("click", function(e) {
+    e.stopPropagation();
+    copySingleCell(this);
+  });
+
+  return cell;
+}
+
+/**
+ * Escape untuk attribute HTML
+ */
+function escapeAttr(str) {
+  return str.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"&#10;");
+}
+
+// ==================== NOTEBOOK: COPY HELPERS ====================
+
+/**
+ * Copy kode satu cell
+ */
+function copySingleCell(btn) {
+  const code = btn.getAttribute("data-code");
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = "✓ Copied";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1400);
+  });
+}
+
+/**
+ * Copy SEMUA kode (source .py asli)
+ */
+function copyAllCode() {
+  if (!_notebookRawSource) return;
+  navigator.clipboard.writeText(_notebookRawSource).then(() => {
+    const btn = document.getElementById("copyAllBtn");
+    const orig = btn.textContent;
+    btn.textContent = "✓ Copied!";
+    btn.style.background = "#4caf50";
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ""; }, 1400);
+  });
+}
+
+// ==================== NOTEBOOK: DOWNLOAD .ipynb ====================
+
+/**
+ * Buat struktur JSON .ipynb dari source .py dan trigger download
+ */
+function downloadAsIpynb() {
+  if (!_notebookRawSource) return;
+
+  // Parse ulang menjadi cells
+  const parsed = parsePythonToCells(_notebookRawSource);
+
+  // Intro markdown cell
+  const introCellMd = {
+    cell_type: "markdown",
+    metadata: {},
+    source: NOTEBOOK_CONFIG.introMarkdown.map((l, i, a) => i < a.length - 1 ? l + "\n" : l)
+  };
+
+  const nbCells = [introCellMd];
+
+  parsed.forEach(cell => {
+    if (cell.type === "markdown") {
+      nbCells.push({
+        cell_type: "markdown",
+        metadata: {},
+        source: cell.content.split("\n").map((l, i, a) => i < a.length - 1 ? l + "\n" : l)
+      });
+    } else {
+      nbCells.push({
+        cell_type: "code",
+        execution_count: null,
+        metadata: {},
+        outputs: [],
+        source: cell.content.split("\n").map((l, i, a) => i < a.length - 1 ? l + "\n" : l)
+      });
+    }
+  });
+
+  // Struktur .ipynb lengkap (Notebook format v4)
+  const notebook = {
+    nbformat: 4,
+    nbformat_minor: 5,
+    metadata: {
+      kernelspec: {
+        display_name: "Python 3",
+        language: "python",
+        name: "python3"
+      },
+      language_info: {
+        name: "python",
+        version: "3.10.0"
+      }
+    },
+    cells: nbCells
+  };
+
+  // Trigger download
+  const blob = new Blob([JSON.stringify(notebook, null, 1)], { type: "application/json" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = NOTEBOOK_CONFIG.downloadName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
