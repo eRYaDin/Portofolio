@@ -64,6 +64,9 @@ function init() {
       drawEnergyGraph(energyCtx, simulationData, currentFrame, isDarkTheme);
     }
   });
+
+  // ---- Tab switching + Notebook init (TAMBAHAN BARU) ----
+  initTabs();
 }
 
 // ==================== SIMULATION CONTROL ====================
@@ -167,6 +170,52 @@ function animate() {
   if (isRunning) {
     animationId = requestAnimationFrame(animate);
   }
+}
+
+// ==================== TAB SWITCHING (TAMBAHAN BARU) ====================
+
+// Flag: sudah fetch notebook atau belum
+let _notebookFetched = false;
+
+/**
+ * Init tab bar event listeners
+ */
+function initTabs() {
+  const tabBtns = document.querySelectorAll(".tab-btn");
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const target = btn.getAttribute("data-tab");
+
+      // Update active class
+      tabBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      // Show / hide tab content
+      document.getElementById("tab-simulasi").style.display = (target === "simulasi") ? "block" : "none";
+      document.getElementById("tab-notebook").style.display  = (target === "notebook") ? "block" : "none";
+
+      // Kalau switch ke notebook & belum pernah di-fetch → fetch sekarang
+      if (target === "notebook" && !_notebookFetched) {
+        _notebookFetched = true;
+        fetchAndRenderNotebook();
+      }
+
+      // Kalau balik ke simulasi → resize canvas (bisa berubah ukuran)
+      if (target === "simulasi") {
+        resizeCanvas(trajectoryCanvas);
+        resizeCanvas(energyCanvas);
+        if (simulationData.length > 0) {
+          drawTrajectory(trajCtx, simulationData, currentFrame, currentBallIndex, isDarkTheme, currentV0, currentAngle);
+          drawEnergyGraph(energyCtx, simulationData, currentFrame, isDarkTheme);
+        }
+      }
+    });
+  });
+
+  // Bind tombol Copy All & Download
+  document.getElementById("copyAllBtn").addEventListener("click", copyAllCode);
+  document.getElementById("downloadBtn").addEventListener("click", downloadAsIpynb);
 }
 
 // ==================== START APPLICATION ====================
