@@ -8,28 +8,24 @@
   border-radius: 8px;
   box-shadow: var(--shadow);
 }
-
 /* ==================== MAIN GRID ==================== */
 .main-grid {
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: 20px;
 }
-
 /* ==================== CONTROL PANEL ==================== */
 .control-panel {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
-
 /* ==================== VISUALIZATION AREA ==================== */
 .visualization-area {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-
 /* ==================== CARDS ==================== */
 .card {
   margin: 15px 0;
@@ -39,7 +35,6 @@
   border-radius: 6px;
   box-shadow: 5px 5px 0px #000, 10px 10px 0px rgba(0, 0, 0, 0.2);
 }
-
 .card-title {
   font-size: 0.85rem;
   text-transform: uppercase;
@@ -48,14 +43,12 @@
   font-weight: bold;
   color: var(--text-color);
 }
-
 /* ==================== FORM GROUPS ==================== */
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
 .form-group label {
   font-size: 0.9rem;
   font-weight: bold;
@@ -65,12 +58,10 @@
   align-items: center;
   text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
 }
-
 .form-group label span {
   font-weight: bold;
   color: #2196f3;
 }
-
 /* ==================== INFO ROWS ==================== */
 .info-row {
   display: flex;
@@ -79,24 +70,19 @@
   border-bottom: 2px solid rgba(0, 0, 0, 0.2);
   font-size: 0.85rem;
 }
-
 .dark .info-row {
   border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
-
 .info-row:last-child {
   border-bottom: none;
 }
-
 .info-label {
   font-weight: normal;
 }
-
 .info-value {
   font-weight: 700;
   font-family: 'Courier New', monospace;
 }
-
 /* ==================== BALL PREVIEW ==================== */
 .ball-preview {
   display: flex;
@@ -108,11 +94,9 @@
   border-radius: 4px;
   margin-top: 5px;
 }
-
 .dark .ball-preview {
   background: rgba(100, 100, 100, 0.5);
 }
-
 .ball-icon {
   width: 40px;
   height: 40px;
@@ -122,11 +106,377 @@
   background-size: cover;
   background-position: center;
 }
-
 .ball-info {
   font-size: 0.75rem;
   line-height: 1.5;
   color: var(--text-color);
+}
+
+/* ==================== TAB BAR ==================== */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border-bottom: 4px solid var(--border-color);
+}
+
+.tab-btn {
+  flex: none;
+  padding: 12px 28px;
+  min-height: 44px;
+  border: 3px solid var(--border-color);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: 3px -2px 0px rgba(0,0,0,0.15);
+  transition: background 0.15s ease, transform 0.1s ease;
+  position: relative;
+  top: 3px;
+}
+
+.tab-btn:hover {
+  background: var(--stat-bg);
+}
+
+.tab-btn.active {
+  background: var(--app-bg);
+  border-color: var(--border-color);
+  color: #ff5722;
+  top: 4px;
+  box-shadow: 3px -3px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* ==================== TAB CONTENT ==================== */
+.tab-content {
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== NOTEBOOK LAYOUT ==================== */
+.notebook-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 18px 22px;
+  background: var(--card-bg);
+  border: 4px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 5px 5px 0px #000, 10px 10px 0px rgba(0,0,0,0.2);
+  margin-bottom: 18px;
+}
+
+.notebook-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.notebook-title-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.notebook-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.notebook-title {
+  font-size: 1.05rem;
+  font-weight: bold;
+  color: var(--text-color);
+  letter-spacing: 0.5px;
+}
+
+.notebook-subtitle {
+  font-size: 0.78rem;
+  color: #888;
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+
+.dark .notebook-subtitle {
+  color: #aaa;
+}
+
+.notebook-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Notebook buttons */
+.btn-nb {
+  padding: 10px 18px;
+  min-height: 40px;
+  border: 3px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 0.82rem;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  white-space: nowrap;
+}
+
+.btn-nb:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 #000 !important;
+}
+
+.btn-nb-copy {
+  background: #ff9800;
+  color: #fff;
+  box-shadow: 3px 3px 0px #000;
+}
+
+.btn-nb-copy:hover {
+  background: #f57c00;
+}
+
+.btn-nb-download {
+  background: #4caf50;
+  color: #fff;
+  box-shadow: 3px 3px 0px #000;
+}
+
+.btn-nb-download:hover {
+  background: #43a047;
+}
+
+/* ==================== NOTEBOOK LOADING / ERROR ==================== */
+.notebook-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 48px 20px;
+  background: var(--card-bg);
+  border: 4px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 5px 5px 0px #000;
+  color: var(--text-color);
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+
+.loading-spinner {
+  width: 28px;
+  height: 28px;
+  border: 4px solid var(--border-color);
+  border-top-color: #ff5722;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.notebook-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 22px;
+  background: #fff3f3;
+  border: 3px solid #f44336;
+  border-radius: 6px;
+  color: #c62828;
+  font-size: 0.88rem;
+}
+
+.notebook-error span:first-child {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.dark .notebook-error {
+  background: rgba(244,67,54,0.12);
+  color: #ef9a9a;
+}
+
+/* ==================== NOTEBOOK CELLS ==================== */
+.notebook-cells {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.nb-cell {
+  display: flex;
+  border: 3px solid var(--border-color);
+  border-top: none;
+  background: var(--card-bg);
+  position: relative;
+}
+
+.nb-cell:first-child {
+  border-top: 3px solid var(--border-color);
+  border-radius: 6px 6px 0 0;
+  box-shadow: 5px 5px 0px #000;
+}
+
+.nb-cell:last-child {
+  border-radius: 0 0 6px 6px;
+}
+
+/* Gutter (nomor cell) */
+.nb-gutter {
+  width: 52px;
+  min-width: 52px;
+  padding: 12px 0;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #999;
+  background: var(--stat-bg);
+  border-right: 3px solid var(--border-color);
+  user-select: none;
+}
+
+.dark .nb-gutter {
+  color: #777;
+}
+
+.nb-cell.cell-markdown .nb-gutter {
+  background: transparent;
+  border-right-color: transparent;
+}
+
+/* Cell body */
+.nb-body {
+  flex: 1;
+  padding: 12px 18px;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+/* ---- Markdown cell ---- */
+.nb-cell.cell-markdown {
+  border-left: 5px solid #ff9800;
+  background: var(--app-bg);
+}
+
+.nb-cell.cell-markdown .nb-body h1,
+.nb-cell.cell-markdown .nb-body h2,
+.nb-cell.cell-markdown .nb-body h3 {
+  color: var(--text-color);
+  margin: 8px 0 4px;
+  font-family: inherit;
+}
+
+.nb-cell.cell-markdown .nb-body h1 { font-size: 1.4rem; }
+.nb-cell.cell-markdown .nb-body h2 { font-size: 1.15rem; }
+.nb-cell.cell-markdown .nb-body h3 { font-size: 1rem; }
+
+.nb-cell.cell-markdown .nb-body p {
+  margin: 6px 0;
+  line-height: 1.6;
+  color: var(--text-color);
+  font-size: 0.92rem;
+}
+
+.nb-cell.cell-markdown .nb-body ul,
+.nb-cell.cell-markdown .nb-body ol {
+  padding-left: 22px;
+  margin: 4px 0;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.nb-cell.cell-markdown .nb-body strong {
+  color: #ff5722;
+}
+
+.nb-cell.cell-markdown .nb-body code {
+  background: var(--stat-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  border: 1px solid var(--border-color);
+}
+
+/* ---- Code cell ---- */
+.nb-cell.cell-code {
+  border-left: 5px solid #2196f3;
+}
+
+.nb-cell.cell-code .nb-body {
+  padding: 0;
+}
+
+.nb-cell.cell-code pre {
+  margin: 0;
+  padding: 14px 18px;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family: 'Courier New', monospace;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  white-space: pre;
+  overflow-x: auto;
+  border-radius: 0;
+}
+
+/* ---- Copy button per cell ---- */
+.nb-cell-copy {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  padding: 3px 9px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  background: rgba(255,255,255,0.85);
+  color: #333;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+}
+
+.nb-cell:hover .nb-cell-copy {
+  opacity: 1;
+}
+
+.nb-cell-copy:hover {
+  background: #ff5722;
+  color: #fff;
+  border-color: #ff5722;
+}
+
+.nb-cell-copy.copied {
+  background: #4caf50;
+  color: #fff;
+  border-color: #4caf50;
+}
+
+.dark .nb-cell-copy {
+  background: rgba(40,40,40,0.9);
+  color: #ddd;
+  border-color: #555;
 }
 
 /* ==================== RESPONSIVE DESIGN ==================== */
@@ -135,7 +485,6 @@
     grid-template-columns: 1fr;
   }
 }
-
 @media (max-width: 768px) {
   .container {
     margin: 10px;
@@ -153,5 +502,21 @@
   .card {
     margin: 10px 0;
     padding: 15px;
+  }
+
+  .tab-btn {
+    padding: 10px 16px;
+    font-size: 0.8rem;
+  }
+
+  .notebook-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nb-gutter {
+    width: 36px;
+    min-width: 36px;
+    font-size: 0.7rem;
   }
 }
