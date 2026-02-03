@@ -3,6 +3,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* OPTIMASI ANDROID - HAPUS HIGHLIGHT */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 /* VARIABEL CSS UNTUK MODE GELAP & AKSEN */
@@ -43,6 +46,9 @@ body {
   color: var(--warna-teks);
   line-height: 1.6;
   transition: var(--transisi);
+  /* OPTIMASI TOUCH SCROLLING */
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
 }
 
 /* NAVIGASI */
@@ -70,6 +76,9 @@ body {
   font-size: 1.5rem;
   font-weight: 800;
   color: var(--warna-teks);
+  /* AREA TOUCH LEBIH BESAR */
+  padding: 10px;
+  margin: -10px;
 }
 
 .nav-menu {
@@ -87,10 +96,16 @@ body {
   text-decoration: none;
   font-weight: 600;
   transition: var(--transisi);
+  /* AREA TOUCH LEBIH BESAR */
+  padding: 12px 16px;
+  display: block;
+  border-radius: 8px;
 }
 
-.nav-menu a:hover {
+.nav-menu a:hover,
+.nav-menu a:active {
   color: var(--warna-aksen);
+  background: rgba(0, 123, 255, 0.1);
 }
 
 .dropdown-content {
@@ -102,6 +117,8 @@ body {
   box-shadow: 4px 4px 0px var(--warna-bayangan);
   min-width: 160px;
   z-index: 1;
+  /* OPTIMASI ANDROID */
+  margin-top: 5px;
 }
 
 .dropdown:hover .dropdown-content {
@@ -110,29 +127,44 @@ body {
 
 .dropdown-content a {
   color: var(--warna-teks);
-  padding: 12px 16px;
+  padding: 14px 18px;
   text-decoration: none;
   display: block;
   transition: var(--transisi);
+  /* AREA TOUCH LEBIH BESAR */
+  min-height: 48px;
+  display: flex;
+  align-items: center;
 }
 
-.dropdown-content a:hover {
+.dropdown-content a:hover,
+.dropdown-content a:active {
   background: var(--warna-bg);
 }
 
 .tombol-tema {
   background: var(--warna-kartu);
   border: 2px solid var(--warna-border);
-  padding: 8px 16px;
+  padding: 10px 18px;
   border-radius: 999px;
   cursor: pointer;
   font-weight: 600;
   box-shadow: 3px 3px 0px var(--warna-bayangan);
   transition: var(--transisi);
   color: var(--warna-teks);
+  /* AREA TOUCH LEBIH BESAR */
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* HAPUS USER SELECT */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-.tombol-tema:hover {
+.tombol-tema:hover,
+.tombol-tema:active {
   transform: translate(-2px, -2px);
   box-shadow: 5px 5px 0px var(--warna-bayangan);
 }
@@ -160,6 +192,8 @@ body {
   box-shadow: 8px 8px 0px var(--warna-bayangan);
   margin-bottom: 30px;
   transition: var(--transisi);
+  /* OPTIMASI LOADING GAMBAR */
+  image-rendering: -webkit-optimize-contrast;
 }
 
 .hero h1 {
@@ -223,6 +257,9 @@ body {
   text-decoration: none;
   color: inherit;
   display: block;
+  /* OPTIMASI TOUCH */
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
 /* PROYEK (HIERARKI BERAT, PEMBEDA PENGAJARAN) */
@@ -240,9 +277,16 @@ body {
   box-shadow: 10px 10px 0px var(--warna-bayangan);
   text-align: center;
   transition: var(--transisi);
+  /* AREA TOUCH LEBIH RESPONSIF */
+  cursor: pointer;
+  position: relative;
+  /* HAPUS USER SELECT */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-.kartu-proyek:hover {
+.kartu-proyek:hover,
+.kartu-proyek:active {
   transform: translate(-8px, -8px);
   box-shadow: 16px 16px 0px var(--warna-bayangan);
 }
@@ -275,7 +319,8 @@ body {
   padding: 35px 25px;
 }
 
-.kartu-pengajaran:hover {
+.kartu-pengajaran:hover,
+.kartu-pengajaran:active {
   transform: translate(-6px, -6px);
   box-shadow: 14px 14px 0px var(--warna-aksen);
 }
@@ -343,9 +388,13 @@ body {
   padding: 20px;
   box-shadow: 8px 8px 0 var(--warna-bayangan);
   transition: var(--transisi);
+  /* HAPUS USER SELECT */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-.kartu-timeline:hover {
+.kartu-timeline:hover,
+.kartu-timeline:active {
   transform: translate(-4px, -4px);
   box-shadow: 12px 12px 0 var(--warna-bayangan);
 }
@@ -379,31 +428,6 @@ body {
   font-size: 1rem;
   color: var(--warna-teks);
   opacity: 0.8;
-}
-
-/* GARIS PEMISAH */
-.kartu-timeline h3 {
-  font-size: 1.3rem;
-  font-weight: 800;
-  margin-bottom: 8px;
-  color: var(--warna-teks);
-  text-align: center;
-}
-
-.kartu-timeline .tahun {
-  font-size: 0.95rem;
-  color: var(--warna-aksen);
-  font-weight: 700;
-  display: block;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.kartu-timeline .jurusan {
-  font-size: 0.95rem;
-  color: var(--warna-teks);
-  opacity: 0.8;
-  text-align: center;
 }
 
 /* GARIS PEMISAH KECIL */
@@ -479,8 +503,8 @@ body {
 
 /* ANIMASI FADE-IN */
 .fade {
-  opacity: 1; /* Ubah dari 0 jadi 1 untuk langsung muncul */
-  transform: translateY(0); /* Ubah dari 30px jadi 0 */
+  opacity: 1;
+  transform: translateY(0);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
@@ -512,11 +536,13 @@ body {
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-wrap: nowrap;
 }
 
 .nama-keahlian {
   font-weight: 700;
   min-width: 120px;
+  flex-shrink: 0;
 }
 
 .bar-progress {
@@ -527,6 +553,7 @@ body {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: inset 3px 3px 0px var(--warna-bayangan);
+  position: relative;
 }
 
 .isi-progress {
@@ -537,9 +564,12 @@ body {
 
 .persen-keahlian {
   font-weight: 700;
-  min-width: 40px;
+  min-width: 50px;
+  width: 50px;
   text-align: right;
   color: var(--warna-aksen);
+  flex-shrink: 0;
+  font-size: 1rem;
 }
 
 /* KONTAK (TENANG) */
@@ -561,7 +591,8 @@ body {
   font-weight: 700;
 }
 
-.kartu-kontak a:hover {
+.kartu-kontak a:hover,
+.kartu-kontak a:active {
   text-decoration: underline;
 }
 
@@ -570,13 +601,21 @@ body {
 .tombol-ig {
   display: inline-block;
   margin-top: 10px;
-  padding: 12px 20px;
+  padding: 14px 24px;
   border-radius: 999px;
   font-weight: 700;
   text-decoration: none;
   border: 3px solid var(--warna-border);
   box-shadow: 4px 4px 0 var(--warna-bayangan);
   transition: var(--transisi);
+  /* AREA TOUCH LEBIH BESAR */
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* HAPUS USER SELECT */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* WhatsApp */
@@ -585,7 +624,8 @@ body {
   color: #fff;
 }
 
-.tombol-wa:hover {
+.tombol-wa:hover,
+.tombol-wa:active {
   transform: translate(-3px, -3px);
   box-shadow: 7px 7px 0 var(--warna-bayangan);
 }
@@ -596,7 +636,8 @@ body {
   color: #fff;
 }
 
-.tombol-ig:hover {
+.tombol-ig:hover,
+.tombol-ig:active {
   transform: translate(-3px, -3px);
   box-shadow: 7px 7px 0 var(--warna-bayangan);
 }
@@ -606,49 +647,14 @@ body {
   color: var(--warna-aksen);
   text-decoration: none;
   font-weight: 700;
+  /* AREA TOUCH LEBIH BESAR */
+  padding: 8px;
+  display: inline-block;
 }
 
-.tautan-github:hover {
+.tautan-github:hover,
+.tautan-github:active {
   text-decoration: underline;
-}
-
-/* PKL DI TIMELINE */
-.pkl {
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 2px dashed var(--warna-border);
-}
-
-.pkl h4 {
-  font-size: 1.1rem;
-  font-weight: 800;
-  margin-bottom: 10px;
-  color: var(--warna-aksen);
-}
-
-.pkl-item {
-  margin-bottom: 12px;
-}
-
-.pkl-item strong {
-  display: block;
-  font-weight: 800;
-}
-
-.pkl-item span {
-  font-size: 0.9rem;
-  color: var(--warna-aksen);
-  font-weight: 700;
-}
-
-.pkl-item ul {
-  margin-top: 6px;
-  padding-left: 18px;
-}
-
-.pkl-item li {
-  font-size: 0.95rem;
-  opacity: 0.85;
 }
 
 /* FOOTER */
@@ -662,7 +668,9 @@ footer {
   transition: var(--transisi);
 }
 
-/* RESPONSIVE (VISUAL MOBILE) */
+/* ============================================ */
+/* RESPONSIVE (VISUAL MOBILE) - OPTIMASI ANDROID */
+/* ============================================ */
 @media (max-width: 768px) {
   .hero {
     padding: 120px 20px 80px;
@@ -715,10 +723,13 @@ footer {
   
   .kartu-proyek {
     padding: 30px 20px;
+    /* AREA TOUCH LEBIH BESAR DI MOBILE */
+    min-height: 180px;
   }
   
   .kartu-pengajaran {
     padding: 25px 20px;
+    min-height: 180px;
   }
   
   /* TIMELINE RESPONSIVE */
@@ -749,8 +760,32 @@ footer {
   
   .item-keahlian {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .nama-keahlian {
+    width: 100%;
+    min-width: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .bar-progress {
+    width: 100%;
+    height: 28px;
+  }
+  
+  .persen-keahlian {
+    display: none; /* Sembunyikan di mobile karena akan digabung dengan nama */
+  }
+  
+  /* Tambahkan persentase ke nama keahlian di mobile */
+  .nama-keahlian::after {
+    content: attr(data-persen);
+    font-weight: 700;
+    color: var(--warna-aksen);
   }
   
   .kartu-kontak {
@@ -762,6 +797,9 @@ footer {
   .tombol-ig {
     width: 100%;
     text-align: center;
+    /* AREA TOUCH LEBIH BESAR */
+    min-height: 52px;
+    font-size: 1.05rem;
   }
   
   footer {
@@ -778,7 +816,57 @@ footer {
   }
   
   .tombol-tema {
-    padding: 6px 12px;
+    padding: 8px 14px;
     font-size: 0.9rem;
+    /* AREA TOUCH TETAP BESAR */
+    min-height: 44px;
   }
+  
+  /* DROPDOWN MOBILE - AREA TOUCH LEBIH BESAR */
+  .dropdown-content a {
+    padding: 16px 20px;
+    min-height: 52px;
+    font-size: 1.05rem;
+  }
+}
+
+/* ============================================ */
+/* OPTIMASI KHUSUS UNTUK LAYAR SANGAT KECIL */
+/* ============================================ */
+@media (max-width: 360px) {
+  .hero h1 {
+    font-size: 1.7rem;
+  }
+  
+  .kartu-proyek {
+    padding: 25px 15px;
+  }
+  
+  .nav-container {
+    padding: 12px 15px;
+  }
+}
+
+/* ============================================ */
+/* OPTIMASI UNTUK LANDSCAPE MOBILE */
+/* ============================================ */
+@media (max-width: 768px) and (orientation: landscape) {
+  .hero {
+    padding: 100px 20px 60px;
+  }
+  
+  .gambar-profil {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* ============================================ */
+/* ACTIVE STATE UNTUK SEMUA ELEMEN INTERAKTIF */
+/* ============================================ */
+a:active,
+button:active,
+.kartu-proyek:active,
+.kartu-timeline:active {
+  opacity: 0.8;
 }
