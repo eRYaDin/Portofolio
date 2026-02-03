@@ -121,7 +121,7 @@ preloadBallImages();
 // Sistem akan fetch .py ini, lalu wrap otomatis menjadi .ipynb untuk render & download
 const NOTEBOOK_CONFIG = {
   // Raw URL file .py di GitHub Anda
-  rawUrl: "https://raw.githubusercontent.com/eRYaDin/Portofolio/main/projects/Pantulan_bola/python/proyektil.py",
+  rawUrl: "https://raw.githubusercontent.com/eRYaDin/Portofolio/main/projects/Pantulan_bola/phyton/proyektil.py",
 
   // Nama file saat di-download
   downloadName: "Simulasi_Dinamika_Energi_Proyektil.ipynb",
