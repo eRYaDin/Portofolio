@@ -1,7 +1,6 @@
 // ==================== DATA BOLA ====================
 // Semua gambar PNG berukuran 500x500px
 // Scale mengatur tampilan besar/kecil di canvas (KUNCI UTAMA!)
-
 const balls = [
   { 
     name: "Pingpong",  
@@ -101,7 +100,6 @@ const MAX_Y0 = 20;        // Ketinggian maksimum (m)
 // ==================== PRELOAD IMAGES ====================
 // Load semua gambar bola di awal agar rendering smooth
 const ballImages = {};
-
 function preloadBallImages() {
   balls.forEach((ball, index) => {
     const img = new Image();
@@ -115,6 +113,39 @@ function preloadBallImages() {
     ballImages[index] = img;
   });
 }
-
 // Jalankan preload saat script dimuat
 preloadBallImages();
+
+// ==================== NOTEBOOK CONFIG (TAMBAHAN BARU) ====================
+// URL raw GitHub untuk file Python
+// Sistem akan fetch .py ini, lalu wrap otomatis menjadi .ipynb untuk render & download
+const NOTEBOOK_CONFIG = {
+  // Raw URL file .py di GitHub Anda
+  rawUrl: "https://raw.githubusercontent.com/eRYaDin/Portofolio/main/projects/Pantulan_bola/python/proyektil.py",
+
+  // Nama file saat di-download
+  downloadName: "Simulasi_Dinamika_Energi_Proyektil.ipynb",
+
+  // Judul yang tampil di header notebook
+  title: "proyektil.py → Notebook",
+
+  // Subtitle / deskripsi
+  subtitle: "Simulasi Dinamika Energi 2D – Proyektil Motion",
+
+  // Markdown intro yang tampil SEBELUM kode (cell pertama)
+  introMarkdown: [
+    "# 🚀 Simulasi Dinamika Energi 2D",
+    "",
+    "**Sumber:** `proyektil.py` — dari repo [Portofolio](https://github.com/eRYaDin/Portofolio)",
+    "",
+    "## Tujuan",
+    "Memahami bagaimana perubahan massa bola (m) mempengaruhi energi (Energi Kinetik, Potensial, dan Mekanik) selama lemparan proyektil, dengan mengasumsikan tidak ada gesekan udara.",
+    "",
+    "## Parameter yang Dicari",
+    "1. **Energi Kinetik (Ek)** — `0.5 * m * v²`",
+    "2. **Energi Potensial (Ep)** — `m * g * h`",
+    "3. **Energi Mekanik (Em)** — `Ek + Ep`",
+    "",
+    "> 💡 Selama `v0` dan sudut lemparan konstan, lintasan dan waktu terbang **tidak** dipengaruhi massa. Semua nilai energi berbanding lurus dengan massa."
+  ]
+};
