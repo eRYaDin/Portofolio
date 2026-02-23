@@ -1,517 +1,588 @@
-/* ========================================
-   RESET & BASE STYLES
-======================================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+// ========================================
+// KONSTANTA SENSOR (BERDASARKAN TEORI)
+// ========================================
+
+// Hall Effect Sensor: Moderate noise karena interferensi medan magnet
+const HALL_NOISE = 50;
+
+// TMR Sensor: Very low noise tapi ada jitter elektronik kecil
+const TMR_NOISE = 5;
+const TMR_JITTER_AMPLITUDE = 3;
+
+// Analog Potentiometer: High noise + mechanical deadzone
+const ANALOG_NOISE = 50;
+const DEADZONE = 100; // Zona mati mekanis di pusat
+
+// Joystick properties
+const WIDTH = 300;
+const HEIGHT = 300;
+const RADIUS = 100;
+const KNOB_SIZE = 20;
+const MAX_OUTPUT = 1600;
+
+// Mini joystick properties
+const MINI_WIDTH = 150;
+const MINI_HEIGHT = 150;
+const MINI_RADIUS = 50;
+const MINI_KNOB_SIZE = 12;
+
+// ========================================
+// GLOBAL VARIABLES
+// ========================================
+let hallData = [];
+let tmrData = [];
+let analogData = [];
+
+// Game variables
+let carX = 400;
+let carY = 300;
+let carSpeed = 4;
+let coins = [];
+let score = 0;
+let gameRunning = false;
+
+const gameCanvas = document.getElementById('game-canvas');
+const gameCtx = gameCanvas ? gameCanvas.getContext('2d') : null;
+
+// ========================================
+// UTILITY FUNCTIONS
+// ========================================
+function calculateAvgNoise(data, target) {
+    if (data.length === 0) return 0;
+    const deviations = data.map(val => Math.abs(val - target));
+    return Math.round(deviations.reduce((a, b) => a + b, 0) / deviations.length);
 }
 
-body {
-    font-family: 'Permanent Marker', cursive;
-    background: #FFE66D url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="3" fill="%23FF6B6B" opacity="0.3"/><circle cx="90" cy="20" r="4" fill="%234ECDC4" opacity="0.3"/><circle cx="50" cy="80" r="3" fill="%2395E1D3" opacity="0.3"/></svg>');
-    min-height: 100vh;
-    color: #2D3436;
-    overflow-x: hidden;
+function calculateAccuracy(avgNoise) {
+    return Math.max(0, Math.round(100 - (avgNoise / 16)));
 }
 
-.hidden {
-    display: none !important;
-}
+// ========================================
+// JOYSTICK CREATION
+// ========================================
+function createJoystick(canvasId, labelId, onMove, type, isMini = false) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
 
-/* ========================================
-   START MENU
-======================================== */
-#start-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    text-align: center;
-    padding: 20px;
-    animation: fadeIn 0.5s ease-in;
-}
+    const ctx = canvas.getContext('2d');
+    const w = isMini ? MINI_WIDTH : WIDTH;
+    const h = isMini ? MINI_HEIGHT : HEIGHT;
+    const centerX = w / 2;
+    const centerY = h / 2;
+    const radius = isMini ? MINI_RADIUS : RADIUS;
+    const knobSize = isMini ? MINI_KNOB_SIZE : KNOB_SIZE;
+    
+    let knobX = centerX;
+    let knobY = centerY;
+    let isDragging = false;
 
-#start-menu h1 {
-    font-family: 'Luckiest Guy', cursive;
-    font-size: 3.5em;
-    color: #FF6B6B;
-    margin-bottom: 20px;
-    transform: rotate(-2deg);
-    text-shadow: 
-        4px 4px 0 #000,
-        -2px -2px 0 #000,
-        2px -2px 0 #000,
-        -2px 2px 0 #000;
-    animation: bounce 2s infinite;
-}
+    function drawBase() {
+        // Outer circle
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 4;
+        ctx.stroke();
 
-@keyframes bounce {
-    0%, 100% { transform: rotate(-2deg) translateY(0); }
-    50% { transform: rotate(-2deg) translateY(-10px); }
-}
+        // Inner guide circle
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius - 8, 0, 2 * Math.PI);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+        // Crosshair
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY - radius);
+        ctx.lineTo(centerX, centerY + radius);
+        ctx.moveTo(centerX - radius, centerY);
+        ctx.lineTo(centerX + radius, centerY);
+        ctx.stroke();
 
-.speech-bubble {
-    position: relative;
-    background: white;
-    border: 4px solid #000;
-    border-radius: 20px;
-    padding: 20px 30px;
-    margin: 20px;
-    font-size: 1.1em;
-    box-shadow: 5px 5px 0 #000;
-    max-width: 600px;
-}
-
-.speech-bubble:before {
-    content: "";
-    position: absolute;
-    bottom: -20px;
-    left: 30px;
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-top: 20px solid #000;
-}
-
-.speech-bubble:after {
-    content: "";
-    position: absolute;
-    bottom: -14px;
-    left: 33px;
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-top: 17px solid white;
-}
-
-.mode-buttons {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-/* ========================================
-   BUTTONS
-======================================== */
-.btn-comic {
-    font-family: 'Bangers', cursive;
-    font-size: 1.5em;
-    padding: 20px 40px;
-    background: #4ECDC4;
-    color: #000;
-    border: 5px solid #000;
-    border-radius: 15px;
-    cursor: pointer;
-    transform: rotate(-1deg);
-    box-shadow: 6px 6px 0 #000;
-    transition: all 0.1s;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-.btn-comic:hover {
-    transform: rotate(-1deg) translateY(-3px);
-    box-shadow: 8px 8px 0 #000;
-}
-
-.btn-comic:active {
-    transform: rotate(-1deg) translateY(2px);
-    box-shadow: 3px 3px 0 #000;
-}
-
-.btn-red { background: #FF6B6B; }
-.btn-yellow { background: #FFE66D; }
-.btn-green { background: #95E1D3; }
-
-.btn-small {
-    font-family: 'Bangers', cursive;
-    font-size: 1em;
-    padding: 10px 20px;
-    background: #4ECDC4;
-    color: #000;
-    border: 3px solid #000;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: 3px 3px 0 #000;
-    transition: all 0.1s;
-    text-transform: uppercase;
-}
-
-.btn-small:hover {
-    transform: translateY(-2px);
-    box-shadow: 4px 4px 0 #000;
-}
-
-.btn-small:active {
-    transform: translateY(1px);
-    box-shadow: 2px 2px 0 #000;
-}
-
-/* ========================================
-   HEADER
-======================================== */
-header {
-    background: white;
-    border-bottom: 5px solid #000;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-header h1 {
-    font-family: 'Luckiest Guy', cursive;
-    font-size: 2em;
-    color: #FF6B6B;
-    text-shadow: 2px 2px 0 #000;
-}
-
-.header-btns {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-/* ========================================
-   MAIN CONTENT
-======================================== */
-.content-wrapper {
-    padding: 30px 20px;
-}
-
-.page-title {
-    font-family: 'Luckiest Guy', cursive;
-    font-size: 2.5em;
-    text-align: center;
-    color: #FF6B6B;
-    margin-bottom: 30px;
-    text-shadow: 3px 3px 0 #000;
-    transform: rotate(-1deg);
-}
-
-/* ========================================
-   INFO PANEL
-======================================== */
-.info-panel {
-    background: white;
-    border: 5px solid #000;
-    border-radius: 20px;
-    padding: 25px;
-    margin: 0 auto 30px;
-    max-width: 1200px;
-    box-shadow: 8px 8px 0 #000;
-}
-
-.info-panel h3 {
-    font-family: 'Bangers', cursive;
-    font-size: 2em;
-    color: #4ECDC4;
-    margin-bottom: 20px;
-    text-shadow: 2px 2px 0 #000;
-    text-align: center;
-}
-
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.info-card {
-    background: #F8F9FA;
-    border: 3px solid #000;
-    border-radius: 15px;
-    padding: 20px;
-}
-
-.info-card h4 {
-    font-family: 'Bangers', cursive;
-    font-size: 1.5em;
-    margin-bottom: 15px;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
-}
-
-.info-card p {
-    font-family: 'Permanent Marker', cursive;
-    font-size: 0.9em;
-    line-height: 1.6;
-    margin-bottom: 10px;
-}
-
-.info-card strong {
-    color: #FF6B6B;
-}
-
-/* ========================================
-   JOYSTICK SECTIONS
-======================================== */
-.sections-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 30px;
-    max-width: 1600px;
-    margin: 0 auto;
-}
-
-.section {
-    background: white;
-    border: 6px solid #000;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 10px 10px 0 #000;
-    transform: rotate(-0.5deg);
-    transition: all 0.2s;
-}
-
-.section:nth-child(even) {
-    transform: rotate(0.5deg);
-}
-
-.section:hover {
-    transform: rotate(0) scale(1.02);
-    box-shadow: 12px 12px 0 #000;
-}
-
-.section-badge {
-    display: inline-block;
-    background: #FFE66D;
-    border: 3px solid #000;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-family: 'Bangers', cursive;
-    font-size: 0.9em;
-    margin-bottom: 10px;
-}
-
-.section h3 {
-    font-family: 'Luckiest Guy', cursive;
-    font-size: 1.8em;
-    color: #FF6B6B;
-    margin-bottom: 10px;
-    text-align: center;
-    text-shadow: 2px 2px 0 #000;
-}
-
-.sensor-desc {
-    font-family: 'Permanent Marker', cursive;
-    font-size: 0.85em;
-    text-align: center;
-    margin-bottom: 15px;
-    color: #666;
-}
-
-/* ========================================
-   JOYSTICK CANVAS
-======================================== */
-.joystick-canvas {
-    border: 5px solid #000;
-    background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
-    margin: 0 auto 20px;
-    display: block;
-    border-radius: 15px;
-    box-shadow: inset 0 4px 8px rgba(0,0,0,0.2);
-    max-width: 100%;
-    height: auto;
-    cursor: grab;
-}
-
-.joystick-canvas:active {
-    cursor: grabbing;
-}
-
-.labels {
-    background: #FFE66D;
-    border: 4px solid #000;
-    border-radius: 15px;
-    padding: 15px;
-    margin: 15px 0;
-    text-align: center;
-}
-
-.labels div {
-    font-family: 'Bangers', cursive;
-    font-size: 1.3em;
-    margin: 5px 0;
-    color: #000;
-}
-
-.stats {
-    background: #95E1D3;
-    border: 4px solid #000;
-    border-radius: 15px;
-    padding: 12px;
-    text-align: center;
-    font-family: 'Bangers', cursive;
-    font-size: 1.1em;
-    margin: 15px 0;
-}
-
-/* ========================================
-   GRAPH CONTAINER
-======================================== */
-.graph-container {
-    width: 100%;
-    height: 200px;
-    border: 4px solid #000;
-    border-radius: 15px;
-    background: white;
-    padding: 10px;
-    margin-top: 20px;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-}
-
-/* ========================================
-   GAME SECTION
-======================================== */
-.game-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: white;
-    border: 6px solid #000;
-    border-radius: 25px;
-    padding: 25px;
-    box-shadow: 12px 12px 0 #000;
-}
-
-#game-canvas {
-    border: 5px solid #000;
-    background: linear-gradient(135deg, #E0E7FF 0%, #F3F4F6 100%);
-    border-radius: 15px;
-    display: block;
-    margin: 20px auto;
-    max-width: 100%;
-    height: auto;
-    box-shadow: inset 0 4px 8px rgba(0,0,0,0.2);
-}
-
-#game-stats {
-    font-family: 'Bangers', cursive;
-    font-size: 2em;
-    text-align: center;
-    color: #FF6B6B;
-    margin: 20px 0;
-    padding: 15px;
-    background: #FFE66D;
-    border: 4px solid #000;
-    border-radius: 15px;
-    text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-}
-
-/* ========================================
-   MINI JOYSTICKS
-======================================== */
-.mini-joysticks {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 20px;
-    margin-top: 25px;
-}
-
-.mini-section {
-    background: #F8F9FA;
-    border: 4px solid #000;
-    border-radius: 15px;
-    padding: 15px;
-    text-align: center;
-    transition: all 0.2s;
-    transform: rotate(-1deg);
-}
-
-.mini-section:nth-child(even) {
-    transform: rotate(1deg);
-}
-
-.mini-section:hover {
-    transform: rotate(0) scale(1.05);
-    box-shadow: 5px 5px 0 #000;
-}
-
-.mini-section h4 {
-    font-family: 'Bangers', cursive;
-    font-size: 1.3em;
-    color: #4ECDC4;
-    margin-bottom: 10px;
-    text-shadow: 1px 1px 0 #000;
-}
-
-.mini-joystick {
-    border: 4px solid #000;
-    background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
-    border-radius: 10px;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-    max-width: 100%;
-    height: auto;
-    cursor: grab;
-}
-
-.mini-joystick:active {
-    cursor: grabbing;
-}
-
-/* ========================================
-   RESPONSIVE
-======================================== */
-@media (max-width: 768px) {
-    #start-menu h1 {
-        font-size: 2.5em;
+        // Deadzone indicator for analog
+        if (type === 'analog' && !isMini) {
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, (DEADZONE / MAX_OUTPUT) * radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = 'rgba(255, 107, 107, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
     }
 
-    .page-title {
-        font-size: 2em;
+    function drawKnob() {
+        // Shadow
+        ctx.beginPath();
+        ctx.arc(knobX + 2, knobY + 2, knobSize, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.fill();
+
+        // Main knob with gradient
+        const gradient = ctx.createRadialGradient(
+            knobX - 4, knobY - 4, 3,
+            knobX, knobY, knobSize
+        );
+        gradient.addColorStop(0, '#FF6B6B');
+        gradient.addColorStop(1, '#C92A2A');
+
+        ctx.beginPath();
+        ctx.arc(knobX, knobY, knobSize, 0, 2 * Math.PI);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Highlight
+        ctx.beginPath();
+        ctx.arc(knobX - 5, knobY - 5, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.fill();
     }
 
-    .sections-grid {
-        grid-template-columns: 1fr;
+    function redraw() {
+        ctx.clearRect(0, 0, w, h);
+        drawBase();
+        drawKnob();
     }
 
-    header h1 {
-        font-size: 1.5em;
+    redraw();
+
+    // Event handlers
+    const handleStart = (e) => {
+        isDragging = true;
+        moveKnob(e.touches ? e.touches[0] : e);
+    };
+
+    const handleMove = (e) => {
+        if (isDragging) {
+            e.preventDefault();
+            moveKnob(e.touches ? e.touches[0] : e);
+        }
+    };
+
+    const handleEnd = () => {
+        isDragging = false;
+        smoothReturn();
+    };
+
+    canvas.addEventListener('mousedown', handleStart);
+    canvas.addEventListener('mousemove', handleMove);
+    canvas.addEventListener('mouseup', handleEnd);
+    canvas.addEventListener('touchstart', handleStart, { passive: false });
+    canvas.addEventListener('touchmove', handleMove, { passive: false });
+    canvas.addEventListener('touchend', handleEnd);
+
+    function moveKnob(e) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        let dx = mouseX - centerX;
+        let dy = mouseY - centerY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Limit to circle
+        if (dist > radius) {
+            const scale = radius / dist;
+            dx *= scale;
+            dy *= scale;
+        }
+
+        knobX = centerX + dx;
+        knobY = centerY + dy;
+        redraw();
+
+        // Calculate normalized values
+        let normX = Math.round((dx / radius) * MAX_OUTPUT);
+        let normY = Math.round((dy / radius) * MAX_OUTPUT);
+
+        // Apply deadzone for analog
+        if (type === 'analog') {
+            if (Math.abs(normX) < DEADZONE) normX = 0;
+            if (Math.abs(normY) < DEADZONE) normY = 0;
+        }
+
+        onMove(normX, normY, type);
     }
 
-    .btn-comic {
-        font-size: 1.2em;
-        padding: 15px 30px;
-    }
+    function smoothReturn() {
+        if (isDragging) return;
 
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
+        const dx = centerX - knobX;
+        const dy = centerY - knobY;
 
-    .mini-joysticks {
-        grid-template-columns: repeat(2, 1fr);
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+            knobX = centerX;
+            knobY = centerY;
+            redraw();
+            onMove(0, 0, type);
+            return;
+        }
+
+        knobX += dx * 0.15;
+        knobY += dy * 0.15;
+        redraw();
+        
+        // Update position during return
+        const returnDx = knobX - centerX;
+        const returnDy = knobY - centerY;
+        let normX = Math.round((returnDx / radius) * MAX_OUTPUT);
+        let normY = Math.round((returnDy / radius) * MAX_OUTPUT);
+        
+        if (type === 'analog') {
+            if (Math.abs(normX) < DEADZONE) normX = 0;
+            if (Math.abs(normY) < DEADZONE) normY = 0;
+        }
+        
+        onMove(normX, normY, type);
+        setTimeout(smoothReturn, 16);
     }
 }
 
-@media (max-width: 480px) {
-    #start-menu h1 {
-        font-size: 2em;
-    }
+// ========================================
+// GRAPH CREATION
+// ========================================
+function createGraph(canvasId, datasets) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return () => {};
 
-    .speech-bubble {
-        font-size: 0.95em;
-        padding: 15px 20px;
-    }
+    const chart = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            elements: {
+                point: { radius: 0 },
+                line: { borderWidth: 2, tension: 0.1 }
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    display: true,
+                    grid: { display: true, color: 'rgba(0,0,0,0.05)' }
+                },
+                y: {
+                    min: -1600,
+                    max: 1600,
+                    grid: { display: true, color: 'rgba(0,0,0,0.05)' }
+                }
+            },
+            plugins: {
+                legend: { display: true, position: 'top' },
+                tooltip: { enabled: true }
+            }
+        }
+    });
 
-    .mode-buttons {
-        flex-direction: column;
-        width: 100%;
-    }
+    let timeStep = 0;
+    const maxPoints = 150;
 
-    .btn-comic {
-        width: 100%;
-    }
+    return function updateGraph(values) {
+        timeStep++;
+        chart.data.labels.push(timeStep);
+        datasets.forEach((dataset, index) => {
+            dataset.data.push(values[index]);
+        });
+
+        if (chart.data.labels.length > maxPoints) {
+            chart.data.labels.shift();
+            datasets.forEach(dataset => dataset.data.shift());
+        }
+
+        chart.update('none');
+    };
 }
+
+// ========================================
+// INITIALIZE JOYSTICKS
+// ========================================
+
+// Hall Effect Joystick
+const updateGraph1 = createGraph('graph-canvas1', [{
+    label: 'Hall Effect X',
+    data: [],
+    borderColor: '#FF6B6B',
+    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+    fill: false
+}]);
+
+createJoystick('joystick-canvas1', null, (normX, normY) => {
+    // Add Hall Effect noise
+    const noiseX = Math.floor(Math.random() * (HALL_NOISE * 2 + 1)) - HALL_NOISE;
+    const hallX = normX + noiseX;
+    
+    document.getElementById('label-hall').textContent = `X=${hallX}  Y=${normY}`;
+    
+    hallData.push(hallX);
+    if (hallData.length > 100) hallData.shift();
+    
+    const avgNoise = calculateAvgNoise(hallData, normX);
+    const accuracy = calculateAccuracy(avgNoise);
+    document.getElementById('stats-hall').textContent = `Avg Noise: ${avgNoise} | Accuracy: ${accuracy}%`;
+    
+    updateGraph1([hallX]);
+}, 'hall');
+
+// TMR Sensor Joystick
+const updateGraph2 = createGraph('graph-canvas2', [{
+    label: 'TMR Sensor X',
+    data: [],
+    borderColor: '#4ECDC4',
+    backgroundColor: 'rgba(78, 205, 196, 0.1)',
+    fill: false
+}]);
+
+createJoystick('joystick-canvas2', null, (normX, normY) => {
+    // Add TMR noise + jitter
+    const noiseX = Math.floor(Math.random() * (TMR_NOISE * 2 + 1)) - TMR_NOISE;
+    const jitter = Math.sin(Date.now() / 50) * TMR_JITTER_AMPLITUDE;
+    const tmrX = normX + noiseX + jitter;
+    
+    document.getElementById('label-tmr').textContent = `X=${Math.round(tmrX)}  Y=${normY}`;
+    
+    tmrData.push(tmrX);
+    if (tmrData.length > 100) tmrData.shift();
+    
+    const avgNoise = calculateAvgNoise(tmrData, normX);
+    const accuracy = calculateAccuracy(avgNoise);
+    document.getElementById('stats-tmr').textContent = `Avg Noise: ${avgNoise} | Accuracy: ${accuracy}%`;
+    
+    updateGraph2([tmrX]);
+}, 'tmr');
+
+// Analog Potentiometer Joystick
+const updateGraph3 = createGraph('graph-canvas3', [{
+    label: 'Analog Pot X',
+    data: [],
+    borderColor: '#FFE66D',
+    backgroundColor: 'rgba(255, 230, 109, 0.1)',
+    fill: false
+}]);
+
+createJoystick('joystick-canvas3', null, (normX, normY) => {
+    // Add analog noise
+    const noiseX = Math.floor(Math.random() * (ANALOG_NOISE * 2 + 1)) - ANALOG_NOISE;
+    const analogX = normX + noiseX;
+    
+    document.getElementById('label-analog').textContent = `X=${analogX}  Y=${normY}`;
+    
+    analogData.push(analogX);
+    if (analogData.length > 100) analogData.shift();
+    
+    const avgNoise = calculateAvgNoise(analogData, normX);
+    const accuracy = calculateAccuracy(avgNoise);
+    document.getElementById('stats-analog').textContent = `Avg Noise: ${avgNoise} | Accuracy: ${accuracy}%`;
+    
+    updateGraph3([analogX]);
+}, 'analog');
+
+// Comparison Joystick
+const updateGraph4 = createGraph('graph-canvas4', [
+    { label: 'Hall', data: [], borderColor: '#FF6B6B', fill: false },
+    { label: 'TMR', data: [], borderColor: '#4ECDC4', fill: false },
+    { label: 'Analog', data: [], borderColor: '#FFE66D', fill: false }
+]);
+
+createJoystick('joystick-canvas4', null, (normX, normY) => {
+    // Hall
+    const hallNoise = Math.floor(Math.random() * (HALL_NOISE * 2 + 1)) - HALL_NOISE;
+    const hallX = normX + hallNoise;
+    document.getElementById('label-comp-hall').textContent = `Hall: X=${hallX} Y=${normY}`;
+    
+    // TMR
+    const tmrNoise = Math.floor(Math.random() * (TMR_NOISE * 2 + 1)) - TMR_NOISE;
+    const jitter = Math.sin(Date.now() / 50) * TMR_JITTER_AMPLITUDE;
+    const tmrX = normX + tmrNoise + jitter;
+    document.getElementById('label-comp-tmr').textContent = `TMR: X=${Math.round(tmrX)} Y=${normY}`;
+    
+    // Analog
+    const analogNoise = Math.floor(Math.random() * (ANALOG_NOISE * 2 + 1)) - ANALOG_NOISE;
+    const analogX = normX + analogNoise;
+    document.getElementById('label-comp-analog').textContent = `Analog: X=${analogX} Y=${normY}`;
+    
+    const hallAvg = calculateAvgNoise([hallX], normX);
+    const tmrAvg = calculateAvgNoise([tmrX], normX);
+    const analogAvg = calculateAvgNoise([analogX], normX);
+    document.getElementById('stats-comp').textContent = `Hall: ${hallAvg} | TMR: ${tmrAvg} | Analog: ${analogAvg}`;
+    
+    updateGraph4([hallX, tmrX, analogX]);
+    
+    // Update game car position
+    if (gameRunning) {
+        carX += (normX / MAX_OUTPUT) * carSpeed;
+        carY += (normY / MAX_OUTPUT) * carSpeed;
+        carX = Math.max(20, Math.min(780, carX));
+        carY = Math.max(20, Math.min(580, carY));
+    }
+}, 'comparison');
+
+// ========================================
+// MINI JOYSTICKS (FOR GAME)
+// ========================================
+createJoystick('mini-joystick1', null, (normX, normY) => {
+    if (gameRunning) {
+        carX += (normX / MAX_OUTPUT) * carSpeed;
+        carY += (normY / MAX_OUTPUT) * carSpeed;
+        carX = Math.max(20, Math.min(780, carX));
+        carY = Math.max(20, Math.min(580, carY));
+    }
+}, 'hall', true);
+
+createJoystick('mini-joystick2', null, (normX, normY) => {
+    if (gameRunning) {
+        carX += (normX / MAX_OUTPUT) * carSpeed;
+        carY += (normY / MAX_OUTPUT) * carSpeed;
+        carX = Math.max(20, Math.min(780, carX));
+        carY = Math.max(20, Math.min(580, carY));
+    }
+}, 'tmr', true);
+
+createJoystick('mini-joystick3', null, (normX, normY) => {
+    if (gameRunning) {
+        carX += (normX / MAX_OUTPUT) * carSpeed;
+        carY += (normY / MAX_OUTPUT) * carSpeed;
+        carX = Math.max(20, Math.min(780, carX));
+        carY = Math.max(20, Math.min(580, carY));
+    }
+}, 'analog', true);
+
+createJoystick('mini-joystick4', null, (normX, normY) => {
+    if (gameRunning) {
+        carX += (normX / MAX_OUTPUT) * carSpeed;
+        carY += (normY / MAX_OUTPUT) * carSpeed;
+        carX = Math.max(20, Math.min(780, carX));
+        carY = Math.max(20, Math.min(580, carY));
+    }
+}, 'comparison', true);
+
+// ========================================
+// NAVIGATION
+// ========================================
+document.getElementById('desktop-mode-start').addEventListener('click', () => {
+    document.getElementById('start-menu').classList.add('hidden');
+    document.getElementById('main-menu').classList.remove('hidden');
+});
+
+document.getElementById('mobile-mode-start').addEventListener('click', () => {
+    document.getElementById('start-menu').classList.add('hidden');
+    document.getElementById('main-menu').classList.remove('hidden');
+});
+
+document.getElementById('mini-game-btn').addEventListener('click', () => {
+    document.getElementById('main-menu').classList.add('hidden');
+    document.getElementById('mini-game').classList.remove('hidden');
+    startGame();
+});
+
+document.getElementById('back-to-main').addEventListener('click', () => {
+    stopGame();
+    document.getElementById('mini-game').classList.add('hidden');
+    document.getElementById('main-menu').classList.remove('hidden');
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+    hallData = [];
+    tmrData = [];
+    analogData = [];
+    location.reload();
+});
+
+// ========================================
+// GAME LOGIC
+// ========================================
+function startGame() {
+    gameRunning = true;
+    score = 0;
+    carX = 400;
+    carY = 300;
+    coins = [];
+    
+    // Spawn initial coins
+    for (let i = 0; i < 8; i++) {
+        coins.push({
+            x: Math.random() * 760 + 20,
+            y: Math.random() * 560 + 20,
+            radius: 12
+        });
+    }
+    
+    gameLoop();
+}
+
+function stopGame() {
+    gameRunning = false;
+}
+
+function gameLoop() {
+    if (!gameRunning || !gameCtx) return;
+
+    gameCtx.clearRect(0, 0, 800, 600);
+
+    // Draw player (blue square with eyes)
+    gameCtx.fillStyle = '#4ECDC4';
+    gameCtx.strokeStyle = '#000';
+    gameCtx.lineWidth = 4;
+    gameCtx.fillRect(carX - 20, carY - 20, 40, 40);
+    gameCtx.strokeRect(carX - 20, carY - 20, 40, 40);
+    
+    // Eyes
+    gameCtx.fillStyle = '#000';
+    gameCtx.beginPath();
+    gameCtx.arc(carX - 8, carY - 5, 4, 0, 2 * Math.PI);
+    gameCtx.arc(carX + 8, carY - 5, 4, 0, 2 * Math.PI);
+    gameCtx.fill();
+
+    // Draw coins
+    coins.forEach((coin, index) => {
+        gameCtx.fillStyle = '#FFE66D';
+        gameCtx.strokeStyle = '#000';
+        gameCtx.lineWidth = 3;
+        gameCtx.beginPath();
+        gameCtx.arc(coin.x, coin.y, coin.radius, 0, 2 * Math.PI);
+        gameCtx.fill();
+        gameCtx.stroke();
+
+        // Sparkle
+        gameCtx.fillStyle = '#FFF';
+        gameCtx.beginPath();
+        gameCtx.arc(coin.x - 4, coin.y - 4, 3, 0, 2 * Math.PI);
+        gameCtx.fill();
+
+        // Check collision
+        const dx = carX - coin.x;
+        const dy = carY - coin.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 20 + coin.radius) {
+            coins.splice(index, 1);
+            score += 10;
+            
+            // Spawn new coin
+            coins.push({
+                x: Math.random() * 760 + 20,
+                y: Math.random() * 560 + 20,
+                radius: 12
+            });
+        }
+    });
+
+    // Update stats
+    document.getElementById('game-stats').textContent = 
+        `Score: ${score} | Coins Collected: ${Math.floor(score / 10)}`;
+
+    requestAnimationFrame(gameLoop);
+}
+
+console.log('🎮 Joystick Sensor Comparison Tool Loaded!');
+console.log('Hall Effect Noise: ±' + HALL_NOISE);
+console.log('TMR Noise: ±' + TMR_NOISE + ' + jitter');
+console.log('Analog Noise: ±' + ANALOG_NOISE + ' + deadzone: ±' + DEADZONE);
