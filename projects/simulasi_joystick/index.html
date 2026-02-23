@@ -1,178 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Joystick Sensor Simulator - Rafif yasin habibullah wiryawan</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joystick Sensor Comparison</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-  <!-- START SCREEN -->
-  <div id="start-screen" class="start-screen">
-    <div class="start-content">
-      <h1 class="start-title">🕹️ Joystick Sensor Simulator</h1>
-      <p class="start-subtitle">Compare Hall Effect, TMR, and Analog sensors in real-time</p>
-      <div class="start-buttons">
-        <button class="btn-start" id="btn-desktop">🖥️ Desktop Mode</button>
-        <button class="btn-start" id="btn-mobile">📱 Mobile Mode</button>
-      </div>
-      <a href="https://eryadin.github.io/Portofolio/" class="back-to-portfolio">
-        ← Back to Portfolio
-      </a>
-    </div>
-  </div>
-
-  <!-- APP HEADER -->
-  <header class="app-header">
-    <a href="https://eryadin.github.io/Portofolio/" class="back-link">
-      ← Portfolio
-    </a>
-    <h1 class="app-title">Joystick Simulator</h1>
-    <div class="header-actions">
-      <button class="theme-toggle-btn" id="theme-toggle">🌙 Dark Mode</button>
-      <button class="btn-game" id="btn-show-game">🎮 Play Game</button>
-    </div>
-  </header>
-
-  <!-- MAIN CONTENT -->
-  <main id="main-content" class="main-container hidden">
-    
-    <!-- INTRO SECTION -->
-    <div class="section-header">
-      <h2 class="section-title">Sensor Comparison</h2>
-      <p class="section-description">
-        Explore different joystick sensor technologies and compare their noise characteristics in real-time
-      </p>
+    <!-- Start Menu -->
+    <div id="start-menu">
+        <h1>🎮 JOYSTICK SENSOR COMPARISON</h1>
+        <div class="speech-bubble">
+            Bandingkan 3 teknologi sensor joystick: Hall Effect, TMR, dan Analog Potentiometer!
+        </div>
+        <div class="mode-buttons">
+            <button class="btn-comic btn-red" id="desktop-mode-start">💻 Desktop Mode</button>
+            <button class="btn-comic btn-yellow" id="mobile-mode-start">📱 Mobile Mode</button>
+        </div>
     </div>
 
-    <!-- INDIVIDUAL SENSORS GRID -->
-    <div class="sensors-grid">
-      
-      <!-- HALL SENSOR -->
-      <div class="sensor-card hall">
-        <div class="sensor-header">
-          <h3 class="sensor-title">Hall Effect Sensor</h3>
-          <span class="sensor-badge">Magnetic</span>
-          <p class="sensor-description">Moderate noise, good durability</p>
-        </div>
-        <div class="joystick-wrapper">
-          <canvas id="joystick-canvas1" width="350" height="350"></canvas>
-          <div class="joystick-label" id="label-hall">Hall: X=0  Y=0</div>
-          <div class="sensor-stats" id="stats-hall">Avg Noise: 0 | Accuracy: 100%</div>
-        </div>
-        <div class="graph-wrapper">
-          <canvas id="graph-canvas1"></canvas>
-        </div>
-      </div>
+    <!-- Main Menu -->
+    <div id="main-menu" class="hidden">
+        <header>
+            <h1>⚡ SENSOR COMPARISON ⚡</h1>
+            <div class="header-btns">
+                <button class="btn-small btn-red" id="mini-game-btn">🎮 TEST GAME</button>
+                <button class="btn-small btn-green" id="reset-btn">🔄 RESET</button>
+            </div>
+        </header>
 
-      <!-- TMR SENSOR -->
-      <div class="sensor-card tmr">
-        <div class="sensor-header">
-          <h3 class="sensor-title">TMR Sensor</h3>
-          <span class="sensor-badge">Precision</span>
-          <p class="sensor-description">Low noise, high accuracy</p>
-        </div>
-        <div class="joystick-wrapper">
-          <canvas id="joystick-canvas2" width="350" height="350"></canvas>
-          <div class="joystick-label" id="label-tmr">TMR: X=0  Y=0</div>
-          <div class="sensor-stats" id="stats-tmr">Avg Noise: 0 | Accuracy: 100%</div>
-        </div>
-        <div class="graph-wrapper">
-          <canvas id="graph-canvas2"></canvas>
-        </div>
-      </div>
+        <div class="content-wrapper">
+            <h2 class="page-title">🔬 COMPARE JOYSTICK SENSORS 🔬</h2>
 
-      <!-- ANALOG SENSOR -->
-      <div class="sensor-card analog">
-        <div class="sensor-header">
-          <h3 class="sensor-title">Analog Sensor</h3>
-          <span class="sensor-badge">Traditional</span>
-          <p class="sensor-description">Higher noise, deadzone present</p>
-        </div>
-        <div class="joystick-wrapper">
-          <canvas id="joystick-canvas3" width="350" height="350"></canvas>
-          <div class="joystick-label" id="label-analog">Analog: X=0  Y=0</div>
-          <div class="sensor-stats" id="stats-analog">Avg Noise: 0 | Accuracy: 100%</div>
-        </div>
-        <div class="graph-wrapper">
-          <canvas id="graph-canvas3"></canvas>
-        </div>
-      </div>
+            <!-- Info Panel -->
+            <div class="info-panel">
+                <h3>📚 Tentang Sensor Joystick</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h4>🔷 Hall Effect</h4>
+                        <p><strong>Prinsip:</strong> Menggunakan efek Hall untuk mendeteksi medan magnet</p>
+                        <p><strong>Noise:</strong> Sedang (±50 unit)</p>
+                        <p><strong>Keunggulan:</strong> Tidak ada kontak fisik, tahan lama</p>
+                        <p><strong>Kelemahan:</strong> Interferensi medan magnet eksternal</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>🔶 TMR (Tunnel Magneto-Resistance)</h4>
+                        <p><strong>Prinsip:</strong> Mengukur perubahan resistensi quantum tunneling</p>
+                        <p><strong>Noise:</strong> Sangat Rendah (±5 unit) + Jitter kecil</p>
+                        <p><strong>Keunggulan:</strong> Presisi tinggi, sensitivitas tinggi</p>
+                        <p><strong>Kelemahan:</strong> Lebih mahal, ada jitter elektronik</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>🔸 Analog Potentiometer</h4>
+                        <p><strong>Prinsip:</strong> Resistor variabel mekanis</p>
+                        <p><strong>Noise:</strong> Tinggi (±50 unit) + Deadzone (±100 unit)</p>
+                        <p><strong>Keunggulan:</strong> Murah, sederhana</p>
+                        <p><strong>Kelemahan:</strong> Aus mekanis, deadzone, drift</p>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Joystick Sections -->
+            <div class="sections-grid">
+                <!-- Hall Sensor -->
+                <div class="section">
+                    <span class="section-badge">🔷 MAGNETIC</span>
+                    <h3>HALL EFFECT</h3>
+                    <p class="sensor-desc">Moderate noise, no mechanical wear</p>
+                    <canvas id="joystick-canvas1" class="joystick-canvas" width="300" height="300"></canvas>
+                    <div class="labels">
+                        <div id="label-hall">X=0  Y=0</div>
+                    </div>
+                    <div class="stats" id="stats-hall">Avg Noise: 0 | Accuracy: 100%</div>
+                    <div class="graph-container">
+                        <canvas id="graph-canvas1"></canvas>
+                    </div>
+                </div>
+
+                <!-- TMR Sensor -->
+                <div class="section">
+                    <span class="section-badge">🔶 PRECISION</span>
+                    <h3>TMR SENSOR</h3>
+                    <p class="sensor-desc">Lowest noise, highest precision with slight jitter</p>
+                    <canvas id="joystick-canvas2" class="joystick-canvas" width="300" height="300"></canvas>
+                    <div class="labels">
+                        <div id="label-tmr">X=0  Y=0</div>
+                    </div>
+                    <div class="stats" id="stats-tmr">Avg Noise: 0 | Accuracy: 100%</div>
+                    <div class="graph-container">
+                        <canvas id="graph-canvas2"></canvas>
+                    </div>
+                </div>
+
+                <!-- Analog Sensor -->
+                <div class="section">
+                    <span class="section-badge">🔸 MECHANICAL</span>
+                    <h3>ANALOG POT</h3>
+                    <p class="sensor-desc">Higher noise, has deadzone, mechanical wear</p>
+                    <canvas id="joystick-canvas3" class="joystick-canvas" width="300" height="300"></canvas>
+                    <div class="labels">
+                        <div id="label-analog">X=0  Y=0</div>
+                    </div>
+                    <div class="stats" id="stats-analog">Avg Noise: 0 | Accuracy: 100%</div>
+                    <div class="graph-container">
+                        <canvas id="graph-canvas3"></canvas>
+                    </div>
+                </div>
+
+                <!-- Comparison -->
+                <div class="section">
+                    <span class="section-badge">📊 COMPARE</span>
+                    <h3>ALL SENSORS</h3>
+                    <p class="sensor-desc">Control all three sensors simultaneously</p>
+                    <canvas id="joystick-canvas4" class="joystick-canvas" width="300" height="300"></canvas>
+                    <div class="labels">
+                        <div id="label-comp-hall">Hall: X=0 Y=0</div>
+                        <div id="label-comp-tmr">TMR: X=0 Y=0</div>
+                        <div id="label-comp-analog">Analog: X=0 Y=0</div>
+                    </div>
+                    <div class="stats" id="stats-comp">Hall: 0 | TMR: 0 | Analog: 0</div>
+                    <div class="graph-container">
+                        <canvas id="graph-canvas4"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- COMPARISON SECTION -->
-    <div class="comparison-section">
-      <div class="section-header">
-        <h3 class="sensor-title">🔬 Side-by-Side Comparison</h3>
-        <p class="sensor-description">All three sensors on one joystick</p>
-      </div>
-      <div class="comparison-labels">
-        <div class="joystick-label" id="label-comp-hall">Hall: X=0  Y=0</div>
-        <div class="joystick-label" id="label-comp-tmr">TMR: X=0  Y=0</div>
-        <div class="joystick-label" id="label-comp-analog">Analog: X=0  Y=0</div>
-      </div>
-      <div class="sensor-stats" id="stats-comp" style="margin-bottom: var(--space-md);">Hall Noise: 0 | TMR Noise: 0 | Analog Noise: 0</div>
-      <div class="joystick-wrapper">
-        <canvas id="joystick-canvas4" width="350" height="350"></canvas>
-      </div>
-      <div class="graph-wrapper">
-        <canvas id="graph-canvas4"></canvas>
-      </div>
+    <!-- Mini Game -->
+    <div id="mini-game" class="hidden">
+        <header>
+            <h1>🎯 SENSOR TEST GAME 🎯</h1>
+            <div class="header-btns">
+                <button class="btn-small btn-red" id="back-to-main">← BACK</button>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <div class="game-container">
+                <div class="speech-bubble" style="margin: 0 0 20px 0;">
+                    Gunakan joystick untuk menggerakkan objek biru dan kumpulkan koin kuning. Rasakan perbedaan akurasi setiap sensor!
+                </div>
+
+                <canvas id="game-canvas" width="800" height="600"></canvas>
+                <div id="game-stats">Score: 0 | Coins Collected: 0</div>
+
+                <div class="mini-joysticks">
+                    <div class="mini-section">
+                        <h4>🔷 HALL</h4>
+                        <canvas id="mini-joystick1" class="mini-joystick" width="150" height="150"></canvas>
+                    </div>
+                    <div class="mini-section">
+                        <h4>🔶 TMR</h4>
+                        <canvas id="mini-joystick2" class="mini-joystick" width="150" height="150"></canvas>
+                    </div>
+                    <div class="mini-section">
+                        <h4>🔸 ANALOG</h4>
+                        <canvas id="mini-joystick3" class="mini-joystick" width="150" height="150"></canvas>
+                    </div>
+                    <div class="mini-section">
+                        <h4>📊 COMPARE</h4>
+                        <canvas id="mini-joystick4" class="mini-joystick" width="150" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-  </main>
-
-  <!-- GAME SECTION -->
-  <section id="game-section" class="main-container hidden">
-    <div class="game-section">
-      <div class="game-header">
-        <h2 class="section-title">🎮 Coin Collector Game</h2>
-        <p class="section-description" style="margin-bottom: var(--space-md);">Test each sensor type by collecting coins</p>
-        <div class="score-display" id="score">Score: 0</div>
-      </div>
-
-      <div class="game-layout">
-        <!-- LEFT JOYSTICKS -->
-        <div class="mini-joysticks">
-          <div class="mini-joystick-card">
-            <h4 class="mini-joystick-title">Hall Sensor</h4>
-            <canvas id="mini-joystick1" width="150" height="150"></canvas>
-          </div>
-          <div class="mini-joystick-card">
-            <h4 class="mini-joystick-title">TMR Sensor</h4>
-            <canvas id="mini-joystick2" width="150" height="150"></canvas>
-          </div>
-        </div>
-
-        <!-- GAME CANVAS CENTER -->
-        <div class="game-canvas-wrapper">
-          <canvas id="game-canvas" width="800" height="600"></canvas>
-        </div>
-
-        <!-- RIGHT JOYSTICKS -->
-        <div class="mini-joysticks">
-          <div class="mini-joystick-card">
-            <h4 class="mini-joystick-title">Analog Sensor</h4>
-            <canvas id="mini-joystick3" width="150" height="150"></canvas>
-          </div>
-          <div class="mini-joystick-card">
-            <h4 class="mini-joystick-title">Comparison</h4>
-            <canvas id="mini-joystick4" width="150" height="150"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <button class="btn btn-danger btn-block" id="btn-back-simulator" style="margin-top: var(--space-lg);">
-        ← Back to Simulator
-      </button>
-    </div>
-  </section>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
