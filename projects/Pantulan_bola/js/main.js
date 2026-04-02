@@ -52,6 +52,29 @@ function init() {
   heightInput.addEventListener("input", resetSimulation);
   restSlider.addEventListener("input", resetSimulation);
   ballSelect.addEventListener("change", resetSimulation);
+
+  // ==================== DRAG LISTENERS ====================
+  
+  // Toggle tampil/sembunyikan slider Cd
+  document.getElementById("airResistanceCheckbox").addEventListener("change", function () {
+    document.getElementById("dragGroup").style.display = this.checked ? "block" : "none";
+    resetSimulation(); // reset saat toggle hambatan udara
+  });
+
+  // Update display Cd + reset simulasi saat slider digeser
+  document.getElementById("dragSlider").addEventListener("input", function () {
+    document.getElementById("dragDisplay").textContent = parseFloat(this.value).toFixed(2);
+    resetSimulation();
+  });
+
+  // Saat ganti bola → update slider Cd ke nilai Cd bola tersebut
+  ballSelect.addEventListener("change", function () {
+    const ball = balls[parseInt(this.value)];
+    if (ball && ball.Cd !== undefined) {
+      document.getElementById("dragSlider").value = ball.Cd;
+      document.getElementById("dragDisplay").textContent = ball.Cd.toFixed(2);
+    }
+  });
   
   // Window resize handler
   window.addEventListener("resize", () => {
