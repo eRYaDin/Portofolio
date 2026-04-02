@@ -18,13 +18,13 @@
     <p>Visualisasi energi kinetik, potensial, dan mekanik</p>
   </header>
 
-  <!-- ==================== TAB BAR (TAMBAHAN BARU) ==================== -->
+  <!-- ==================== TAB BAR ==================== -->
   <div class="tab-bar">
     <button class="tab-btn active" data-tab="simulasi">🎯 Simulasi</button>
     <button class="tab-btn" data-tab="notebook">📓 Notebook Python</button>
   </div>
 
-  <!-- ==================== SECTION: SIMULASI (ORIGINAL) ==================== -->
+  <!-- ==================== SECTION: SIMULASI ==================== -->
   <div class="tab-content" id="tab-simulasi">
     <div class="main-grid">
       <!-- ==================== SIDEBAR KONTROL ==================== -->
@@ -71,6 +71,20 @@
             <label>Koefisien Restitusi <span id="restDisplay">0.7</span></label>
             <input type="range" id="restSlider" min="0.1" max="0.95" value="0.7" step="0.05">
           </div>
+
+          <!-- ===== HAMBATAN UDARA (TAMBAHAN) ===== -->
+          <div class="form-group" style="margin-top: 10px;">
+            <label style="cursor: pointer;">
+              <input type="checkbox" id="airResistanceCheckbox" style="width: auto; margin-right: 8px;">
+              Hambatan Udara (Drag)
+            </label>
+          </div>
+
+          <div class="form-group" id="dragGroup" style="display: none;">
+            <label>Koefisien Drag (Cd) <span id="dragDisplay">0.47</span></label>
+            <input type="range" id="dragSlider" min="0.10" max="1.00" value="0.47" step="0.01">
+          </div>
+          <!-- ===== END HAMBATAN UDARA ===== -->
         </div>
 
         <!-- Tombol Kontrol -->
@@ -191,7 +205,7 @@
     </div>
   </div>
 
-  <!-- ==================== SECTION: NOTEBOOK (TAMBAHAN BARU) ==================== -->
+  <!-- ==================== SECTION: NOTEBOOK ==================== -->
   <div class="tab-content" id="tab-notebook" style="display: none;">
     <div class="notebook-header-bar">
       <div class="notebook-meta">
@@ -243,5 +257,28 @@
 <script src="js/gambar.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/main.js"></script>
+
+<!-- ===== EVENT LISTENER HAMBATAN UDARA ===== -->
+<script>
+  // Toggle tampil/sembunyikan slider Cd
+  document.getElementById('airResistanceCheckbox').addEventListener('change', function () {
+    document.getElementById('dragGroup').style.display = this.checked ? 'block' : 'none';
+  });
+
+  // Update display nilai Cd saat slider digeser
+  document.getElementById('dragSlider').addEventListener('input', function () {
+    document.getElementById('dragDisplay').textContent = parseFloat(this.value).toFixed(2);
+  });
+
+  // Saat ganti jenis bola → update slider Cd ke nilai Cd bola tersebut
+  document.getElementById('ballSelect').addEventListener('change', function () {
+    const ball = balls[parseInt(this.value)];
+    if (ball && ball.Cd !== undefined) {
+      document.getElementById('dragSlider').value = ball.Cd;
+      document.getElementById('dragDisplay').textContent = ball.Cd.toFixed(2);
+    }
+  });
+</script>
+
 </body>
 </html>
