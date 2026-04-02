@@ -13,15 +13,22 @@ function runSimulation(ballIndex, v0, angleDeg, restitution, y0) {
   const ball = balls[ballIndex];
   const angle = angleDeg * Math.PI / 180;
   const mass = ball.mass;
+  const radius = ball.diameter / 2;
+
+  // Ambil setting hambatan udara dari UI
+  const useDrag = document.getElementById('airResistanceCheckbox').checked;
+  const Cd = parseFloat(document.getElementById('dragSlider').value);
+  const rho = 1.225; // kg/m³, densitas udara standar (sea level, 15°C)
+  const A = Math.PI * radius * radius; // luas penampang bola (m²)
 
   const simulationData = [];
   let t = 0;
   let x = 0;
-  let y = y0; // Mulai dari ketinggian y0
+  let y = y0;
   let vx = v0 * Math.cos(angle);
   let vy = v0 * Math.sin(angle);
   let bounces = 0;
-  let maxHeight = y0; // Max height minimal = ketinggian awal
+  let maxHeight = y0;
   let isBouncing = true;
 
   const maxIterations = 50000;
@@ -29,7 +36,7 @@ function runSimulation(ballIndex, v0, angleDeg, restitution, y0) {
 
   while (iteration < maxIterations) {
     iteration++;
-    
+
     // Hitung energi
     const speed = Math.sqrt(vx * vx + vy * vy);
     const ke = 0.5 * mass * speed * speed;
@@ -37,26 +44,24 @@ function runSimulation(ballIndex, v0, angleDeg, restitution, y0) {
     const me = ke + pe;
 
     // Simpan data frame
-    simulationData.push({ 
-      t, 
-      x, 
-      y, 
-      vx, 
-      vy, 
-      speed, 
-      ke, 
-      pe, 
-      me 
-    });
+    simulationData.push({ t, x, y, vx, vy, speed, ke, pe, me });
 
     // Update max height
-    if (y > maxHeight) {
-      maxHeight = y;
+    if (y > maxHeight) maxHeight = y;
+
+    // Update velocity
+    if (useDrag && speed > 0) {
+      // F_drag = 0.5 * Cd * rho * A * v²
+      // a_drag = F_drag / mass (berlawanan arah gerak)
+      const Fd = 0.5 * Cd * rho * A * speed * speed;
+      const dragAcc = Fd / mass;
+      vx -= dragAcc * (vx / speed) * DT;
+      vy -= (G + dragAcc * (vy / speed)) * DT;
+    } else {
+      // Tanpa drag, hanya gravitasi
+      vy -= G * DT;
     }
 
-    // Update velocity (gravitasi)
-    vy -= G * DT;
-    
     // Update position
     x += vx * DT;
     y += vy * DT;
@@ -68,32 +73,26 @@ function runSimulation(ballIndex, v0, angleDeg, restitution, y0) {
       vy = -vy * restitution;
       vx = vx * restitution;
       bounces++;
-      
-      // Cek apakah bola masih memantul signifikan
+
       if (Math.abs(vy) < 0.1 && Math.abs(vx) < 0.05) {
         isBouncing = false;
       }
     }
 
     // Stop jika bola sudah berhenti
-    if (!isBouncing && Math.abs(vx) < 0.01) {
-      break;
-    }
+    if (!isBouncing && Math.abs(vx) < 0.01) break;
 
     // Safety break untuk waktu terlalu lama
-    if (t > 100) {
-      break;
-    }
+    if (t > 100) break;
   }
 
-  // Return data dan summary
   return {
     data: simulationData,
     summary: {
-      maxHeight: maxHeight,
+      maxHeight,
       totalDistance: x,
       flightTime: t,
-      bounces: bounces
+      bounces
     }
   };
 }
@@ -111,7 +110,6 @@ function calculateEnergy(mass, vx, vy, y) {
   const ke = 0.5 * mass * speed * speed;
   const pe = mass * G * Math.max(0, y);
   const me = ke + pe;
-  
   return { ke, pe, me };
 }
 
@@ -125,14 +123,10 @@ function calculateIdealTrajectory(v0, angleDeg) {
   const angle = angleDeg * Math.PI / 180;
   const v0x = v0 * Math.cos(angle);
   const v0y = v0 * Math.sin(angle);
-  
+
   const timeOfFlight = (2 * v0y) / G;
   const maxHeight = (v0y * v0y) / (2 * G);
   const range = v0x * timeOfFlight;
-  
-  return {
-    maxHeight,
-    range,
-    timeOfFlight
-  };
+
+  return { maxHeight, range, timeOfFlight };
 }
