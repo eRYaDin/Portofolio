@@ -1,12 +1,14 @@
 // ==================== DATA BOLA ====================
 // Semua gambar PNG berukuran 500x500px
 // Scale mengatur tampilan besar/kecil di canvas (KUNCI UTAMA!)
+// Cd = Koefisien drag aerodinamik bola (referensi empiris)
 const balls = [
   { 
     name: "Pingpong",  
     mass: 0.0027,      // kg
     diameter: 0.04,    // m
     scale: 0.5,        // skala tampilan di canvas
+    Cd: 0.40,          // Bola ringan, relatif tinggi
     image: "assets/pingpong.png"
   },
   { 
@@ -14,6 +16,7 @@ const balls = [
     mass: 0.045,  
     diameter: 0.043, 
     scale: 0.55, 
+    Cd: 0.25,          // Permukaan dimple mengurangi drag
     image: "assets/golf.png"
   },
   { 
@@ -21,6 +24,7 @@ const balls = [
     mass: 0.057,  
     diameter: 0.067, 
     scale: 0.7, 
+    Cd: 0.55,          // Permukaan berbulu meningkatkan drag
     image: "assets/tenis.png"
   },
   { 
@@ -28,6 +32,7 @@ const balls = [
     mass: 0.145,  
     diameter: 0.073, 
     scale: 0.75, 
+    Cd: 0.35,          // Permukaan jahitan mempengaruhi aliran
     image: "assets/baseball.png"
   },
   { 
@@ -35,6 +40,7 @@ const balls = [
     mass: 0.163,  
     diameter: 0.072, 
     scale: 0.75, 
+    Cd: 0.40,          // Mirip baseball
     image: "assets/kriket.png"
   },
   { 
@@ -42,6 +48,7 @@ const balls = [
     mass: 0.156,  
     diameter: 0.057, 
     scale: 0.65, 
+    Cd: 0.47,          // Bola mulus, standar sphere
     image: "assets/billiard.png"
   },
   { 
@@ -49,6 +56,7 @@ const balls = [
     mass: 0.43,   
     diameter: 0.22,  
     scale: 1.2, 
+    Cd: 0.25,          // Panel kulit mengurangi drag
     image: "assets/bolasepak.png"
   },
   { 
@@ -56,6 +64,7 @@ const balls = [
     mass: 0.42,   
     diameter: 0.20,  
     scale: 1.1, 
+    Cd: 0.27,
     image: "assets/futsal.png"
   },
   { 
@@ -63,6 +72,7 @@ const balls = [
     mass: 0.62,   
     diameter: 0.24,  
     scale: 1.3, 
+    Cd: 0.47,          // Permukaan kasar, mendekati sphere
     image: "assets/basket.png"
   },
   { 
@@ -70,6 +80,7 @@ const balls = [
     mass: 0.27,   
     diameter: 0.21,  
     scale: 1.1, 
+    Cd: 0.35,
     image: "assets/voly.png"
   },
   { 
@@ -77,6 +88,7 @@ const balls = [
     mass: 0.50,   
     diameter: 0.05,  
     scale: 0.6, 
+    Cd: 0.47,          // Bola mulus sempurna
     image: "assets/bola_besi.png"
   },
   { 
@@ -84,6 +96,7 @@ const balls = [
     mass: 6.8,    
     diameter: 0.22,  
     scale: 1.4, 
+    Cd: 0.47,          // Bola mulus, berat → drag kurang efektif
     image: "assets/bowling.png"
   }
 ];
