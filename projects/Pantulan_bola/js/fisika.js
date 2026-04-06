@@ -1,34 +1,49 @@
 // ==================== PHYSICS SIMULATION ENGINE ====================
 
 /**
- * Menjalankan simulasi fisika projectile motion dengan bouncing
- * @param {number} ballIndex - Index bola dari array balls
- * @param {number} v0 - Kecepatan awal (m/s)
- * @param {number} angleDeg - Sudut peluncuran (derajat)
- * @param {number} restitution - Koefisien restitusi (0-1)
- * @param {number} y0 - Ketinggian awal (m)
- * @returns {Object} - { data, summary }
+ * Menjalankan simulasi fisika
+ * @param {number} ballIndex
+ * @param {number} v0
+ * @param {number} angleDeg
+ * @param {number} restitution
+ * @param {number} y0
+ * @param {string} mode - "projectile" | "freefall" | "billiard"
+ * @param {number} boxWidth - Lebar kotak biliar (m)
+ * @param {number} boxHeight - Tinggi kotak biliar (m)
  */
-function runSimulation(ballIndex, v0, angleDeg, restitution, y0) {
+function runSimulation(ballIndex, v0, angleDeg, restitution, y0, mode = "projectile", boxWidth = 20, boxHeight = 15) {
   const ball = balls[ballIndex];
   const angle = angleDeg * Math.PI / 180;
   const mass = ball.mass;
   const radius = ball.diameter / 2;
 
-  // Ambil setting hambatan udara dari UI
+  // Hambatan udara
   const useDrag = document.getElementById('airResistanceCheckbox').checked;
   const Cd = parseFloat(document.getElementById('dragSlider').value);
-  const rho = 1.225; // kg/m³, densitas udara standar (sea level, 15°C)
-  const A = Math.PI * radius * radius; // luas penampang bola (m²)
+  const rho = 1.225;
+  const A = Math.PI * radius * radius;
 
   const simulationData = [];
   let t = 0;
   let x = 0;
   let y = y0;
-  let vx = v0 * Math.cos(angle);
-  let vy = v0 * Math.sin(angle);
+  let vx, vy;
+
+  if (mode === "freefall") {
+    vx = 0;
+    vy = 0;
+  } else if (mode === "billiard") {
+    vx = v0 * Math.cos(angle);
+    vy = v0 * Math.sin(angle);
+    x = boxWidth * 0.1;
+    y = boxHeight * 0.5;
+  } else {
+    vx = v0 * Math.cos(angle);
+    vy = v0 * Math.sin(angle);
+  }
+
   let bounces = 0;
-  let maxHeight = y0;
+  let maxHeight = y;
   let isBouncing = true;
 
   const maxIterations = 50000;
@@ -37,96 +52,70 @@ function runSimulation(ballIndex, v0, angleDeg, restitution, y0) {
   while (iteration < maxIterations) {
     iteration++;
 
-    // Hitung energi
     const speed = Math.sqrt(vx * vx + vy * vy);
     const ke = 0.5 * mass * speed * speed;
     const pe = mass * G * Math.max(0, y);
     const me = ke + pe;
 
-    // Simpan data frame
     simulationData.push({ t, x, y, vx, vy, speed, ke, pe, me });
 
-    // Update max height
     if (y > maxHeight) maxHeight = y;
 
     // Update velocity
     if (useDrag && speed > 0) {
-      // F_drag = 0.5 * Cd * rho * A * v²
-      // a_drag = F_drag / mass (berlawanan arah gerak)
       const Fd = 0.5 * Cd * rho * A * speed * speed;
       const dragAcc = Fd / mass;
       vx -= dragAcc * (vx / speed) * DT;
       vy -= (G + dragAcc * (vy / speed)) * DT;
     } else {
-      // Tanpa drag, hanya gravitasi
       vy -= G * DT;
     }
 
-    // Update position
     x += vx * DT;
     y += vy * DT;
     t += DT;
 
-    // Deteksi pantulan dengan tanah
-    if (y <= 0 && vy < 0) {
-      y = 0;
-      vy = -vy * restitution;
-      vx = vx * restitution;
-      bounces++;
-
-      if (Math.abs(vy) < 0.1 && Math.abs(vx) < 0.05) {
-        isBouncing = false;
+    if (mode === "billiard") {
+      if (y <= 0 && vy < 0)           { y = 0;         vy = -vy * restitution; vx *= restitution; bounces++; }
+      if (y >= boxHeight && vy > 0)   { y = boxHeight;  vy = -vy * restitution; vx *= restitution; bounces++; }
+      if (x <= 0 && vx < 0)           { x = 0;         vx = -vx * restitution; vy *= restitution; bounces++; }
+      if (x >= boxWidth && vx > 0)    { x = boxWidth;   vx = -vx * restitution; vy *= restitution; bounces++; }
+      if (speed < 0.05) break;
+    } else {
+      if (y <= 0 && vy < 0) {
+        y = 0;
+        vy = -vy * restitution;
+        vx *= restitution;
+        bounces++;
+        if (Math.abs(vy) < 0.1 && Math.abs(vx) < 0.05) isBouncing = false;
       }
+      if (!isBouncing && Math.abs(vx) < 0.01) break;
     }
 
-    // Stop jika bola sudah berhenti
-    if (!isBouncing && Math.abs(vx) < 0.01) break;
-
-    // Safety break untuk waktu terlalu lama
     if (t > 100) break;
   }
 
   return {
     data: simulationData,
-    summary: {
-      maxHeight,
-      totalDistance: x,
-      flightTime: t,
-      bounces
-    }
+    summary: { maxHeight, totalDistance: x, flightTime: t, bounces },
+    mode, boxWidth, boxHeight
   };
 }
 
-/**
- * Menghitung energi pada titik tertentu
- * @param {number} mass - Massa bola (kg)
- * @param {number} vx - Kecepatan horizontal (m/s)
- * @param {number} vy - Kecepatan vertikal (m/s)
- * @param {number} y - Posisi vertikal (m)
- * @returns {Object} - { ke, pe, me }
- */
 function calculateEnergy(mass, vx, vy, y) {
   const speed = Math.sqrt(vx * vx + vy * vy);
   const ke = 0.5 * mass * speed * speed;
   const pe = mass * G * Math.max(0, y);
-  const me = ke + pe;
-  return { ke, pe, me };
+  return { ke, pe, me: ke + pe };
 }
 
-/**
- * Menghitung trajectory ideal tanpa pantulan (untuk referensi)
- * @param {number} v0 - Kecepatan awal (m/s)
- * @param {number} angleDeg - Sudut peluncuran (derajat)
- * @returns {Object} - { maxHeight, range, timeOfFlight }
- */
 function calculateIdealTrajectory(v0, angleDeg) {
   const angle = angleDeg * Math.PI / 180;
   const v0x = v0 * Math.cos(angle);
   const v0y = v0 * Math.sin(angle);
-
-  const timeOfFlight = (2 * v0y) / G;
-  const maxHeight = (v0y * v0y) / (2 * G);
-  const range = v0x * timeOfFlight;
-
-  return { maxHeight, range, timeOfFlight };
+  return {
+    timeOfFlight: (2 * v0y) / G,
+    maxHeight: (v0y * v0y) / (2 * G),
+    range: v0x * (2 * v0y) / G
+  };
 }
