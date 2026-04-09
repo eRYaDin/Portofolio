@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PendulumLab — Physics Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════ -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-mark">⊙</div>
+      <div class="header-title">
+        <span class="title-main">PendulumLab</span>
+        <span class="title-sub">Physics Simulator v1.0</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="mode-tabs">
+        <button class="mode-tab active" data-mode="single" id="btn-mode-single">Single</button>
+        <button class="mode-tab" data-mode="compare" id="btn-mode-compare">Compare</button>
+        <button class="mode-tab" data-mode="double" id="btn-mode-double">Double</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       MAIN LAYOUT
+  ═══════════════════════════════════════════ -->
+  <main class="app-layout">
+
+    <!-- LEFT PANEL: Controls -->
+    <aside class="panel panel-controls" id="panel-controls">
+      <div class="panel-header">
+        <span class="panel-icon">⚙</span>
+        <span>Kontrol Simulasi</span>
+      </div>
+
+      <!-- Sandbox Variables -->
+      <section class="control-section" id="section-sandbox">
+        <div class="section-label">Variabel Sandbox</div>
+
+        <div class="slider-group" id="group-length">
+          <div class="slider-meta">
+            <label for="sl-length">Panjang Tali (L)</label>
+            <span class="slider-value" id="val-length">1.50 m</span>
+          </div>
+          <input type="range" id="sl-length" min="0.3" max="3.0" step="0.05" value="1.5" />
+        </div>
+
+        <div class="slider-group" id="group-mass">
+          <div class="slider-meta">
+            <label for="sl-mass">Massa Beban (m)</label>
+            <span class="slider-value" id="val-mass">1.0 kg</span>
+          </div>
+          <input type="range" id="sl-mass" min="0.1" max="5.0" step="0.1" value="1.0" />
+        </div>
+
+        <div class="slider-group" id="group-angle">
+          <div class="slider-meta">
+            <label for="sl-angle">Sudut Awal (θ)</label>
+            <span class="slider-value" id="val-angle">30°</span>
+          </div>
+          <input type="range" id="sl-angle" min="1" max="85" step="1" value="30" />
+        </div>
+      </section>
+
+      <!-- Environment / Gravity -->
+      <section class="control-section" id="section-environment">
+        <div class="section-label">Lingkungan</div>
+        <div class="gravity-grid" id="gravity-grid">
+          <button class="gravity-btn active" data-g="9.81" data-label="Bumi">
+            <span class="gravity-icon">🌍</span>
+            <span class="gravity-name">Bumi</span>
+            <span class="gravity-val">9.81 m/s²</span>
+          </button>
+          <button class="gravity-btn" data-g="1.62" data-label="Bulan">
+            <span class="gravity-icon">🌕</span>
+            <span class="gravity-name">Bulan</span>
+            <span class="gravity-val">1.62 m/s²</span>
+          </button>
+          <button class="gravity-btn" data-g="3.72" data-label="Mars">
+            <span class="gravity-icon">🔴</span>
+            <span class="gravity-name">Mars</span>
+            <span class="gravity-val">3.72 m/s²</span>
+          </button>
+          <button class="gravity-btn" data-g="0.001" data-label="Zero-G">
+            <span class="gravity-icon">🛸</span>
+            <span class="gravity-name">Zero-G</span>
+            <span class="gravity-val">~0 m/s²</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Damping -->
+      <section class="control-section" id="section-damping">
+        <div class="section-label">Redaman (Damping)</div>
+        <div class="slider-group">
+          <div class="slider-meta">
+            <label for="sl-damping">Gesekan Udara</label>
+            <span class="slider-value" id="val-damping">Ideal</span>
+          </div>
+          <input type="range" id="sl-damping" min="0" max="0.05" step="0.001" value="0" />
+          <div class="damping-labels">
+            <span>Ideal</span>
+            <span>Realistis</span>
+            <span>Berat</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Visual Toggles -->
+      <section class="control-section" id="section-overlays">
+        <div class="section-label">Tampilan Overlay</div>
+        <div class="toggle-list">
+          <label class="toggle-item">
+            <input type="checkbox" id="tog-vectors" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Vektor Gaya</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" id="tog-trace" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Jejak Lintasan</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" id="tog-protractor" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Busur Derajat</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" id="tog-energy" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Grafik Energi</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Compare Panel B (hidden unless compare mode) -->
+      <section class="control-section compare-only hidden" id="section-compare-b">
+        <div class="section-label" style="color: var(--accent-b)">▶ Pendulum B</div>
+        <div class="slider-group">
+          <div class="slider-meta">
+            <label for="sl-length-b">Panjang Tali (L)</label>
+            <span class="slider-value" id="val-length-b">2.00 m</span>
+          </div>
+          <input type="range" id="sl-length-b" min="0.3" max="3.0" step="0.05" value="2.0" />
+        </div>
+        <div class="slider-group">
+          <div class="slider-meta">
+            <label for="sl-angle-b">Sudut Awal (θ)</label>
+            <span class="slider-value" id="val-angle-b">30°</span>
+          </div>
+          <input type="range" id="sl-angle-b" min="1" max="85" step="1" value="30" />
+        </div>
+      </section>
+    </aside>
+
+    <!-- CENTER: Canvas -->
+    <section class="panel panel-canvas" id="panel-canvas">
+      <div class="canvas-toolbar">
+        <div class="stopwatch-display" id="stopwatch-display">
+          <span class="sw-label">T</span>
+          <span class="sw-time" id="sw-time">0.000 s</span>
+          <span class="sw-period" id="sw-period">— s/siklus</span>
+        </div>
+        <div class="canvas-actions">
+          <button class="btn-icon" id="btn-reset" title="Reset">↺</button>
+          <button class="btn-play" id="btn-play">▶ Mulai</button>
+          <button class="btn-icon" id="btn-clear-trace" title="Hapus Jejak">⌫</button>
+        </div>
+      </div>
+
+      <!-- Canvas container — holds one or two canvases -->
+      <div class="canvas-wrapper" id="canvas-wrapper">
+        <canvas id="canvas-a"></canvas>
+        <!-- Canvas B appears in compare mode -->
+        <canvas id="canvas-b" class="hidden"></canvas>
+      </div>
+
+      <!-- Live readout bar -->
+      <div class="readout-bar" id="readout-bar">
+        <div class="readout-item">
+          <span class="readout-label">θ</span>
+          <span class="readout-val" id="rd-angle">0.00°</span>
+        </div>
+        <div class="readout-item">
+          <span class="readout-label">ω</span>
+          <span class="readout-val" id="rd-omega">0.000 rad/s</span>
+        </div>
+        <div class="readout-item">
+          <span class="readout-label">v</span>
+          <span class="readout-val" id="rd-vel">0.000 m/s</span>
+        </div>
+        <div class="readout-item">
+          <span class="readout-label">Ep</span>
+          <span class="readout-val" id="rd-ep">0.000 J</span>
+        </div>
+        <div class="readout-item">
+          <span class="readout-label">Ek</span>
+          <span class="readout-val" id="rd-ek">0.000 J</span>
+        </div>
+        <div class="readout-item">
+          <span class="readout-label">g</span>
+          <span class="readout-val" id="rd-g">9.81 m/s²</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: Energy Chart -->
+    <aside class="panel panel-chart" id="panel-chart">
+      <div class="panel-header">
+        <span class="panel-icon">📈</span>
+        <span>Grafik Energi</span>
+      </div>
+      <canvas id="energy-chart"></canvas>
+      <div class="chart-legend">
+        <span class="legend-dot" style="background:var(--ep-color)"></span><span>Ep (Potensial)</span>
+        <span class="legend-dot" style="background:var(--ek-color)"></span><span>Ek (Kinetik)</span>
+        <span class="legend-dot" style="background:var(--et-color)"></span><span>Et (Total)</span>
+      </div>
+      <div class="panel-header" style="margin-top:1.5rem">
+        <span class="panel-icon">📋</span>
+        <span>Info Fisika</span>
+      </div>
+      <div class="formula-box" id="formula-box">
+        <div class="formula-row">
+          <span class="f-label">Periode (T)</span>
+          <span class="f-val" id="f-period">—</span>
+        </div>
+        <div class="formula-row">
+          <span class="f-label">Frekuensi (f)</span>
+          <span class="f-val" id="f-freq">—</span>
+        </div>
+        <div class="formula-row">
+          <span class="f-label">Panjang Tali</span>
+          <span class="f-val" id="f-length">—</span>
+        </div>
+        <div class="formula-row">
+          <span class="f-label">Massa Beban</span>
+          <span class="f-val" id="f-mass">—</span>
+        </div>
+        <div class="formula-row">
+          <span class="f-label">Gravitasi (g)</span>
+          <span class="f-val" id="f-gravity">—</span>
+        </div>
+        <div class="formula-row">
+          <span class="f-label">Energi Total</span>
+          <span class="f-val" id="f-etotal">—</span>
+        </div>
+      </div>
+
+      <div class="formula-tex">
+        T = 2π √(L/g)
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Scripts — order matters -->
+  <script src="js/pendulum.js"></script>
+  <script src="js/sketch.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
