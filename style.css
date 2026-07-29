@@ -142,6 +142,43 @@ body {
   background: var(--warna-bg);
 }
 
+/* TOMBOL HAMBURGER (HANYA MUNCUL DI MOBILE) */
+.tombol-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  background: var(--warna-kartu);
+  border: 2px solid var(--warna-border);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.tombol-hamburger span {
+  display: block;
+  width: 22px;
+  height: 3px;
+  background: var(--warna-teks);
+  border-radius: 2px;
+  transition: var(--transisi);
+}
+
+.tombol-hamburger.aktif span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.tombol-hamburger.aktif span:nth-child(2) {
+  opacity: 0;
+}
+
+.tombol-hamburger.aktif span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
 .tombol-tema {
   background: var(--warna-kartu);
   border: 2px solid var(--warna-border);
@@ -323,6 +360,22 @@ body {
 .kartu-pengajaran:active {
   transform: translate(-6px, -6px);
   box-shadow: 14px 14px 0px var(--warna-aksen);
+}
+
+/* KARTU PROYEK YANG BELUM ADA DEMO */
+.kartu-segera {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.kartu-segera:hover,
+.kartu-segera:active {
+  transform: none;
+}
+
+.kartu-segera small {
+  color: var(--warna-teks);
+  opacity: 0.6;
 }
 
 /* LINI MASA (TIMELINE) */
@@ -807,10 +860,51 @@ footer {
     padding: 30px;
   }
   
+  .tombol-hamburger {
+    display: flex;
+  }
+
   .nav-menu {
     display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: var(--warna-nav);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--warna-border);
+    gap: 0;
+    padding: 10px 20px 20px;
   }
-  
+
+  .nav-menu.terbuka {
+    display: flex;
+  }
+
+  .nav-menu li {
+    width: 100%;
+  }
+
+  .nav-menu a {
+    width: 100%;
+  }
+
+  .dropdown-content {
+    position: static;
+    box-shadow: none;
+    border: none;
+    border-left: 3px solid var(--warna-aksen);
+    border-radius: 0;
+    margin-top: 0;
+    margin-left: 10px;
+    display: none;
+  }
+
+  .dropdown-content.terbuka {
+    display: block;
+  }
+
   .nav-title {
     font-size: 1.2rem;
   }
@@ -870,3 +964,4 @@ button:active,
 .kartu-timeline:active {
   opacity: 0.8;
 }
+v
