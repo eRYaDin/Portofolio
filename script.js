@@ -73,6 +73,31 @@ function perbaruiTeksTombol(tema) {
 }
 
 // ============================================
+// TOGGLE MENU HAMBURGER (MOBILE)
+// ============================================
+const tombolHamburger = document.getElementById('tombol-hamburger');
+const navMenu = document.getElementById('nav-menu');
+
+if (tombolHamburger && navMenu) {
+  tombolHamburger.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const terbuka = navMenu.classList.toggle('terbuka');
+    tombolHamburger.classList.toggle('aktif', terbuka);
+    tombolHamburger.setAttribute('aria-expanded', terbuka);
+  });
+}
+
+// Tutup menu hamburger ketika klik di luar
+document.addEventListener('click', (e) => {
+  if (navMenu && navMenu.classList.contains('terbuka') && !e.target.closest('.nav-container')) {
+    navMenu.classList.remove('terbuka');
+    tombolHamburger.classList.remove('aktif');
+    tombolHamburger.setAttribute('aria-expanded', false);
+  }
+});
+
+// ============================================
 // SMOOTH SCROLL UNTUK NAVIGASI
 // ============================================
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -207,14 +232,11 @@ function optimasiUntukPerangkat() {
     if (menuNav) {
       menuNav.style.display = 'none';
     }
-    console.log('Dioptimasi untuk mobile');
   } else if (perangkat === 'tablet') {
     if (menuNav) {
       menuNav.style.gap = '18px';
     }
-    console.log('Dioptimasi untuk tablet');
   } else {
-    console.log('Dioptimasi untuk desktop');
   }
 }
 
@@ -243,17 +265,14 @@ function animasiScrollFadeIn() {
   const elemen = document.querySelectorAll('.fade');
   
   if (elemen.length === 0) {
-    console.log('Tidak ada elemen dengan class .fade');
     return;
   }
   
-  console.log(`Ditemukan ${elemen.length} elemen fade`);
   
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('show');
-        console.log('Elemen muncul:', entry.target);
       }
     });
   }, { 
@@ -263,14 +282,12 @@ function animasiScrollFadeIn() {
   
   elemen.forEach(el => {
     observer.observe(el);
-    console.log('Mengamati elemen:', el);
   });
 }
 
 // FALLBACK: Jika Intersection Observer tidak support
 function fallbackAnimasiFade() {
   const elemen = document.querySelectorAll('.fade');
-  console.log('Menggunakan fallback animasi');
   
   elemen.forEach(el => {
     el.classList.add('show');
@@ -311,7 +328,6 @@ function aturAnimasiSection() {
 // JALANKAN SEMUA ANIMASI PADA LOAD
 // ============================================
 window.addEventListener('load', () => {
-  console.log('Halaman selesai dimuat, menjalankan animasi...');
   animasiBarProgress();
   aturAnimasiSection();
 });
@@ -319,9 +335,6 @@ window.addEventListener('load', () => {
 // ============================================
 // LOG KONFIRMASI
 // ============================================
-console.log("Portfolio dimuat dengan optimasi Android!");
-console.log("Fitur aktif: Mode Gelap, Smooth Scroll, Animasi Timeline, Progress Bar");
-console.log("Optimasi: Debounce, Touch Feedback, Prevent Double Click");
 
 // ============================================
 // DETEKSI SCROLL UNTUK NAVBAR
@@ -361,7 +374,6 @@ function deteksiBrowser() {
     namaBrowser = "Internet Explorer";
   }
   
-  console.log("Browser terdeteksi:", namaBrowser);
   return namaBrowser;
 }
 
@@ -375,7 +387,6 @@ const waktuMulai = performance.now();
 window.addEventListener('load', () => {
   const waktuSelesai = performance.now();
   const waktuLoading = ((waktuSelesai - waktuMulai) / 1000).toFixed(2);
-  console.log(`Halaman dimuat dalam ${waktuLoading} detik`);
 });
 
 // ============================================
@@ -383,18 +394,14 @@ window.addEventListener('load', () => {
 // ============================================
 function cekKoneksi() {
   if (navigator.onLine) {
-    console.log("Status: Online");
   } else {
-    console.log("Status: Offline");
   }
 }
 
 window.addEventListener('online', () => {
-  console.log("Koneksi kembali!");
 });
 
 window.addEventListener('offline', () => {
-  console.log("Koneksi terputus!");
 });
 
 // JALANKAN CEK KONEKSI
@@ -404,6 +411,23 @@ cekKoneksi();
 // OPTIMASI KHUSUS ANDROID - HAPUS HIGHLIGHT
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
+  // Isi tahun sekarang di footer
+  const elemenTahun = document.getElementById('tahun-sekarang');
+  if (elemenTahun) {
+    elemenTahun.textContent = new Date().getFullYear();
+  }
+
+  // Tutup menu hamburger saat salah satu link nav diklik (mobile)
+  document.querySelectorAll('.nav-menu a:not(.dropbtn)').forEach(link => {
+    link.addEventListener('click', () => {
+      if (navMenu) navMenu.classList.remove('terbuka');
+      if (tombolHamburger) {
+        tombolHamburger.classList.remove('aktif');
+        tombolHamburger.setAttribute('aria-expanded', false);
+      }
+    });
+  });
+
   // Tambahkan style untuk menghilangkan highlight di Android
   const style = document.createElement('style');
   style.textContent = `
@@ -427,5 +451,4 @@ document.addEventListener('DOMContentLoaded', () => {
   `;
   document.head.appendChild(style);
   
-  console.log('Optimasi Android diterapkan: tap highlight removed');
 });
