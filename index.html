@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Rafif Yasin | Portfolio Fisika</title>
+  <meta name="description" content="Portfolio Rafif Yasin Habibullah Wiryawan — Mahasiswa S1 Fisika Universitas Padjadjaran. Simulasi fisika, visualisasi data, dan proyek pengajaran berbasis komputasi.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚛️</text></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,7 +14,12 @@
   <nav class="navbar">
     <div class="nav-container">
       <h1 class="nav-title">Rafif Yasin</h1>
-      <ul class="nav-menu">
+      <button id="tombol-hamburger" class="tombol-hamburger" aria-label="Buka menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="nav-menu" id="nav-menu">
         <li><a href="#beranda">Beranda</a></li>
         <li class="dropdown">
           <a href="#proyek" class="dropbtn">Proyek ▼</a>
@@ -80,10 +87,10 @@
         </a>
         
         <!-- KARTU 3 - TIDAK ADA LINK -->
-        <div class="kartu-proyek">
+        <div class="kartu-proyek kartu-segera">
           <p>Proyek Komputasi Numerik</p>
           <span>Pemodelan numerik untuk persamaan diferensial fisika.</span>
-          <small>Status: Selesai</small>
+          <small>🔒 Demo Segera Hadir</small>
         </div>
 
         <!-- ✅ KARTU BARU - SIMULASI PENDULUM -->
@@ -96,10 +103,10 @@
         </a>
         
         <!-- KARTU 4 - TIDAK ADA LINK -->
-        <div class="kartu-proyek">
+        <div class="kartu-proyek kartu-segera">
           <p>Proyek Mandiri</p>
           <span>Eksplorasi algoritma simulasi untuk fenomena gelombang.</span>
-          <small>Status: Berlangsung</small>
+          <small>🚧 Sedang Dikerjakan</small>
         </div>
         
       </div>
@@ -120,17 +127,17 @@
         </a>
         
         <!-- KARTU 2 - TIDAK ADA LINK -->
-        <div class="kartu-proyek kartu-pengajaran">
+        <div class="kartu-proyek kartu-pengajaran kartu-segera">
           <p>Modul Visualisasi Data Fisika</p>
           <span>Bimbingan mahasiswa dalam membuat grafik interaktif untuk analisis data.</span>
-          <small>Status: Berlangsung</small>
+          <small>🚧 Sedang Dikerjakan</small>
         </div>
         
         <!-- KARTU 3 - TIDAK ADA LINK -->
-        <div class="kartu-proyek kartu-pengajaran">
+        <div class="kartu-proyek kartu-pengajaran kartu-segera">
           <p>Pendekatan Mengajar Berbasis Komputasi</p>
           <span>Fokus pada visualisasi dulu baru rumus, untuk pemahaman mendalam.</span>
-          <small>Status: Aktif</small>
+          <small>✅ Aktif Berjalan</small>
         </div>
         
       </div>
@@ -280,12 +287,16 @@
       </a>
 
       <p style="margin-top: 20px;"><strong>Email</strong></p>
-      <p><a href="mailto:rafifyasin@example.com">rafifyasin@example.com</a></p>
+      <p><a href="mailto:rafifyasin@gmail.com">rafifyasin@gmail.com</a></p>
 
       <p style="margin-top: 10px;"><strong>GitHub</strong></p>
       <a href="https://github.com/eRYaDin" target="_blank" class="tautan-github">github.com/eRYaDin</a>
     </div>
   </section>
+
+  <footer>
+    <p>&copy; <span id="tahun-sekarang"></span> Rafif Yasin Habibullah Wiryawan. Dibuat dengan HTML, CSS &amp; JavaScript.</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
